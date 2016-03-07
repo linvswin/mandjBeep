@@ -124,7 +124,7 @@ void standby() {
 	else lcd.print(TXT_ENTER_PIN);
 	lcd.setCursor(0, 1);
 	lcd.print(getDate());
-	lcd.setCursor(0, 3);
+	lcd.setCursor(5, 3);
 	lcd.print(TXT_AUTOR);
 }
 
@@ -261,10 +261,10 @@ void codiceErrato()
 	password.reset();
 	lcd.backlight();
 	lcd.clear();
-	lcd.setCursor(1, 0);
-	lcd.print(F(TXT_INVALID_PIN));
-	lcd.setCursor(1, 2);
-	lcd.print(F(TXT_RIPROVA_PIN));
+	lcd.setCursor(3, 0);
+	lcd.print(TXT_INVALID_PIN);
+	lcd.setCursor(5, 2);
+	lcd.print(TXT_RIPROVA_PIN);
 	delay(1000);
 	standby();
 }
