@@ -14,7 +14,7 @@
 #include "RTClib.h"
 
 #define BAUD_RATE  115200    //9600
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 	#define DEBUG_SETTINGS
@@ -99,11 +99,11 @@ int timerPrintData=0;
 /**********************************************************
 **    Definizione di stringhe
 ***********************************************************/
-#define TXT_AUTOR              F("    Beep by M&J")
+#define TXT_AUTOR              F("Beep by M&J")
 #define TXT_SYS_ACTIVE         F("Attivo: ")
-#define TXT_ENTER_PIN          F("Codice:")
-#define TXT_INVALID_PIN        "   Codice errato!"
-#define TXT_RIPROVA_PIN        "     Riprova.."
+#define TXT_ENTER_PIN          F("Codice: ")
+#define TXT_INVALID_PIN        F("Codice errato!")
+#define TXT_RIPROVA_PIN        F("Riprova")
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
 #define TXT_INTRUSIONE         F("     Intrusione")
 
