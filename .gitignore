@@ -4,3 +4,4 @@ core/
 .ino.cpp
 .project
 *.fzz
+/.settings/
