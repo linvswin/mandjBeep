@@ -1,0 +1,6 @@
+Release/
+core/
+.cproject
+.ino.cpp
+.project
+*.fzz
