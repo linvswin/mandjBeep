@@ -1,0 +1,14 @@
+
+/*===========================================================
+-- 1 evento stampa data
+-- 2 evento timerLCDbacklight
+-- 3 evento timerLoopMenu
+-- 4 evento doAfterRitActivate
+-- 5 evento doPrintRitAttivazione
+-- 6 evento doAfterTimerT
+*/
+
+
+- linea tamper
+- menu
+addUsrNav()
