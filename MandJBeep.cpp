@@ -31,30 +31,34 @@ void setup() {
 #endif
 	password.set(settings.alarmPassword1);
 
-	pinMode(TIMER1_PIN1, OUTPUT);
-	//pinMode(TIMER1_PIN2, OUTPUT);
-
+	/*pinMode(RELAY_SIRENA2, OUTPUT);
 	pinMode(RELAY_SIRENA1, OUTPUT);
-	pinMode(RELAY_SIRENA2, OUTPUT);
-	pinMode(GREEN_LED, OUTPUT);
-	pinMode(RED_LED, OUTPUT);
-	//pinMode(SPEAKER_PIN, OUTPUT);
 	pinMode(PIR0_PIN, INPUT);
-	pinMode(PIR1_PIN, INPUT);
+	pinMode(RED_LED, OUTPUT);
+	pinMode(GREEN_LED, OUTPUT);*/
 
-	digitalWrite(GREEN_LED, HIGH);
-	digitalWrite(RED_LED, LOW);
+	DDRD=11011111;
+
+	/*pinMode(TIMER1_PIN1, OUTPUT);
+	pinMode(TIMER1_PIN2, OUTPUT);
+	pinMode(PIR1_PIN, INPUT);
+	pinMode(PIR2_PIN, INPUT);*/
+	DDRB=00101110;
+
+	/*digitalWrite(RELAY_SIRENA2, HIGH);
 	digitalWrite(RELAY_SIRENA1, LOW);
-	digitalWrite(RELAY_SIRENA2, HIGH);
+	digitalWrite(RED_LED, LOW);
+	digitalWrite(GREEN_LED, HIGH);*/
+	PORTD=10010100;
 
 	//Adding time
 	RTC.begin();
 	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
 	//RTC.adjust(DateTime(__DATE__, __TIME__));
 	if (!RTC.isrunning())
-		Serial.println(F("RTC is NOT running!"));
+		Serial.println(F("RTC NOT run"));
 	else
-		Serial.println(F("RTC running"));
+		Serial.println(F("RTC run"));
 
 	keypad.begin(makeKeymap(keys));
 	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
@@ -275,8 +279,14 @@ void attiva() // Activate the system if correct PIN entered and display message 
 	statoAllarme = true;
 	password.reset();
 
-	digitalWrite(RED_LED, HIGH);
-	digitalWrite(GREEN_LED, LOW);
+	//digitalWrite(RED_LED, HIGH);
+	//PORTD=(1<<PD4);
+	//PORTD=_BV(PD4);
+	PORTD |= 0x08; /* leave all the other bits alone, just set bit 4 */
+
+	//digitalWrite(GREEN_LED, LOW);
+	//PORTD=(1<<PD2);
+	PORTD &= 0x00;
 
 	standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
@@ -290,11 +300,15 @@ void disattiva() {
 
 	Timer1.disablePwm(TIMER1_PIN1);
 
-	digitalWrite(RED_LED, LOW);
-	digitalWrite(GREEN_LED, HIGH);
+	//digitalWrite(RED_LED, LOW);
+	PORTD &= 0x00; /* leave all the other bits alone, just set bit 4 */
+	//digitalWrite(GREEN_LED, HIGH);
+	PORTD |= 0x04; /* leave all the other bits alone, just set bit 2 */
 
-	digitalWrite(RELAY_SIRENA1, LOW);
-	digitalWrite(RELAY_SIRENA2, HIGH);
+	//digitalWrite(RELAY_SIRENA1, LOW);
+	PORTD &= 0x00;
+	//digitalWrite(RELAY_SIRENA2, HIGH);
+	PORTD |= 0x40;
 
 	lcd.backlight();
 	lcd.clear();
@@ -314,8 +328,10 @@ void alarmTriggered() {
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth);
 
-	digitalWrite(RELAY_SIRENA1, HIGH);
-	digitalWrite(RELAY_SIRENA2, LOW);
+	//digitalWrite(RELAY_SIRENA1, HIGH);
+	PORTD |= 0x40;
+	//digitalWrite(RELAY_SIRENA2, LOW);
+	PORTD &= 0x00;
 
 	password.reset();
 	statoAllarme = true;
