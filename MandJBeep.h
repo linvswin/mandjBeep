@@ -63,32 +63,19 @@ const static byte REED5_PIN=8;
 
 class Sensore{
 protected:
-	int pin;
+	char pin;
 	tipoSensore tipo;
 	boolean attivo;
 	statoSensore stato;
-	int logica;
+	char logica;
 	String messaggio;
 	boolean malfunzionamento;
-	short int conta;
+	char conta;
 	boolean ritardato;
-	short int zona;
+	char zona;
 public:
-	/*        pin - tipoSensore */
-	/*Sensore(int p, tipoSensore t){
-		this->pin=p;
-		this->tipo=t;
-		this->attivo=true;
-		this->stato=sensNonAttivo;
-		this->logica=LOW;
-		this->messaggio=F("Allarme");
-		this->malfunzionamento=false;
-		this->conta=0;
-		this->ritardato=false;
-	};*/
-
 	/*      pin - tipoSensore - logica*/
-	Sensore(int p, tipoSensore t, int l){
+	Sensore(char p, tipoSensore t, char l){
 		this->pin=p;
 		this->tipo=t;
 		this->attivo=true;
@@ -102,7 +89,7 @@ public:
 	};
 
 	/*         pin - tipoSensore - logica - messaggio - zona */
-	Sensore(int p, tipoSensore t, int l, const String msg, short int zona=znPerimetrale){
+	Sensore(char p, tipoSensore t, char l, const String msg, char zona=znPerimetrale){
 		this->pin=p;
 		this->tipo=t;
 		this->attivo=true;
@@ -115,8 +102,8 @@ public:
 		this->zona=zona;
 	};
 
-	int getPin(){return this->pin;};
-	void setPin(int p){this->pin=p;};
+	char getPin(){return this->pin;};
+	void setPin(char p){this->pin=p;};
 
 	tipoSensore getTipo(){return this->tipo;};
 	void setTipo(tipoSensore t){this->tipo=t;};
@@ -127,8 +114,8 @@ public:
 	statoSensore getStato(){return this->stato;};
 	void setStato(statoSensore a){this->stato=a;};
 
-	int getLogica(){return this->logica;};
-	void setLogica(int l){this->logica=l;};
+	char getLogica(){return this->logica;};
+	void setLogica(char l){this->logica=l;};
 
 	String getMessaggio(){return this->messaggio;};
 	void setMessaggio(String m){this->messaggio=m;};
@@ -136,15 +123,14 @@ public:
 	boolean getMalfunzionamento(){return this->malfunzionamento;};
 	void setMalfunzionamento(boolean m){this->malfunzionamento=m;};
 
-	short int getConta(){return this->conta;};
-	void setConta(short int c){this->conta=c;};
+	char getConta(){return this->conta;};
+	void setConta(char c){this->conta=c;};
 
 	boolean getRitardato(){return this->ritardato;};
 	void setRitardato(boolean m){this->ritardato=m;};
 
-	short int getZona(){return this->zona;};
-	void setZona(short int z){this->zona=z;};
-
+	char getZona(){return this->zona;};
+	void setZona(char z){this->zona=z;};
 };
 
 
@@ -154,10 +140,10 @@ struct AlarmSettings {
 	char alarmPassword1[PasswordLength_Max];
 	char alarmPassword2[PasswordLength_Max];
 	/*unsigned*/
-	int tempoSirena;
+	byte tempoSirena;
 	char menuPassword[PasswordLength_Max];
 	/*unsigned*/
-	int lcdBacklightTime;
+	byte lcdBacklightTime;
 	const byte maxReed_Conta;
 	short int zona;
 ///	Sensore sensore[numSens];
@@ -204,12 +190,12 @@ Password password = Password(settings.alarmPassword1);
 PCF8574_Class PCF_24(0x24);
 
 MandJTimer t;
-int conta = 0;
+char conta = 0;
 
 #include "Menu.h"
 
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
-const int outPin = 9; // the physical pin
+const char outPin = 9; // the physical pin
 long period = 1000; // the period in microseconds
 long pulseWidth = 950; // width of a pulse in microseconds
 int prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values

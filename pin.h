@@ -58,12 +58,12 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	//#define TIMER2_PIN1 3
 	//#define TIMER2_PIN2 11
 	
-	#define GREEN_LED  2
-	#define RED_LED     4
+	//#define GREEN_LED  2
+	//#define RED_LED     4
 	
 	#define PIR0_PIN    5
 	#define PIR1_PIN    8
-	#define PIR2_PIN    8
+	#define PIR2_PIN    12
 	
 	#define RELAY_SIRENA1 6
 	#define RELAY_SIRENA2 7
