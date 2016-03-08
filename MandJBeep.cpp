@@ -282,19 +282,12 @@ void attiva() // Activate the system if correct PIN entered and display message 
 	//digitalWrite(RED_LED, HIGH);
 	//PORTD=(1<<PD4);
 	//PORTD=_BV(PD4);
-	PORTD |= (0x08); /* leave all the other bits alone, just set bit 4 */
+	//PORTD |= (0x08); /* leave all the other bits alone, just set bit 4 */
+	PORTD |= (1<<5);
 
 	//digitalWrite(GREEN_LED, LOW);
 	//PORTD=(1<<PD2);
-	PORTD &= 0x00;
-	//digitalWrite(RED_LED, HIGH);
-	//PORTD=(1<<PD4);
-	//PORTD=_BV(PD4);
-	PORTD |= 0x08; /* leave all the other bits alone, just set bit 4 */
-
-	//digitalWrite(GREEN_LED, LOW);
-	//PORTD=(1<<PD2);
-	PORTD &= 0x00;
+	PORTD &= ~(1<<2);
 
 	standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
