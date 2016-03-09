@@ -92,7 +92,6 @@ void loop() {
 				//if ( sensore[i].getZona() == settings.zona )
 				{
 					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()==sensAttivo ) {
-
 						if (sensore[i].getTipo()==intReed){
 							int f=sensore[i].getConta()+1;
 #ifdef DEBUG_SENS2
@@ -302,7 +301,6 @@ void attiva() // Activate the system if correct PIN entered and display message 
 	PORTD &= ~(1<<PD2);
 	PORTD &= ~(_BV(PD2));
 
-
 	standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
@@ -364,11 +362,13 @@ void saveSettings(void) {
 		EEPROM.write(i, p[i]);
 }
 
+
 void loadSettings(void) {
 	byte* p = (byte*) &settings;
 	for (int i = 0; i < sizeof(AlarmSettings); i++)
 		p[i] = EEPROM.read(i);
 }
+
 
 #ifdef DEBUG_SETTINGS
 void printSettings()
@@ -397,6 +397,7 @@ void doAfterRitActivate() {
 	mostraMenu=false;
 	standby();
 }
+
 
 void doAfterTimerT() {
 	Timer1.disablePwm(TIMER1_PIN1);
@@ -431,12 +432,14 @@ bool setPulseWidth(long microseconds) {
 	return ret;
 }
 
+
 void doPrintRitAttivazione() {
 	//standby();
 	lcd.setCursor(0, 2);
 	lcd.print(F("Rit. "));
 	lcd.print(++conta);
 }
+
 
 void timerDoLCDbacklight() { lcd.noBacklight(); }
 
