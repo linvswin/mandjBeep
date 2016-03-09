@@ -23,7 +23,7 @@ void setup() {
 	lcd.begin(20, 4);
 	MenuSetup();
 
-	//saveSettings();
+	saveSettings();
 	loadSettings();
 #ifdef DEBUG_SETTINGS
 	Serial.print(F("Setting sizeof: "));
@@ -31,25 +31,24 @@ void setup() {
 #endif
 	password.set(settings.alarmPassword1);
 
-	/*pinMode(RELAY_SIRENA2, OUTPUT);
-	pinMode(RELAY_SIRENA1, OUTPUT);
-	pinMode(PIR0_PIN, INPUT);
-	pinMode(RED_LED, OUTPUT);
-	pinMode(GREEN_LED, OUTPUT);*/
+	/*pinMode(PIR0_PIN, INPUT);	*/
 
-	DDRD=11011111;
+	//DDRD=0b11011111;
+	DDRD |= _BV(PD2); //pinMode(GREEN_LED, OUTPUT);
+	DDRD |= _BV(PD4); //pinMode(RED_LED, OUTPUT);
+	DDRD |= _BV(PD6); //pinMode(RELAY_SIRENA1, OUTPUT);
+	DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
 
-	/*pinMode(TIMER1_PIN1, OUTPUT);
-	pinMode(TIMER1_PIN2, OUTPUT);
-	pinMode(PIR1_PIN, INPUT);
-	pinMode(PIR2_PIN, INPUT);*/
-	DDRB=00101110;
+	//DDRB=0b00101110;
+	DDRB |= _BV(PB1);  //pinMode(TIMER1_PIN1, OUTPUT);
+	DDRB |= _BV(PB2);  //pinMode(TIMER1_PIN2, OUTPUT);
+	//DDRB &= ~(_BV(PB2));  //pinMode(PIR1_PIN, INPUT);
+	//DDRB &= ~(_BV(PB4));  //pinMode(PIR2_PIN, INPUT);
 
-	/*digitalWrite(RELAY_SIRENA2, HIGH);
-	digitalWrite(RELAY_SIRENA1, LOW);
-	digitalWrite(RED_LED, LOW);
-	digitalWrite(GREEN_LED, HIGH);*/
-	PORTD=10010100;
+	PORTD |= _BV(PD7);    //digitalWrite(RELAY_SIRENA2, HIGH);
+	PORTD &= ~(_BV(PD6)); //digitalWrite(RELAY_SIRENA1, LOW);
+	PORTD &= ~(_BV(PD4)); //digitalWrite(RED_LED, LOW);
+	PORTD |= _BV(PD2);    //digitalWrite(GREEN_LED, HIGH);
 
 	//Adding time
 	RTC.begin();
@@ -81,38 +80,52 @@ void loop() {
 
 	if (alarmeAttivo) {
 		for(int i=0; i < numSens; i++){
-/*#ifdef DEBUG
+
+#ifdef DEBUG_SENS
 			Serial.print("sens ");
 			Serial.print(sensore[i].getMessaggio());
-			Serial.print(" - attivo");
-			Serial.println(sensore[i].getAttivo());
-#endif*/
-			if (sensore[i].getAttivo()){
+			Serial.print(" - stato");
+			Serial.println(sensore[i].getStato());
+#endif
+
+			if (sensore[i].getStato() != sensDisabilitato or sensore[i].getStato() != sensTempDisabilitato){
 				//if ( sensore[i].getZona() == settings.zona )
 				{
-					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()==sensNonAttivo ) {
+					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()==sensAttivo ) {
 
 						if (sensore[i].getTipo()==intReed){
-							//Serial.println("type reed");
-							short int f=sensore[i].getConta()+1;
-							sensore[i].setConta(f);
-							//Serial.print("conta: ");
-							//Serial.println(s[i].getConta());
+							int f=sensore[i].getConta()+1;
+#ifdef DEBUG_SENS2
+							Serial.print("conta reed: ");
+							Serial.print(f);
+							Serial.print(" - max conta reed: ");
+							Serial.print(settings.maxReed_Conta);
+							Serial.print(" - stato: ");
+							Serial.println(sensore[i].getStato());
+#endif
+							sensore[i].setConta( (sensore[i].getConta()+1) );
 
 							if (sensore[i].getConta() >= settings.maxReed_Conta){
-								sensore[i].setMalfunzionamento(true);
-								sensore[i].setAttivo(false);
+								sensore[i].setStato(sensTempDisabilitato);
 							}
 						}
 
-						sensore[i].setStato(sensAttivo);
+#ifdef DEBUG_PIR
+						if (sensore[i].getTipo()==tpPIR)
+						{
+							Serial.print("PIR: ");
+							Serial.println( PCF_24.read(sensore[i].getPin()) );
+						}
+#endif
+
+						sensore[i].setStato(sensTrigged);
 						alarmTriggered();
 					}
 				}
 			}
 		}
 	}
-	//check_activity();
+
 	//if (mostraMenu==true)
 		MenuLoop();
 	t.update();
@@ -246,7 +259,7 @@ void checkPassword() {           // To check if PIN is corrected, if not, retry!
 	if (password.evaluate()) {
 		if (alarmeAttivo == false && statoAllarme == false) {
 #ifdef DEBUG
-			Serial.print(F("Ritardo attivazione ..........."));
+			Serial.println(F("Ritardo attivazione ..........."));
 #endif
 			if (checkSensori()) {
 				t.after(settings.tempoSirena, doAfterRitActivate);
@@ -280,14 +293,15 @@ void attiva() // Activate the system if correct PIN entered and display message 
 	password.reset();
 
 	//digitalWrite(RED_LED, HIGH);
-	//PORTD=(1<<PD4);
-	//PORTD=_BV(PD4);
-	//PORTD |= (0x08); /* leave all the other bits alone, just set bit 4 */
-	PORTD |= (1<<5);
+	//PORTD |= (1<<5);
+	PORTD |= (1<<PD4);
+	PORTD |= _BV(PD4);
 
 	//digitalWrite(GREEN_LED, LOW);
-	//PORTD=(1<<PD2);
-	PORTD &= ~(1<<2);
+	//PORTD &= ~(1<<2);
+	PORTD &= ~(1<<PD2);
+	PORTD &= ~(_BV(PD2));
+
 
 	standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
@@ -298,26 +312,20 @@ void disattiva() {
 	alarmeAttivo = false;
 
 	password.reset();
-
 	Timer1.disablePwm(TIMER1_PIN1);
 
-	//digitalWrite(RED_LED, LOW);
-	PORTD &= 0x00; /* leave all the other bits alone, just set bit 4 */
-	//digitalWrite(GREEN_LED, HIGH);
-	PORTD |= 0x04; /* leave all the other bits alone, just set bit 2 */
-
-	//digitalWrite(RELAY_SIRENA1, LOW);
-	PORTD &= 0x00;
-	//digitalWrite(RELAY_SIRENA2, HIGH);
-	PORTD |= 0x40;
+	PORTD &= ~(_BV(PD4));	//digitalWrite(RED_LED, LOW);
+	PORTD |= _BV(PD2);	//digitalWrite(GREEN_LED, HIGH);
+	PORTD &= ~(_BV(PD6));	//digitalWrite(RELAY_SIRENA1, LOW);
+	PORTD |= _BV(PD7); 	//digitalWrite(RELAY_SIRENA2, HIGH);
 
 	lcd.backlight();
 	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.print(TXT_SISTEMA_DISATTIVO);
 
-	for(int i=0; i < numSens; i++)
-		sensore[i].setStato(sensNonAttivo);
+//	for(int i=0; i < numSens; i++)
+//		sensore[i].setStato(sensNonAttivo);
 
 	delay(5000);
 	standby();
@@ -329,21 +337,19 @@ void alarmTriggered() {
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth);
 
-	//digitalWrite(RELAY_SIRENA1, HIGH);
-	PORTD |= 0x40;
-	//digitalWrite(RELAY_SIRENA2, LOW);
-	PORTD &= 0x00;
+	PORTD |= _BV(PD6);      //digitalWrite(RELAY_SIRENA1, HIGH);
+	PORTD &= ~(_BV(PD7));	//digitalWrite(RELAY_SIRENA2, LOW);
 
 	password.reset();
 	statoAllarme = true;
 
 	lcd.clear();
-	lcd.setCursor(0, 2);
+	lcd.setCursor(5, 2);
 	lcd.print(TXT_INTRUSIONE);
 	lcd.setCursor(0, 3);
 
 	for(int i=0; i < numSens; i++){
-		if ( sensore[i].getStato()==sensAttivo ) {
+		if ( sensore[i].getStato()==sensTrigged ) {
 			lcd.print( sensore[i].getMessaggio() );
 		}
 	}
@@ -371,6 +377,8 @@ void printSettings()
 	Serial.println(settings.tempoSirena);
 	Serial.print(F("tempo lcd: "));
 	Serial.println(settings.lcdBacklightTime);
+	Serial.print(F("conta REED: "));
+	Serial.println(settings.maxReed_Conta);
 	Serial.print(F("AdminPassword: "));
 	Serial.println(settings.menuPassword);
 	Serial.print(F("Password1: "));
@@ -393,12 +401,14 @@ void doAfterRitActivate() {
 void doAfterTimerT() {
 	Timer1.disablePwm(TIMER1_PIN1);
 
-	digitalWrite(RELAY_SIRENA1, LOW);
-	digitalWrite(RELAY_SIRENA2, HIGH);
+//	digitalWrite(RELAY_SIRENA1, LOW);
+//	digitalWrite(RELAY_SIRENA2, HIGH);
+	PORTD &= ~(_BV(PD6));
+	PORTD |= _BV(PD7);
 
 	for(int i=0; i < numSens; i++){
-		if (sensore[i].getStato()==sensAttivo )
-			sensore[i].setStato(sensNonAttivo);
+		if (sensore[i].getStato()==sensTrigged )
+			sensore[i].setStato(sensAttivo);
 	}
 }
 
@@ -432,14 +442,15 @@ void timerDoLCDbacklight() { lcd.noBacklight(); }
 
 boolean checkSensori(){
 	for(int i=0; i < numSens; i++){
-		if (sensore[i].getAttivo())
+		if (sensore[i].getStato()==sensAttivo)
 		{
 			if ( PCF_24.read( sensore[i].getPin())==sensore[i].getLogica() ){
-				sensore[i].setMalfunzionamento(true);
+				//sensore[i].setMalfunzionamento(true);
+				sensore[i].setStato(sensMalfunzionamento);
 
 				lcd.clear();
 				lcd.setCursor(0, 2);
-				lcd.print(F("Errore: "));
+				lcd.print(F("Err: "));
 				lcd.print( sensore[i].getMessaggio() );
 				return false;
 			}
@@ -453,8 +464,8 @@ boolean checkSensori(){
 
 void disattivaSensori(){
 	for(int i=0; i < numSens; i++){
-		if ( sensore[i].getMalfunzionamento() )
-			sensore[i].setAttivo(false);
+		if ( sensore[i].getStato()==sensMalfunzionamento )
+			sensore[i].setStato(sensTempDisabilitato);
 	}
 	password.reset();
 	passwd_pos = 9;
@@ -463,9 +474,9 @@ void disattivaSensori(){
 
 void riAttivaSensori(){
 	for(int i=0; i < numSens; i++){
-		if (!sensore[i].getAttivo()){
-			sensore[i].setAttivo(true);
-			sensore[i].setMalfunzionamento(true);
+		if (sensore[i].getStato()==sensTempDisabilitato){
+			sensore[i].setStato(sensAttivo);
+			//sensore[i].setMalfunzionamento(true);
 		}
 	}
 	password.reset();

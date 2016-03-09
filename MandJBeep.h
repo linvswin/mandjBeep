@@ -20,16 +20,19 @@
 #include "def.h"
 
 enum znZone {znTotale, znPerimetrale};
-enum statoSensore {sensNonAttivo, sensAttivo};
-enum tipoSensore {intReed, senPIR, sensSirena};
+enum statoSensore {sensNonAttivo, sensAttivo, sensDisabilitato, sensTempDisabilitato, sensTrigged, sensMalfunzionamento};
+enum tipoSensore {intReed, tpPIR, sensSirena};
 
-const static byte numSens=8;
+#define numSens 8
 
-const static byte REED1_PIN=4;
-const static byte REED2_PIN=5;
-const static byte REED3_PIN=6;
-const static byte REED4_PIN=7;
-const static byte REED5_PIN=8;
+#define I2C_REED1_PIN 4
+#define I2C_REED2_PIN 5
+#define I2C_REED3_PIN 6
+#define I2C_REED4_PIN 7
+#define I2C_REED5_PIN 3
+#define I2C_PIR0_PIN  0
+#define I2C_PIR1_PIN  1
+#define I2C_PIR2_PIN  2
 
 /*
  char alarmPassword3[PasswordLength_Max];
@@ -65,24 +68,21 @@ class Sensore{
 protected:
 	char pin;
 	tipoSensore tipo;
-	boolean attivo;
 	statoSensore stato;
 	char logica;
 	String messaggio;
-	boolean malfunzionamento;
-	char conta;
+	int conta;
 	boolean ritardato;
 	char zona;
+
 public:
 	/*      pin - tipoSensore - logica*/
 	Sensore(char p, tipoSensore t, char l){
 		this->pin=p;
 		this->tipo=t;
-		this->attivo=true;
-		this->stato=sensNonAttivo;
+		this->stato=sensAttivo;
 		this->logica=l;
 		this->messaggio=F("Allarme");
-		this->malfunzionamento=false;
 		this->conta=0;
 		this->ritardato=false;
 		this->zona=0;
@@ -92,11 +92,9 @@ public:
 	Sensore(char p, tipoSensore t, char l, const String msg, char zona=znPerimetrale){
 		this->pin=p;
 		this->tipo=t;
-		this->attivo=true;
-		this->stato=sensNonAttivo;
+		this->stato=sensAttivo;
 		this->logica=l;
 		this->messaggio=msg;
-		this->malfunzionamento=false;
 		this->conta=0;
 		this->ritardato=false;
 		this->zona=zona;
@@ -108,9 +106,6 @@ public:
 	tipoSensore getTipo(){return this->tipo;};
 	void setTipo(tipoSensore t){this->tipo=t;};
 
-	boolean getAttivo(){return this->attivo;};
-	void setAttivo(boolean a){this->attivo=a;};
-
 	statoSensore getStato(){return this->stato;};
 	void setStato(statoSensore a){this->stato=a;};
 
@@ -120,11 +115,8 @@ public:
 	String getMessaggio(){return this->messaggio;};
 	void setMessaggio(String m){this->messaggio=m;};
 
-	boolean getMalfunzionamento(){return this->malfunzionamento;};
-	void setMalfunzionamento(boolean m){this->malfunzionamento=m;};
-
 	char getConta(){return this->conta;};
-	void setConta(char c){this->conta=c;};
+	void setConta(int c){this->conta=c;};
 
 	boolean getRitardato(){return this->ritardato;};
 	void setRitardato(boolean m){this->ritardato=m;};
@@ -132,7 +124,6 @@ public:
 	char getZona(){return this->zona;};
 	void setZona(char z){this->zona=z;};
 };
-
 
 //const static byte SettingsMagic = 0x11;
 const static byte PasswordLength_Max = 7;
@@ -143,19 +134,19 @@ struct AlarmSettings {
 	byte tempoSirena;
 	char menuPassword[PasswordLength_Max];
 	/*unsigned*/
-	byte lcdBacklightTime;
-	const byte maxReed_Conta;
-	short int zona;
+	int lcdBacklightTime;
+	const int maxReed_Conta;
+	int zona;
 ///	Sensore sensore[numSens];
 } settings = {
-	//SettingsMagic, // magic
-	"1111", // alarmPassword1,
-	"1111", // alarmPassword2,
-	20,     // tempoSirena secondi
-	"0000", // menuPassword
-	30,     // lcdBacklightTime secondi
-	5,      //maxReedConta
-	/*znPerimetrale, /// zona
+	"1111",        // alarmPassword1,
+	"2222",        // alarmPassword2,
+	20,            // tempoSirena secondi
+	"0000",        // menuPassword
+	30,            // lcdBacklightTime secondi
+	5,             //maxReedConta
+	znPerimetrale, // zona
+	/*
 	{
 		Sensore(REED1_PIN, intReed,  LOW, "REED1"),
 		Sensore(REED2_PIN, intReed,  LOW, "REED2"),
@@ -168,29 +159,26 @@ struct AlarmSettings {
 	}*/
 };
 
-
-
 Sensore sensore[numSens]={
-		Sensore(REED1_PIN, intReed,  LOW, "REED1"),
-		Sensore(REED2_PIN, intReed,  LOW, "REED2"),
-		Sensore(REED3_PIN, intReed,  LOW, "REED3"),
-		Sensore(REED4_PIN, intReed,  LOW, "REED4"),
-		Sensore(REED5_PIN, intReed,  LOW, "REED5"),
-		Sensore( PIR0_PIN,  senPIR, HIGH, "PIR 1"),
-		Sensore( PIR1_PIN,  senPIR, HIGH, "PIR 2"),
-		Sensore( PIR2_PIN,  senPIR, HIGH, "PIR 3")
+		Sensore(I2C_REED1_PIN, intReed,  LOW, "REED1"),
+		Sensore(I2C_REED2_PIN, intReed,  LOW, "REED2"),
+		Sensore(I2C_REED3_PIN, intReed,  LOW, "REED3"),
+		Sensore(I2C_REED4_PIN, intReed,  LOW, "REED4"),
+		Sensore(I2C_REED5_PIN, intReed,  LOW, "REED5"),
+		Sensore(I2C_PIR0_PIN,   tpPIR,  HIGH, "PIR 1"),
+		Sensore(I2C_PIR1_PIN,   tpPIR,  HIGH, "PIR 2"),
+		Sensore(I2C_PIR2_PIN,   tpPIR,  HIGH, "PIR 3")
 };
 
 // Create the Keypad
 Keypad_I2C keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF8574);
-
 //Password
 Password password = Password(settings.alarmPassword1);
-
+// PCF8574
 PCF8574_Class PCF_24(0x24);
-
+// timer
 MandJTimer t;
-char conta = 0;
+int conta = 0;
 
 #include "Menu.h"
 

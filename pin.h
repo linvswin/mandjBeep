@@ -14,10 +14,12 @@
 #include "RTClib.h"
 
 #define BAUD_RATE  115200    //9600
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 	#define DEBUG_SETTINGS
+//	#define DEBUG_SENS
+	#define DEBUG_SENS2
 //	#define DEBUG_PIR
 //	#define DEBUG_SECTIMER
 //	#define DEBUG_PRINTDATA
@@ -57,16 +59,10 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	//#define TIMER1_PIN2 10   //buzzer pin
 	//#define TIMER2_PIN1 3
 	//#define TIMER2_PIN2 11
-	
 	//#define GREEN_LED  2
-	//#define RED_LED     4
-	
-	#define PIR0_PIN    5
-	#define PIR1_PIN    8
-	#define PIR2_PIN    12
-	
-	#define RELAY_SIRENA1 6
-	#define RELAY_SIRENA2 7
+	//#define RED_LED    4
+	//#define RELAY_SIRENA1 6
+	//#define RELAY_SIRENA2 7
 
 #endif
 
@@ -80,7 +76,6 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 #define D6_pin  2
 #define D7_pin  3
 LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
-
 
 //Real Time Clock
 RTC_DS1307 RTC;
@@ -105,7 +100,7 @@ int timerPrintData=0;
 #define TXT_INVALID_PIN        F("Codice errato!")
 #define TXT_RIPROVA_PIN        F("Riprova")
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
-#define TXT_INTRUSIONE         F("     Intrusione")
+#define TXT_INTRUSIONE         F("Intrusione")
 
 //#define TXT_MENU               "Menu"
 #define TXT_SICUREZZA			"Sicurezza"
@@ -113,14 +108,14 @@ int timerPrintData=0;
 #define TXT_PERIMETRALE			"Perimetrale"
 #define TXT_TOTALE				"Totale"
 #define TXT_DISATTIVA_SENSORI	"Disattiva Sensori"
-#define TXT_IMPOSTAZIONE       "Impostazioni"
-#define TXT_SAVE_TO_EPROM      "Salva in EPROM"
-#define TXT_LOAD_TO_EPROM      "Carica da EEPROM"
-#define TXT_TEMPO_SIRENA       "Tempo Sirena "
-#define TXT_LCDBACK_LIGHT_TIME "Tempo Retroillum"
-#define TXT_ADMIN_PASSWORD     "Admin Password "
-#define TXT_PASSWORD1          "Password1 "
-#define TXT_PASSWORD2          "Password2 "
+#define TXT_IMPOSTAZIONE       	"Impostazioni"
+#define TXT_SAVE_TO_EPROM     	"Salva in EPROM"
+#define TXT_LOAD_TO_EPROM      	"Carica da EEPROM"
+#define TXT_TEMPO_SIRENA       	"Tempo Sirena "
+#define TXT_LCDBACK_LIGHT_TIME 	"Tempo Retroillum"
+#define TXT_ADMIN_PASSWORD     	"Admin Password "
+#define TXT_PASSWORD1          	"Password1 "
+#define TXT_PASSWORD2          	"Password2 "
 #define TXT_CONFERMA			"# conferma"
 //#define TXT_SPLASH             "      M&J Beep\n\n      ver 1.0\n   Licenza GPL 3"
 
