@@ -1,5 +1,5 @@
 /**
- * Project Title: M&J Allarm
+ * Project Title: M&J Beep
  * Author: M&J
  * Started Date: 09/02/2016
  * Version: 1.0
@@ -7,11 +7,11 @@
 **/
 
 #include <LiquidCrystal_I2C.h>
-#include <Keypad_I2C.h>
-#include <Password.h> //http://www.arduino.cc/playground/uploads/Code/Password.zip
+#include "lib/Keypad_I2C/Keypad_I2C.h"
+#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
 // cambia wuesta riga in RTClib.h
 //enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
-#include "RTClib.h"
+#include "lib/RTClib/RTClib.h"
 
 #define BAUD_RATE  115200    //9600
 #define DEBUG
@@ -28,7 +28,7 @@
 #define ROWS 4
 #define COLS  4  // Four columns
 
-char keys[ROWS][COLS] = { // Define the Keymap
+const char PROGMEM keys[ROWS][COLS] = { // Define the Keymap
   {'1','2','3','A'},
   {'4','5','6','B'},
   {'7','8','9','C'},
@@ -83,7 +83,6 @@ DateTime now;
 
 boolean alarmeAttivo=false;
 boolean statoAllarme=false;
-
 
 int passwd_pos=9;  // the postition of the password input
 

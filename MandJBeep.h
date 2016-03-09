@@ -1,5 +1,5 @@
 /**
- * Project Title: M&J Allarm
+ * Project Title: M&J Beep
  * Author: M&J
  * Started Date: 09/02/2016
  * Version: 1.0
@@ -11,10 +11,10 @@
 
 #include <avr/wdt.h>
 #include <EEPROM.h>
-#include <MandJTimer.h>
+#include "lib/MandJTimer/MandJTimer.h"
 #include <TimerOne.h>
 #include <LCDMenuLib.h>
-#include "PCF8574_Class.h"
+#include "lib/PCF8574/PCF8574_Class.h"
 
 #include "pin.h"
 #include "def.h"
@@ -33,36 +33,6 @@ enum tipoSensore {intReed, tpPIR, sensSirena};
 #define I2C_PIR0_PIN  0
 #define I2C_PIR1_PIN  1
 #define I2C_PIR2_PIN  2
-
-/*
- char alarmPassword3[PasswordLength_Max];
- char alarmPassword4[PasswordLength_Max];
- unsigned int keypadDebounceTime;
- unsigned int beforeTurnOnDelay;
- unsigned int beforeAlarmDelay;
- unsigned int alarmOutMask;
- unsigned int alarmInMask;
- unsigned int alarmTamperMask;
- unsigned int alarmFireMask;
- unsigned int alarmStatOutCount;
- unsigned int alarmStatInCount;
- unsigned int alarmStatTamperCount;
- unsigned int alarmStatFireCount;
- ---------------------------------
- "1111", // alarmPassword3,
- "1111", // alarmPassword4,
- 80,     // keypadDebounceTime
- 30000,   // beforeTurnOnDelay
- 15000,   // beforeAlarmDelay
- 0xFFFFFFFF, // alarmOutMask - all outputs are enabled
- 0xFFFFFFFF, // alarmInMask - all inputs are enabled
- 0xFFFFFFFF, // alarmTamperMask - all tampers are enabled
- 0xFFFFFFFF, // alarmFireMask - all fire inputs are enabled
- 0, // alarmStatOutCount
- 0, // alarmStatInCount
- 0, // alarmStatTamperCount
- 0, // alarmFireCount
- */
 
 class Sensore{
 protected:
@@ -160,14 +130,14 @@ struct AlarmSettings {
 };
 
 Sensore sensore[numSens]={
-		Sensore(I2C_REED1_PIN, intReed,  LOW, "REED1"),
-		Sensore(I2C_REED2_PIN, intReed,  LOW, "REED2"),
-		Sensore(I2C_REED3_PIN, intReed,  LOW, "REED3"),
-		Sensore(I2C_REED4_PIN, intReed,  LOW, "REED4"),
-		Sensore(I2C_REED5_PIN, intReed,  LOW, "REED5"),
-		Sensore(I2C_PIR0_PIN,   tpPIR,  HIGH, "PIR 1"),
-		Sensore(I2C_PIR1_PIN,   tpPIR,  HIGH, "PIR 2"),
-		Sensore(I2C_PIR2_PIN,   tpPIR,  HIGH, "PIR 3")
+	Sensore(I2C_REED1_PIN, intReed,  LOW, "REED1"),
+	Sensore(I2C_REED2_PIN, intReed,  LOW, "REED2"),
+	Sensore(I2C_REED3_PIN, intReed,  LOW, "REED3"),
+	Sensore(I2C_REED4_PIN, intReed,  LOW, "REED4"),
+	Sensore(I2C_REED5_PIN, intReed,  LOW, "REED5"),
+	Sensore(I2C_PIR0_PIN,   tpPIR,  HIGH, "PIR 1"),
+	Sensore(I2C_PIR1_PIN,   tpPIR,  HIGH, "PIR 2"),
+	Sensore(I2C_PIR2_PIN,   tpPIR,  HIGH, "PIR 3")
 };
 
 // Create the Keypad
@@ -183,10 +153,10 @@ int conta = 0;
 #include "Menu.h"
 
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
-const char outPin = 9; // the physical pin
+const int outPin = 9; // the physical pin
 long period = 1000; // the period in microseconds
 long pulseWidth = 950; // width of a pulse in microseconds
-int prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
+const int PROGMEM prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
 
 //Do not add code below this line
 #endif /* _MandJBeep_H_ */
