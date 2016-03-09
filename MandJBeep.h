@@ -115,7 +115,7 @@ public:
 	String getMessaggio(){return this->messaggio;};
 	void setMessaggio(String m){this->messaggio=m;};
 
-	char getConta(){return this->conta;};
+	int getConta(){return this->conta;};
 	void setConta(int c){this->conta=c;};
 
 	boolean getRitardato(){return this->ritardato;};

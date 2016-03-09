@@ -93,10 +93,10 @@ void loop() {
 				{
 					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()==sensAttivo ) {
 						if (sensore[i].getTipo()==intReed){
-							int f=sensore[i].getConta()+1;
+							//int f=sensore[i].getConta()+1;
 #ifdef DEBUG_SENS2
 							Serial.print("conta reed: ");
-							Serial.print(f);
+							Serial.print(sensore[i].getConta());
 							Serial.print(" - max conta reed: ");
 							Serial.print(settings.maxReed_Conta);
 							Serial.print(" - stato: ");
