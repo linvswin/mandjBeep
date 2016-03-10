@@ -18,10 +18,10 @@
 // LCDML TYPE SELECT
 // *********************************************************************
 // settings for lcd
-#define _LCDML_DISP_cols             20
-#define _LCDML_DISP_rows             4
+#define _LCDML_DISP_cols    20
+#define _LCDML_DISP_rows     4
 
-const uint8_t scroll_bar[5][8] = {
+uint8_t  scroll_bar[5][8] = {
 		{ B10001, B10001, B10001, B10001, B10001, B10001, B10001, B10001 }, // scrollbar top
 		{ B11111, B11111, B10001, B10001, B10001, B10001, B10001, B10001 }, // scroll state 1
 		{ B10001, B10001, B11111, B11111, B10001, B10001, B10001, B10001 }, // scroll state 2
@@ -29,13 +29,26 @@ const uint8_t scroll_bar[5][8] = {
 		{ B10001, B10001, B10001, B10001, B10001, B10001, B11111, B11111 } // scrollbar bottom
 };
 
+/*FLASH_TABLE(uint8_t, scroll_bar, 5,
+		{ B10001, B10001, B10001, B10001, B10001, B10001, B10001, B10001 }, // scrollbar top
+		{ B11111, B11111, B10001, B10001, B10001, B10001, B10001, B10001 }, // scroll state 1
+		{ B10001, B10001, B11111, B11111, B10001, B10001, B10001, B10001 }, // scroll state 2
+		{ B10001, B10001, B10001, B10001, B11111, B11111, B10001, B10001 }, // scroll state 3
+		{ B10001, B10001, B10001, B10001, B10001, B10001, B11111, B11111 } // scrollbar bottom
+);*/
+
+/*FLASH_TABLE(boolean, font_table, 7, {0,0,0,0,0,0,0},
+    {0,0,0,1,0,1,1}, {1,0,1,1,1,0,1}, {1,1,0,0,0,0,0},
+    {0,1,0,1,0,1,0}, {1,0,1,1,1,0,1}, {1,0,0,1,0,0,1},
+    {0,0,1,1,0,1,1}, {1,0,1,1,1,1,1});
+*/
 // *********************************************************************
 // LCDML MENU/DISP
 // *********************************************************************
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   12 // 26
+#define _LCDML_DISP_cnt   13 // 26
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
@@ -61,9 +74,10 @@ LCDML_DISP_addMenu          (4 , _LCDML_G1 , LCDML_root     , 2 , TXT_IMPOSTAZIO
 		LCDML_DISP_addParam (7 , _LCDML_G1 , LCDML_root_2_1 , 2 , TXT_PASSWORD1 ,          mnuPassword, 2);
 		LCDML_DISP_addParam (8 , _LCDML_G1 , LCDML_root_2_1 , 3 , TXT_PASSWORD2 ,          mnuPassword, 3);
 	LCDML_DISP_addParam     (9 , _LCDML_G1 , LCDML_root_2   , 2 , TXT_TEMPO_SIRENA ,       mnuTempoSirena, 1);
-	LCDML_DISP_addParam     (10, _LCDML_G1 , LCDML_root_2   , 3 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	LCDML_DISP_addParam     (11, _LCDML_G1 , LCDML_root_2   , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	LCDML_DISP_addParam     (12, _LCDML_G1 , LCDML_root_2   , 4 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+	LCDML_DISP_addParam     (10 , _LCDML_G1 , LCDML_root_2   , 6 , TXT_CONTA_REED ,       mnuTempoSirena, 8);
+	LCDML_DISP_addParam     (11, _LCDML_G1 , LCDML_root_2   , 3 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
+	LCDML_DISP_addParam     (12, _LCDML_G1 , LCDML_root_2   , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+	LCDML_DISP_addParam     (13, _LCDML_G1 , LCDML_root_2   , 4 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
 
 /*	LCDML_DISP_add      (11 , _LCDML_G1  , LCDML_root_2, 4  , "Set Datetime"       , LCDML_FUNC_change_datetime);
 //LCDML_DISP_add      (11 , _LCDML_G2  , LCDML_root  , 3  , "InitScreen"         , mnuStandby);
@@ -122,6 +136,14 @@ void MenuSetup() {
 	lcd.createChar(2, (uint8_t*) scroll_bar[2]);
 	lcd.createChar(3, (uint8_t*) scroll_bar[3]);
 	lcd.createChar(4, (uint8_t*) scroll_bar[4]);
+
+
+	/*lcd.createChar(0, (uint8_t*) pgm_read_byte(&scroll_bar [0]));
+	lcd.createChar(1, (uint8_t*) pgm_read_byte(&scroll_bar [1]));
+	lcd.createChar(2, (uint8_t*) pgm_read_byte(&scroll_bar [2]));
+	lcd.createChar(3, (uint8_t*) pgm_read_byte(&scroll_bar [3]));
+	lcd.createChar(4, (uint8_t*) pgm_read_byte(&scroll_bar [4]));*/
+
 
 	// Enable all items with _LCDML_G1
 	LCDML_DISP_groupEnable (_LCDML_G1); // enable group 1
@@ -342,6 +364,9 @@ void mngTempoSirena(uint8_t par){
 		case 7:
 			lcd.print(TXT_TOTALE);
 			break;
+		case 8:
+			lcd.print(TXT_CONTA_REED);
+			break;
 	}
 	lcd.setCursor(0, 1);
 	lcd.blink();
@@ -377,6 +402,9 @@ void LCDML_DISP_setup(mnuTempoSirena)
 	case 2:
 		newIntVal = settings.lcdBacklightTime;
 		break;
+	case 8:
+		newIntVal = settings.maxReed_Conta;
+		break;
 	}
 	mngTempoSirena(param);
 }
@@ -405,9 +433,15 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				break;
 			case 3:
 				loadSettings();
+#ifdef DEBUG_SETTINGS
+				printSettings();
+#endif
 				break;
 			case 4:
 				saveSettings();
+#ifdef DEBUG_SETTINGS
+				printSettings();
+#endif
 				break;
 			case 5:
 				disattivaSensori();
@@ -417,6 +451,9 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				break;
 			case 7:
 				settings.zona=znTotale;
+				break;
+			case 8:
+				settings.maxReed_Conta=newIntVal;
 				break;
 			}
 			newIntVal = 0;

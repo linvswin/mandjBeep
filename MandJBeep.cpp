@@ -20,10 +20,17 @@ String printDigits(int digits)
 void setup() {
 	Serial.begin(BAUD_RATE);
 
+	sensore[1].setStato(sensDisabilitato);
+	sensore[2].setStato(sensDisabilitato);
+	sensore[3].setStato(sensDisabilitato);
+	sensore[4].setStato(sensDisabilitato);
+	sensore[6].setStato(sensDisabilitato);
+	sensore[7].setStato(sensDisabilitato);
+
 	lcd.begin(20, 4);
 	MenuSetup();
 
-	saveSettings();
+	//saveSettings();
 	loadSettings();
 #ifdef DEBUG_SETTINGS
 	Serial.print(F("Setting sizeof: "));
@@ -31,13 +38,12 @@ void setup() {
 #endif
 	password.set(settings.alarmPassword1);
 
-	/*pinMode(PIR0_PIN, INPUT);	*/
-
 	//DDRD=0b11011111;
 	DDRD |= _BV(PD2); //pinMode(GREEN_LED, OUTPUT);
 	DDRD |= _BV(PD4); //pinMode(RED_LED, OUTPUT);
 	DDRD |= _BV(PD6); //pinMode(RELAY_SIRENA1, OUTPUT);
 	DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
+
 
 	//DDRB=0b00101110;
 	DDRB |= _BV(PB1);  //pinMode(TIMER1_PIN1, OUTPUT);
@@ -88,25 +94,26 @@ void loop() {
 			Serial.println(sensore[i].getStato());
 #endif
 
-			if (sensore[i].getStato() != sensDisabilitato or sensore[i].getStato() != sensTempDisabilitato){
+			if ( (sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato) ){
 				//if ( sensore[i].getZona() == settings.zona )
 				{
 					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()==sensAttivo ) {
+						sensore[i].setStato(sensTrigged);
+						alarmTriggered();
+
 						if (sensore[i].getTipo()==intReed){
-							//int f=sensore[i].getConta()+1;
+							if ( sensore[i].getConta() >= settings.maxReed_Conta){
+								sensore[i].setStato(sensTempDisabilitato);
+							}
 #ifdef DEBUG_SENS2
-							Serial.print("conta reed: ");
+							Serial.print(F("conta reed: "));
 							Serial.print(sensore[i].getConta());
-							Serial.print(" - max conta reed: ");
+							Serial.print(F(" - max conta reed: "));
 							Serial.print(settings.maxReed_Conta);
-							Serial.print(" - stato: ");
+							Serial.print(F(" - stato: "));
 							Serial.println(sensore[i].getStato());
 #endif
 							sensore[i].setConta( (sensore[i].getConta()+1) );
-
-							if (sensore[i].getConta() >= settings.maxReed_Conta){
-								sensore[i].setStato(sensTempDisabilitato);
-							}
 						}
 
 #ifdef DEBUG_PIR
@@ -116,9 +123,6 @@ void loop() {
 							Serial.println( PCF_24.read(sensore[i].getPin()) );
 						}
 #endif
-
-						sensore[i].setStato(sensTrigged);
-						alarmTriggered();
 					}
 				}
 			}
@@ -362,13 +366,11 @@ void saveSettings(void) {
 		EEPROM.write(i, p[i]);
 }
 
-
 void loadSettings(void) {
 	byte* p = (byte*) &settings;
 	for (int i = 0; i < sizeof(AlarmSettings); i++)
 		p[i] = EEPROM.read(i);
 }
-
 
 #ifdef DEBUG_SETTINGS
 void printSettings()

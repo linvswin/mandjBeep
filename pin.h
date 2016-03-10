@@ -19,16 +19,16 @@
 //	#define DEBUG_KEY
 	#define DEBUG_SETTINGS
 //	#define DEBUG_SENS
-	#define DEBUG_SENS2
+//	#define DEBUG_SENS2
 //	#define DEBUG_PIR
 //	#define DEBUG_SECTIMER
 //	#define DEBUG_PRINTDATA
 #endif
 
-#define ROWS 4
+#define ROWS  4  // Four rows
 #define COLS  4  // Four columns
 
-const char PROGMEM keys[ROWS][COLS] = { // Define the Keymap
+const char keys[ROWS][COLS] = { // Define the Keymap
   {'1','2','3','A'},
   {'4','5','6','B'},
   {'7','8','9','C'},
@@ -110,7 +110,8 @@ int timerPrintData=0;
 #define TXT_IMPOSTAZIONE       	"Impostazioni"
 #define TXT_SAVE_TO_EPROM     	"Salva in EPROM"
 #define TXT_LOAD_TO_EPROM      	"Carica da EEPROM"
-#define TXT_TEMPO_SIRENA       	"Tempo Sirena "
+#define TXT_TEMPO_SIRENA       	"Tempo Sirena"
+#define TXT_CONTA_REED			"ContoeReed"
 #define TXT_LCDBACK_LIGHT_TIME 	"Tempo Retroillum"
 #define TXT_ADMIN_PASSWORD     	"Admin Password "
 #define TXT_PASSWORD1          	"Password1 "

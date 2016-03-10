@@ -13,8 +13,10 @@
 #include <EEPROM.h>
 #include "lib/MandJTimer/MandJTimer.h"
 #include <TimerOne.h>
-#include <LCDMenuLib.h>
+#include "lib/LCDMenuLib/LCDMenuLib.h"
 #include "lib/PCF8574/PCF8574_Class.h"
+#include <avr/pgmspace.h>
+#include "lib/Flash/Flash.h"
 
 #include "pin.h"
 #include "def.h"
@@ -39,7 +41,7 @@ protected:
 	char pin;
 	tipoSensore tipo;
 	statoSensore stato;
-	char logica;
+	byte logica;
 	String messaggio;
 	int conta;
 	boolean ritardato;
@@ -47,23 +49,23 @@ protected:
 
 public:
 	/*      pin - tipoSensore - logica*/
-	Sensore(char p, tipoSensore t, char l){
+	Sensore(char p, tipoSensore tipo, byte logica){
 		this->pin=p;
-		this->tipo=t;
+		this->tipo=tipo;
 		this->stato=sensAttivo;
-		this->logica=l;
+		this->logica=logica;
 		this->messaggio=F("Allarme");
 		this->conta=0;
 		this->ritardato=false;
-		this->zona=0;
+		this->zona=znPerimetrale;
 	};
 
 	/*         pin - tipoSensore - logica - messaggio - zona */
-	Sensore(char p, tipoSensore t, char l, const String msg, char zona=znPerimetrale){
+	Sensore(char p, tipoSensore tipo, byte logica, const String msg, char zona=znPerimetrale){
 		this->pin=p;
-		this->tipo=t;
+		this->tipo=tipo;
 		this->stato=sensAttivo;
-		this->logica=l;
+		this->logica=logica;
 		this->messaggio=msg;
 		this->conta=0;
 		this->ritardato=false;
@@ -74,19 +76,19 @@ public:
 	void setPin(char p){this->pin=p;};
 
 	tipoSensore getTipo(){return this->tipo;};
-	void setTipo(tipoSensore t){this->tipo=t;};
+	void setTipo(tipoSensore tipo){this->tipo=tipo;};
 
 	statoSensore getStato(){return this->stato;};
 	void setStato(statoSensore a){this->stato=a;};
 
-	char getLogica(){return this->logica;};
-	void setLogica(char l){this->logica=l;};
+	byte getLogica(){return this->logica;};
+	void setLogica(byte logica){this->logica=logica;};
 
 	String getMessaggio(){return this->messaggio;};
 	void setMessaggio(String m){this->messaggio=m;};
 
 	int getConta(){return this->conta;};
-	void setConta(int c){this->conta=c;};
+	void setConta(int conta){this->conta=conta;};
 
 	boolean getRitardato(){return this->ritardato;};
 	void setRitardato(boolean m){this->ritardato=m;};
@@ -100,14 +102,11 @@ const static byte PasswordLength_Max = 7;
 struct AlarmSettings {
 	char alarmPassword1[PasswordLength_Max];
 	char alarmPassword2[PasswordLength_Max];
-	/*unsigned*/
-	byte tempoSirena;
+	int tempoSirena;
 	char menuPassword[PasswordLength_Max];
-	/*unsigned*/
 	int lcdBacklightTime;
-	const int maxReed_Conta;
+	int maxReed_Conta;
 	int zona;
-///	Sensore sensore[numSens];
 } settings = {
 	"1111",        // alarmPassword1,
 	"2222",        // alarmPassword2,
@@ -116,17 +115,6 @@ struct AlarmSettings {
 	30,            // lcdBacklightTime secondi
 	5,             //maxReedConta
 	znPerimetrale, // zona
-	/*
-	{
-		Sensore(REED1_PIN, intReed,  LOW, "REED1"),
-		Sensore(REED2_PIN, intReed,  LOW, "REED2"),
-		Sensore(REED3_PIN, intReed,  LOW, "REED3"),
-		Sensore(REED4_PIN, intReed,  LOW, "REED4"),
-		Sensore(REED5_PIN, intReed,  LOW, "REED5"),
-		Sensore( PIR0_PIN,  senPIR, HIGH, "PIR 1"),
-		Sensore( PIR1_PIN,  senPIR, HIGH, "PIR 2"),
-		Sensore( PIR2_PIN,  senPIR, HIGH, "PIR 3")
-	}*/
 };
 
 Sensore sensore[numSens]={
@@ -135,9 +123,9 @@ Sensore sensore[numSens]={
 	Sensore(I2C_REED3_PIN, intReed,  LOW, "REED3"),
 	Sensore(I2C_REED4_PIN, intReed,  LOW, "REED4"),
 	Sensore(I2C_REED5_PIN, intReed,  LOW, "REED5"),
-	Sensore(I2C_PIR0_PIN,   tpPIR,  HIGH, "PIR 1"),
-	Sensore(I2C_PIR1_PIN,   tpPIR,  HIGH, "PIR 2"),
-	Sensore(I2C_PIR2_PIN,   tpPIR,  HIGH, "PIR 3")
+	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR 1"),
+	Sensore(I2C_PIR1_PIN,    tpPIR,  HIGH, "PIR 2"),
+	Sensore(I2C_PIR2_PIN,    tpPIR,  HIGH, "PIR 3")
 };
 
 // Create the Keypad
