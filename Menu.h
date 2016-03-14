@@ -48,7 +48,7 @@ uint8_t  scroll_bar[5][8] = {
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   13 // 26
+#define _LCDML_DISP_cnt   15 // 26
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
@@ -65,46 +65,21 @@ uint8_t  scroll_bar[5][8] = {
 LCDML_DISP_initParam(_LCDML_DISP_cnt);// enbable parameters (needs one byte per menu element)
 // Menu
 LCDML_DISP_addMenu          (0 , _LCDML_G1 , LCDML_root     , 1 , TXT_ATTIVA);
-	LCDML_DISP_addParam     (1 , _LCDML_G1 , LCDML_root_1   , 1 , TXT_PERIMETRALE ,       mnuTempoSirena, 6);
-	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1   , 2 , TXT_TOTALE ,            mnuTempoSirena, 7);
-	LCDML_DISP_addParam     (3 , _LCDML_G1 , LCDML_root_1   , 3 , TXT_DISATTIVA_SENSORI , mnuTempoSirena, 5);
+	LCDML_DISP_addParam     (1 , _LCDML_G1 , LCDML_root_1   , 1 , TXT_PERIMETRALE ,        mnuTempoSirena, 6);
+	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1   , 2 , TXT_TOTALE ,             mnuTempoSirena, 7);
+	LCDML_DISP_addParam     (3 , _LCDML_G1 , LCDML_root_1   , 3 , TXT_DISATTIVA_SENSORI ,  mnuTempoSirena, 5);
 LCDML_DISP_addMenu          (4 , _LCDML_G1 , LCDML_root     , 2 , TXT_IMPOSTAZIONE);
 	LCDML_DISP_addMenu      (5 , _LCDML_G1 , LCDML_root_2   , 1 , TXT_SICUREZZA);
 		LCDML_DISP_addParam (6 , _LCDML_G1 , LCDML_root_2_1 , 1 , TXT_ADMIN_PASSWORD,      mnuPassword, 1);
 		LCDML_DISP_addParam (7 , _LCDML_G1 , LCDML_root_2_1 , 2 , TXT_PASSWORD1 ,          mnuPassword, 2);
 		LCDML_DISP_addParam (8 , _LCDML_G1 , LCDML_root_2_1 , 3 , TXT_PASSWORD2 ,          mnuPassword, 3);
 	LCDML_DISP_addParam     (9 , _LCDML_G1 , LCDML_root_2   , 2 , TXT_TEMPO_SIRENA ,       mnuTempoSirena, 1);
-	LCDML_DISP_addParam     (10 , _LCDML_G1 , LCDML_root_2   , 6 , TXT_CONTA_REED ,       mnuTempoSirena, 8);
+	LCDML_DISP_addParam     (10, _LCDML_G1 , LCDML_root_2   , 6 , TXT_CONTA_REED ,         mnuTempoSirena, 8);
 	LCDML_DISP_addParam     (11, _LCDML_G1 , LCDML_root_2   , 3 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
 	LCDML_DISP_addParam     (12, _LCDML_G1 , LCDML_root_2   , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
 	LCDML_DISP_addParam     (13, _LCDML_G1 , LCDML_root_2   , 4 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-
-/*	LCDML_DISP_add      (11 , _LCDML_G1  , LCDML_root_2, 4  , "Set Datetime"       , LCDML_FUNC_change_datetime);
-//LCDML_DISP_add      (11 , _LCDML_G2  , LCDML_root  , 3  , "InitScreen"         , mnuStandby);
-
- LCDML_DISP_addParam (4  , _LCDML_G1  , LCDML_root_1      , 4  , "Restart"       , LCDML_FUNC_static, 4);
- LCDML_DISP_addParam (5  , _LCDML_G1  , LCDML_root_1      , 5  , "Stop stable"   , LCDML_FUNC_static, 5);
- LCDML_DISP_addMenu  (7  , _LCDML_G1  , LCDML_root_1      , 2  , "Func (dynamic)");
- LCDML_DISP_addParam (8  , _LCDML_G1  , LCDML_root_1_2    , 1  , "Start"        , LCDML_FUNC_dynamic, 1);
- LCDML_DISP_addParam (9  , _LCDML_G1  , LCDML_root_1_2    , 2  , "Stop Stable"  , LCDML_FUNC_dynamic, 2);
- LCDML_DISP_addParam (10 , _LCDML_G1  , LCDML_root_1_2    , 3  , "Set Time"     , LCDML_FUNC_dynamic, 3);
- LCDML_DISP_addMenu  (11 , _LCDML_G1  , LCDML_root        , 2  , "Backend Groups");
- LCDML_DISP_addParam (12 , _LCDML_G1  , LCDML_root_2      , 1  , "Group start"  , LCDML_FUNC_group, 1);
- LCDML_DISP_addParam (13 , _LCDML_G1  , LCDML_root_2      , 2  , "Group stop"   , LCDML_FUNC_group, 2);
- LCDML_DISP_addMenu  (14 , _LCDML_G1  , LCDML_root        , 3  , "Backend State-M.");
- LCDML_DISP_add      (15 , _LCDML_G1  , LCDML_root_3      , 1  , "Start"        , LCDML_FUNC_state_start);
- LCDML_DISP_addMenu  (16 , _LCDML_G1  , LCDML_root        , 4  , "Backend Event");
- LCDML_DISP_add      (17 , _LCDML_G1  , LCDML_root_4      , 1  , "Trigger"      , LCDML_FUNC_trigger_event);
- LCDML_DISP_addMenu  (18 , _LCDML_G1  , LCDML_root        , 5  , "Backend Signals");
- LCDML_DISP_add      (19 , _LCDML_G1  , LCDML_root_5      , 1  , "Ping Pong"    , LCDML_FUNC_ping_pong);
- LCDML_DISP_addMenu  (20 , _LCDML_G1  , LCDML_root        , 6  , "Destroy System");
- LCDML_DISP_addMenu  (21 , _LCDML_G1  , LCDML_root_6      , 1  , "restart helps");
- LCDML_DISP_addMenu  (22 , _LCDML_G1  , LCDML_root_6      , 2  , "Kill");
- LCDML_DISP_addParam (23 , _LCDML_G1  , LCDML_root_6_2    , 1  , "stopp all"    , LCDML_FUNC_kill, 1);
- LCDML_DISP_addParam (24 , _LCDML_G1  , LCDML_root_6_2    , 2  , "restart all"  , LCDML_FUNC_kill, 2);
- LCDML_DISP_addParam (25 , _LCDML_G1  , LCDML_root_6_2    , 3  , "static init 0", LCDML_FUNC_kill, 3);
- LCDML_DISP_addParam (26 , _LCDML_G1  , LCDML_root_6_2    , 4  , "dyn set to 0" , LCDML_FUNC_kill, 4);
- */
+LCDML_DISP_addMenu          (14, _LCDML_G1 , LCDML_root     , 3 , TXT_REPORT);
+	LCDML_DISP_addParam     (15, _LCDML_G1 , LCDML_root_3   , 1 , TXT_REPORT,              mnuTempoSirena, 9);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -367,11 +342,14 @@ void mngTempoSirena(uint8_t par){
 		case 8:
 			lcd.print(TXT_CONTA_REED);
 			break;
+		case 9:
+			lcd.print(TXT_REPORT);
+			break;
 	}
 	lcd.setCursor(0, 1);
 	lcd.blink();
 	lcd.setCursor(1, 1);
-	/*switch(par){
+	switch(par){
 	case 3:
 	case 4:
 	case 5:
@@ -379,12 +357,20 @@ void mngTempoSirena(uint8_t par){
 	case 7:
 		lcd.print(TXT_CONFERMA);
 		break;
+	case 9:
+		lcd.setCursor(0, 1);
+		lcd.print(leggiEventoEprom(0));
+		lcd.setCursor(0, 2);
+		lcd.print(leggiEventoEprom(1));
+		lcd.noBlink();
+		break;
 	default:
 		lcd.print(newIntVal);
 		break;
-	}*/
-	if (par >=3 and par <= 7) lcd.print(TXT_CONFERMA);
-	else lcd.print(newIntVal);
+	}
+
+	/*if (par >=3 and par <= 7) lcd.print(TXT_CONFERMA);
+	else lcd.print(newIntVal);*/
 }
 
 void LCDML_DISP_setup(mnuTempoSirena)
@@ -454,6 +440,9 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				break;
 			case 8:
 				settings.maxReed_Conta=newIntVal;
+				break;
+			case 9:
+
 				break;
 			}
 			newIntVal = 0;

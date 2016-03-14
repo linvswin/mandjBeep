@@ -31,7 +31,8 @@ void disattivaSensori();
 void riAttivaSensori();
 void controlloMenu();
 void store_lcdline(int i, char sbuffer[20]) ;
-
+void salvaEventoEprom(int num);
+String leggiEventoEprom(byte a);
 
 void check_activity();
 void refresh_lcd();

@@ -6,18 +6,11 @@
  * Licence: GPL ver 3
 **/
 
-#include <LiquidCrystal_I2C.h>
-#include "lib/Keypad_I2C/Keypad_I2C.h"
-#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
-// cambia wuesta riga in RTClib.h
-//enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
-#include "lib/RTClib/RTClib.h"
-
 #define BAUD_RATE  115200    //9600
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
-	#define DEBUG_SETTINGS
+//	#define DEBUG_SETTINGS
 //	#define DEBUG_SENS
 //	#define DEBUG_SENS2
 //	#define DEBUG_PIR
@@ -61,6 +54,7 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	//#define TIMER2_PIN2 11
 	//#define GREEN_LED  2
 	//#define RED_LED    4
+	//#define GIALLO_LED  8
 	//#define RELAY_SIRENA1 6
 	//#define RELAY_SIRENA2 7
 
@@ -93,7 +87,7 @@ int timerPrintData=0;
 /**********************************************************
 **    Definizione di stringhe
 ***********************************************************/
-#define TXT_AUTOR              F("Beep by M&J")
+//#define TXT_AUTOR              F("Beep by M&J")
 #define TXT_SYS_ACTIVE         F("Attivo: ")
 #define TXT_ENTER_PIN          F("Codice: ")
 #define TXT_INVALID_PIN        F("Codice errato!")
@@ -117,15 +111,10 @@ int timerPrintData=0;
 #define TXT_PASSWORD1          	"Password1 "
 #define TXT_PASSWORD2          	"Password2 "
 #define TXT_CONFERMA			"# conferma"
+#define TXT_REPORT  			"Report"
+//#define TXT_REPORT  			"Report"
 //#define TXT_SPLASH             "      M&J Beep\n\n      ver 1.0\n   Licenza GPL 3"
 
 /**********************************************************/
-
 boolean mostraMenu=false;
-/**********************************************************
-**    Definizione di tipi
-***********************************************************/
-//enum statoAllarme{stDisattivo, stAttivo, stRilIntrusione, stDisSirena};
-//enum AlarmLedMode {lmOff, lmOn, lmBlink};
-//enum statoLDC {spento, acceso};
 /**********************************************************/

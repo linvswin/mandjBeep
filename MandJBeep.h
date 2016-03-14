@@ -16,7 +16,13 @@
 #include "lib/LCDMenuLib/LCDMenuLib.h"
 #include "lib/PCF8574/PCF8574_Class.h"
 #include <avr/pgmspace.h>
-#include "lib/Flash/Flash.h"
+#include <LiquidCrystal_I2C.h>
+#include "lib/Keypad_I2C/Keypad_I2C.h"
+#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
+// cambia wuesta riga in RTClib.h
+//enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
+#include "lib/RTClib/RTClib.h"
+//#include "lib/Flash/Flash.h"
 
 #include "pin.h"
 #include "def.h"
@@ -27,12 +33,12 @@ enum tipoSensore {intReed, tpPIR, sensSirena};
 
 #define numSens 8
 
-#define I2C_REED1_PIN 4
+#define I2C_REED1_PIN 0
 #define I2C_REED2_PIN 5
 #define I2C_REED3_PIN 6
-#define I2C_REED4_PIN 7
+#define I2C_REED4_PIN 4
 #define I2C_REED5_PIN 3
-#define I2C_PIR0_PIN  0
+#define I2C_PIR0_PIN  7
 #define I2C_PIR1_PIN  1
 #define I2C_PIR2_PIN  2
 
@@ -123,9 +129,9 @@ Sensore sensore[numSens]={
 	Sensore(I2C_REED3_PIN, intReed,  LOW, "REED3"),
 	Sensore(I2C_REED4_PIN, intReed,  LOW, "REED4"),
 	Sensore(I2C_REED5_PIN, intReed,  LOW, "REED5"),
-	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR 1"),
-	Sensore(I2C_PIR1_PIN,    tpPIR,  HIGH, "PIR 2"),
-	Sensore(I2C_PIR2_PIN,    tpPIR,  HIGH, "PIR 3")
+	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR1"),
+	Sensore(I2C_PIR1_PIN,    tpPIR,  HIGH, "PIR2"),
+	Sensore(I2C_PIR2_PIN,    tpPIR,  HIGH, "PIR3")
 };
 
 // Create the Keypad
@@ -141,10 +147,11 @@ int conta = 0;
 #include "Menu.h"
 
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
-const int outPin = 9; // the physical pin
 long period = 1000; // the period in microseconds
 long pulseWidth = 950; // width of a pulse in microseconds
 const int PROGMEM prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
+//const int prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
+//FLASH_ARRAY(int, prescale, 0, 1, 8, 64, 256, 1024)
 
 //Do not add code below this line
 #endif /* _MandJBeep_H_ */
