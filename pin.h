@@ -87,7 +87,7 @@ int timerPrintData=0;
 /**********************************************************
 **    Definizione di stringhe
 ***********************************************************/
-//#define TXT_AUTOR              F("Beep by M&J")
+#define TXT_AUTOR              F("Beep by M&J")
 #define TXT_SYS_ACTIVE         F("Attivo: ")
 #define TXT_ENTER_PIN          F("Codice: ")
 #define TXT_INVALID_PIN        F("Codice errato!")
@@ -100,18 +100,19 @@ int timerPrintData=0;
 #define TXT_ATTIVA				"Attiva"
 #define TXT_PERIMETRALE			"Perimetrale"
 #define TXT_TOTALE				"Totale"
-#define TXT_DISATTIVA_SENSORI	"Disattiva Sensori"
+#define TXT_DISATTIVA_SENSORI	"Dis.Temp.Sensori"
 #define TXT_IMPOSTAZIONE       	"Impostazioni"
-#define TXT_SAVE_TO_EPROM     	"Salva in EPROM"
-#define TXT_LOAD_TO_EPROM      	"Carica da EEPROM"
+#define TXT_SAVE_TO_EPROM     	"Salva EPROM"
+#define TXT_LOAD_TO_EPROM      	"Carica EEPROM"
 #define TXT_TEMPO_SIRENA       	"Tempo Sirena"
 #define TXT_CONTA_REED			"ContoeReed"
-#define TXT_LCDBACK_LIGHT_TIME 	"Tempo Retroillum"
+#define TXT_LCDBACK_LIGHT_TIME 	"Retroillum"
 #define TXT_ADMIN_PASSWORD     	"Admin Password "
 #define TXT_PASSWORD1          	"Password1 "
 #define TXT_PASSWORD2          	"Password2 "
 #define TXT_CONFERMA			"# conferma"
 #define TXT_REPORT  			"Report"
+#define TXT_SENSORI				"Sensori"
 //#define TXT_REPORT  			"Report"
 //#define TXT_SPLASH             "      M&J Beep\n\n      ver 1.0\n   Licenza GPL 3"
 

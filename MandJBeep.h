@@ -29,7 +29,7 @@
 
 enum znZone {znTotale, znPerimetrale};
 enum statoSensore {sensNonAttivo, sensAttivo, sensDisabilitato, sensTempDisabilitato, sensTrigged, sensMalfunzionamento};
-enum tipoSensore {intReed, tpPIR, sensSirena};
+enum tipoSensore {tpReed, tpPIR, tpSirena, tpTamper};
 
 #define numSens 8
 
@@ -60,7 +60,7 @@ public:
 		this->tipo=tipo;
 		this->stato=sensAttivo;
 		this->logica=logica;
-		this->messaggio=F("Allarme");
+		this->messaggio=F("S");
 		this->conta=0;
 		this->ritardato=false;
 		this->zona=znPerimetrale;
@@ -113,6 +113,7 @@ struct AlarmSettings {
 	int lcdBacklightTime;
 	int maxReed_Conta;
 	int zona;
+	byte sens;
 } settings = {
 	"1111",        // alarmPassword1,
 	"2222",        // alarmPassword2,
@@ -121,14 +122,15 @@ struct AlarmSettings {
 	30,            // lcdBacklightTime secondi
 	5,             //maxReedConta
 	znPerimetrale, // zona
+	B10000100		// sens
 };
 
 Sensore sensore[numSens]={
-	Sensore(I2C_REED1_PIN, intReed,  LOW, "REED1"),
-	Sensore(I2C_REED2_PIN, intReed,  LOW, "REED2"),
-	Sensore(I2C_REED3_PIN, intReed,  LOW, "REED3"),
-	Sensore(I2C_REED4_PIN, intReed,  LOW, "REED4"),
-	Sensore(I2C_REED5_PIN, intReed,  LOW, "REED5"),
+	Sensore(I2C_REED1_PIN,  tpReed,  LOW, "REED1"),
+	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "REED2"),
+	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "REED3"),
+	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "REED4"),
+	Sensore(I2C_REED5_PIN,  tpReed,  LOW, "REED5"),
 	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR1"),
 	Sensore(I2C_PIR1_PIN,    tpPIR,  HIGH, "PIR2"),
 	Sensore(I2C_PIR2_PIN,    tpPIR,  HIGH, "PIR3")
@@ -149,8 +151,8 @@ int conta = 0;
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
 long period = 1000; // the period in microseconds
 long pulseWidth = 950; // width of a pulse in microseconds
-const int PROGMEM prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
-//const int prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
+//const int PROGMEM prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
+const int prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale values
 //FLASH_ARRAY(int, prescale, 0, 1, 8, 64, 256, 1024)
 
 //Do not add code below this line

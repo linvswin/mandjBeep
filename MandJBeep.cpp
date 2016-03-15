@@ -24,12 +24,23 @@ void setup() {
 	//saveSettings();
 	loadSettings();
 
-	sensore[1].setStato(sensDisabilitato);
-	sensore[2].setStato(sensDisabilitato);
-	sensore[3].setStato(sensDisabilitato);
-	sensore[4].setStato(sensDisabilitato);
-	sensore[6].setStato(sensDisabilitato);
-	sensore[7].setStato(sensDisabilitato);
+	//Adding time
+	RTC.begin();
+	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
+	//RTC.adjust(DateTime(__DATE__, __TIME__));
+	if (!RTC.isrunning())
+		Serial.println(F("RTC NOT run"));
+	else
+		Serial.println(F("RTC run"));
+
+	sensore[0].setStato( (bitRead(settings.sens, 7)==0?sensDisabilitato:sensAttivo ) );
+	sensore[1].setStato( (bitRead(settings.sens, 6)==0?sensDisabilitato:sensAttivo ) );
+	sensore[2].setStato( (bitRead(settings.sens, 5)==0?sensDisabilitato:sensAttivo ) );
+	sensore[3].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
+	sensore[4].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
+	sensore[5].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
+	sensore[6].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
+	sensore[7].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -46,7 +57,6 @@ void setup() {
 	DDRD |= _BV(PD6); //pinMode(RELAY_SIRENA1, OUTPUT);
 	DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
 
-
 	//DDRB=0b00101110;
 	DDRB |= _BV(PB0);  //pinMode(GIALLO_LED, OUTPUT);
 	DDRB |= _BV(PB1);  //pinMode(TIMER1_PIN1, OUTPUT);
@@ -59,19 +69,8 @@ void setup() {
 	PORTD &= ~(_BV(PD4)); //digitalWrite(RED_LED, LOW);
 	PORTD |= _BV(PD2);    //digitalWrite(GREEN_LED, HIGH);
 
-	//Adding time
-	RTC.begin();
-	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
-	//RTC.adjust(DateTime(__DATE__, __TIME__));
-	if (!RTC.isrunning())
-		Serial.println(F("RTC NOT run"));
-	else
-		Serial.println(F("RTC run"));
-
 	keypad.begin(makeKeymap(keys));
 	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
-
-	standby();
 
 #ifdef DEBUG_SETTINGS
 	printSettings();
@@ -80,7 +79,9 @@ void setup() {
 	wdt_enable(WDTO_8S);
 	t.startTimer();
 	timerPrintData=t.every(1, printDate);
-	//timerLCDbacklight = t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+	timerLCDbacklight = t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+
+	standby();
 }
 
 void loop() {
@@ -104,7 +105,7 @@ void loop() {
 						sensore[i].setStato(sensTrigged);
 						alarmTriggered();
 
-						if (sensore[i].getTipo()==intReed){
+						if (sensore[i].getTipo()==tpReed){
 							if ( sensore[i].getConta() >= settings.maxReed_Conta){
 								sensore[i].setStato(sensTempDisabilitato);
 							}
@@ -140,15 +141,16 @@ void loop() {
 
 void standby() {
 	//display time and date
-	lcd.backlight();
+//	lcd.backlight();
 	lcd.clear();
 	lcd.setCursor(0, 0);
 	if (alarmeAttivo) lcd.print(TXT_SYS_ACTIVE);
 	else lcd.print(TXT_ENTER_PIN);
-	lcd.setCursor(0, 1);
-	lcd.print(getDate());
-	//lcd.setCursor(5, 3);
-	//lcd.print(TXT_AUTOR);
+//	lcd.setCursor(0, 1);
+//	lcd.print(getDate());
+
+	lcd.setCursor(5, 3);
+	lcd.print(TXT_AUTOR);
 }
 
 void printDate() {
@@ -190,6 +192,8 @@ void keypadEvent(KeypadEvent eKey) {
 			passwd_pos = 9;
 		}
 		lcd.backlight();
+		t.stop(timerLCDbacklight);
+		timerLCDbacklight = t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
 
 		switch (eKey) {
 		case '#':
@@ -214,7 +218,7 @@ void keypadEvent(KeypadEvent eKey) {
 			break;
 		case 'A':
 			if (statoAllarme==false) {
-				disattivaSensori();
+			//	disattivaSensori();
 			}
 			break;
 		case 'B':
@@ -239,7 +243,7 @@ void keypadEvent(KeypadEvent eKey) {
 			break;
 		case 'D':
 			if (mostraMenu==false){
-				lcd.noBacklight();
+				//lcd.noBacklight();
 			} else {
 				LCDML_BUTTON_down();
 			}
@@ -282,7 +286,7 @@ void checkPassword() {           // To check if PIN is corrected, if not, retry!
 void codiceErrato()
 {
 	password.reset();
-	lcd.backlight();
+//	lcd.backlight();
 	lcd.clear();
 	lcd.setCursor(3, 0);
 	lcd.print(TXT_INVALID_PIN);
@@ -442,7 +446,13 @@ void doPrintRitAttivazione() {
 	lcd.print(++conta);
 }
 
-void timerDoLCDbacklight() { lcd.noBacklight(); }
+void timerDoLCDbacklight() {
+	if (mostraMenu==true){
+		mostraMenu==false;
+		standby();
+	}
+	lcd.noBacklight();
+}
 
 boolean checkSensori(){
 	for(int i=0; i < numSens; i++){
