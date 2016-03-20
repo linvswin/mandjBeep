@@ -28,19 +28,24 @@ void setup() {
 	RTC.begin();
 	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
 	//RTC.adjust(DateTime(__DATE__, __TIME__));
+#ifdef DEBUG
 	if (!RTC.isrunning())
 		Serial.println(F("RTC NOT run"));
 	else
 		Serial.println(F("RTC run"));
+#endif
 
 	sensore[0].setStato( (bitRead(settings.sens, 7)==0?sensDisabilitato:sensAttivo ) );
 	sensore[1].setStato( (bitRead(settings.sens, 6)==0?sensDisabilitato:sensAttivo ) );
-	sensore[2].setStato( (bitRead(settings.sens, 5)==0?sensDisabilitato:sensAttivo ) );
-	sensore[3].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
-	sensore[4].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
-	sensore[5].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
-	sensore[6].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
-	sensore[7].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
+	sensore[2].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
+
+	//sensore[2].setStato( (bitRead(settings.sens, 5)==0?sensDisabilitato:sensAttivo ) );
+	//sensore[3].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
+	//sensore[4].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
+
+	//sensore[5].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
+	//sensore[6].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
+	//sensore[7].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -459,17 +464,20 @@ boolean checkSensori(){
 		//if (sensore[i].getStato()==sensAttivo)
 		if (sensore[i].getStato()!=sensDisabilitato and sensore[i].getStato()!=sensTempDisabilitato)
 		{
-			if ( PCF_24.read( sensore[i].getPin())==sensore[i].getLogica() ){
-				sensore[i].setStato(sensMalfunzionamento);
+			if (sensore[i].getTipo()==tpReed)
+			{
+				if ( PCF_24.read( sensore[i].getPin())==sensore[i].getLogica() ){
+					sensore[i].setStato(sensMalfunzionamento);
 
-				lcd.clear();
-				lcd.setCursor(0, 2);
-				lcd.print(F("Err: "));
-				//lcd.setCursor(5, 2);
-				lcd.print( sensore[i].getMessaggio() );
-				password.reset();
-				passwd_pos = 9;
-				return false;
+					lcd.clear();
+					lcd.setCursor(0, 2);
+					lcd.print(F("Err: "));
+					//lcd.setCursor(5, 2);
+					lcd.print( sensore[i].getMessaggio() );
+					password.reset();
+					passwd_pos = 9;
+					return false;
+				}
 			}
 		}
 	}

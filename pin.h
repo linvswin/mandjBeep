@@ -7,7 +7,7 @@
 **/
 
 #define BAUD_RATE  115200    //9600
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
