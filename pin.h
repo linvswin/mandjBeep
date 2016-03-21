@@ -7,7 +7,7 @@
 **/
 
 #define BAUD_RATE  115200    //9600
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
@@ -78,11 +78,11 @@ DateTime now;
 boolean alarmeAttivo=false;
 boolean statoAllarme=false;
 
-int passwd_pos=9;  // the postition of the password input
+uint8_t passwd_pos=9;  // the postition of the password input
 
 // id timer event
-int timerLCDbacklight=0;
-int timerPrintData=0;
+int8_t timerLCDbacklight=0;
+int8_t timerPrintData=0;
 
 /**********************************************************
 **    Definizione di stringhe
@@ -93,29 +93,28 @@ int timerPrintData=0;
 #define TXT_INVALID_PIN        F("Codice errato!")
 #define TXT_RIPROVA_PIN        F("Riprova")
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
-#define TXT_INTRUSIONE         F("Intrusione")
+#define TXT_INTRUSIONE   	    F("Intrusione")
+#define TXT_SPAZIO				F(" ")
 
 //#define TXT_MENU               "Menu"
 #define TXT_SICUREZZA			"Sicurezza"
 #define TXT_ATTIVA				"Attiva"
 #define TXT_PERIMETRALE			"Perimetrale"
+#define TXT_INTERNO				"Interno"
 #define TXT_TOTALE				"Totale"
 #define TXT_DISATTIVA_SENSORI	"Dis.Temp.Sensori"
 #define TXT_IMPOSTAZIONE       	"Impostazioni"
 #define TXT_SAVE_TO_EPROM     	"Salva EPROM"
 #define TXT_LOAD_TO_EPROM      	"Carica EEPROM"
 #define TXT_TEMPO_SIRENA       	"Tempo Sirena"
-#define TXT_CONTA_REED			"ContoeReed"
+#define TXT_CONTA_REED			"ContaReed"
 #define TXT_LCDBACK_LIGHT_TIME 	"Retroillum"
 #define TXT_ADMIN_PASSWORD     	"Admin Password "
 #define TXT_PASSWORD1          	"Password1 "
 #define TXT_PASSWORD2          	"Password2 "
-#define TXT_CONFERMA			"# conferma"
+#define TXT_CONFERMA			"#conferma"
 #define TXT_REPORT  			"Report"
 #define TXT_SENSORI				"Sensori"
-//#define TXT_REPORT  			"Report"
-//#define TXT_SPLASH             "      M&J Beep\n\n      ver 1.0\n   Licenza GPL 3"
-
 /**********************************************************/
 boolean mostraMenu=false;
 /**********************************************************/

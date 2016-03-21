@@ -35,7 +35,7 @@ uint8_t  scroll_bar[5][8] = {
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   15 // 26
+#define _LCDML_DISP_cnt   14 // 26
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
@@ -52,25 +52,20 @@ uint8_t  scroll_bar[5][8] = {
 LCDML_DISP_initParam(_LCDML_DISP_cnt);// enbable parameters (needs one byte per menu element)
 // Menu
 LCDML_DISP_addMenu          (0 , _LCDML_G1 , LCDML_root     , 1 , TXT_ATTIVA);
-	LCDML_DISP_addParam     (1 , _LCDML_G1 , LCDML_root_1   , 1 , TXT_PERIMETRALE ,        mnuTempoSirena, 6);
-	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1   , 2 , TXT_TOTALE ,             mnuTempoSirena, 7);
-	LCDML_DISP_addParam     (3 , _LCDML_G1 , LCDML_root_1   , 3 , TXT_DISATTIVA_SENSORI ,  mnuTempoSirena, 5);
-	//LCDML_DISP_add          (4 , _LCDML_G1 , LCDML_root     , 4 , TXT_SENSORI           ,  mnuSensori);
-	//LCDML_DISP_addMenu      (4 , _LCDML_G1 , LCDML_root_1   , 4 , TXT_SENSORI ,            mnuTempoSirena, 5);
-LCDML_DISP_addMenu          (4 , _LCDML_G1 , LCDML_root     , 2 , TXT_IMPOSTAZIONE);
-	LCDML_DISP_addMenu      (5 , _LCDML_G1 , LCDML_root_2   , 1 , TXT_SICUREZZA);
-		LCDML_DISP_addParam (6 , _LCDML_G1 , LCDML_root_2_1 , 1 , TXT_ADMIN_PASSWORD,      mnuPassword, 1);
-		LCDML_DISP_addParam (7 , _LCDML_G1 , LCDML_root_2_1 , 2 , TXT_PASSWORD1 ,          mnuPassword, 2);
-		LCDML_DISP_addParam (8 , _LCDML_G1 , LCDML_root_2_1 , 3 , TXT_PASSWORD2 ,          mnuPassword, 3);
-	LCDML_DISP_addParam     (9 , _LCDML_G1 , LCDML_root_2   , 2 , TXT_TEMPO_SIRENA ,       mnuTempoSirena, 1);
-	LCDML_DISP_addParam     (10, _LCDML_G1 , LCDML_root_2   , 6 , TXT_CONTA_REED ,         mnuTempoSirena, 8);
-	LCDML_DISP_addParam     (11, _LCDML_G1 , LCDML_root_2   , 3 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	LCDML_DISP_addParam     (12, _LCDML_G1 , LCDML_root_2   , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	LCDML_DISP_addParam     (13, _LCDML_G1 , LCDML_root_2   , 4 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-//LCDML_DISP_addMenu          (14, _LCDML_G1 , LCDML_root     , 3 , TXT_REPORT);
-	LCDML_DISP_addParam     (14, _LCDML_G1 , LCDML_root     , 4 , TXT_REPORT,              mnuTempoSirena, 9);
-LCDML_DISP_add              (15, _LCDML_G1 , LCDML_root     , 5 , TXT_SENSORI           ,  mnuSensori);
-//LCDML_DISP_addMenu         (15 , _LCDML_G1 , LCDML_root   , 5 , TXT_SENSORI);
+	LCDML_DISP_add          (1 , _LCDML_G1 , LCDML_root_1   , 1 , TXT_ATTIVA ,             mnuTipoAttivazione);
+	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1   , 2 , TXT_DISATTIVA_SENSORI ,  mnuTempoSirena, 5);
+LCDML_DISP_addMenu          (3 , _LCDML_G1 , LCDML_root     , 2 , TXT_IMPOSTAZIONE);
+	LCDML_DISP_addMenu      (4 , _LCDML_G1 , LCDML_root_2   , 1 , TXT_SICUREZZA);
+		LCDML_DISP_addParam (5 , _LCDML_G1 , LCDML_root_2_1 , 1 , TXT_ADMIN_PASSWORD,      mnuPassword, 1);
+		LCDML_DISP_addParam (6 , _LCDML_G1 , LCDML_root_2_1 , 2 , TXT_PASSWORD1 ,          mnuPassword, 2);
+		LCDML_DISP_addParam (7 , _LCDML_G1 , LCDML_root_2_1 , 3 , TXT_PASSWORD2 ,          mnuPassword, 3);
+	LCDML_DISP_addParam     (8 , _LCDML_G1 , LCDML_root_2   , 2 , TXT_TEMPO_SIRENA ,       mnuTempoSirena, 1);
+	LCDML_DISP_addParam     (9 , _LCDML_G1 , LCDML_root_2   , 6 , TXT_CONTA_REED ,         mnuTempoSirena, 8);
+	LCDML_DISP_addParam     (10, _LCDML_G1 , LCDML_root_2   , 3 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
+	LCDML_DISP_addParam     (11, _LCDML_G1 , LCDML_root_2   , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+	LCDML_DISP_addParam     (12, _LCDML_G1 , LCDML_root_2   , 4 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+	LCDML_DISP_addParam     (13, _LCDML_G1 , LCDML_root     , 4 , TXT_REPORT,              mnuTempoSirena, 9);
+LCDML_DISP_add              (14, _LCDML_G1 , LCDML_root     , 5 , TXT_SENSORI           ,  mnuSensori);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -324,12 +319,6 @@ void mngTempoSirena(uint8_t par){
 		case 5:
 			lcd.print(TXT_DISATTIVA_SENSORI);
 			break;
-		case 6:
-			lcd.print(TXT_PERIMETRALE);
-			break;
-		case 7:
-			lcd.print(TXT_TOTALE);
-			break;
 		case 8:
 			lcd.print(TXT_CONTA_REED);
 			break;
@@ -344,8 +333,6 @@ void mngTempoSirena(uint8_t par){
 	case 3:
 	case 4:
 	case 5:
-	case 6:
-	case 7:
 		lcd.print(TXT_CONFERMA);
 		break;
 	case 9:
@@ -423,17 +410,10 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 			case 5:
 				disattivaSensori();
 				break;
-			case 6:
-				settings.zona=znPerimetrale;
-				break;
-			case 7:
-				settings.zona=znTotale;
-				break;
 			case 8:
 				settings.maxReed_Conta=newIntVal;
 				break;
 			case 9:
-
 				break;
 			}
 			newIntVal = 0;
@@ -523,16 +503,9 @@ void LCDML_DISP_loop_end(mnuPassword) {  // loop end
 	memset(newTxtVal,0,sizeof(newTxtVal));
 }
 
-
-
-// scroll row position
-uint8_t scroll_row;
-// cursor real position on lcd lines (0 - _LCDML_DISP_rows - 1)
-uint8_t cursor_real_pos;
-// max filelist count
-//uint8_t current_max_list_count;
-// cursor position to file list entry
-uint8_t cursor_position_cur;
+uint8_t scroll_row;          // scroll row position
+uint8_t cursor_real_pos;     // cursor real position on lcd lines (0 - _LCDML_DISP_rows - 1)
+uint8_t cursor_position_cur; // cursor position to file list entry
 
 void mngSensori(){
 	// loop function, can be run in a loop when LCDML_DISP_triggerMenu(xx) is set
@@ -613,8 +586,6 @@ void mngSensori(){
 		}
 
 	}
-
-
 }
 
 void LCDML_DISP_setup(mnuSensori) {
@@ -663,13 +634,14 @@ void LCDML_DISP_loop(mnuSensori) {
 		if (LCDML_BUTTON_checkEnter()) {
 			LCDML_BUTTON_resetAll();
 			// save selected file (serial.print)
-			LCDML_DISP_funcend();
+			//LCDML_DISP_funcend();
 			// output of current line
-			Serial.println(sensore[cursor_position_cur].getMessaggio());
+			//Serial.println(sensore[cursor_position_cur].getMessaggio());
+			sensore[cursor_position_cur].setStato( (sensore[cursor_position_cur].getStato()==sensAttivo?sensDisabilitato:sensAttivo) );
+			bitWrite(settings.sens, cursor_position_cur, (sensore[cursor_position_cur].getStato()==sensAttivo?1:0) );
+			//Serial.println(settings.sens);
 		}
-
 		// clear display
-		// ================
 		lcd.clear();
 		mngSensori();
 	}
@@ -679,38 +651,136 @@ void LCDML_DISP_loop_end(mnuSensori) {
 
 }
 
-/*
-  // define help function to display the current clock settings
-  void digitalClockDisplay(){
+const String tipoAttivazione[3]={TXT_TOTALE, TXT_PERIMETRALE, TXT_INTERNO };
 
-    lcd.setCursor(3,0);
-    printDigits2(hour1());
-    lcd.print(":");
-    if(_pos == 1) { lcd.print(" "); }
-    printDigits2(minute1());
-    lcd.print(":");
-    printDigits2(second1());
-    lcd.setCursor(3,1);
-    lcd.print(day1());
-    lcd.print(".");
-    if(_pos == 3) { lcd.print(" "); }
-    lcd.print(month1());
-    lcd.print(".");
-    if(_pos == 4) { lcd.print(" "); }
-    lcd.print(year1());
-    // set cursor
-    switch(_pos) {
-      case 0: lcd.setCursor(2,0); lcd.blink(); break; //hour
-      case 1: lcd.setCursor(6,0); lcd.blink(); break; //min
-      case 2: lcd.setCursor(2,1); lcd.blink(); break; //day
-      case 3: lcd.setCursor(5+((day1()<10)?0:1),1); lcd.blink(); break;//month
-      case 4: lcd.setCursor(7+((day1()<10)?0:1)+((month1()<10)?0:1),1); lcd.blink(); break; //year
-      default: lcd.noBlink(); break;
-     }
-  }
-*/
+void mngTipoAttivazione(){
+	// loop function, can be run in a loop when LCDML_DISP_triggerMenu(xx) is set
+	// the quit button works in every DISP function without any checks; it starts the loop_end function
 
+	// init some vars for scrollbar
+	uint8_t n_max = (3 >= _LCDML_DISP_rows) ? _LCDML_DISP_rows : (3);
 
+	uint8_t scrollbar_min = 0;
+	uint8_t scrollbar_max = 3;
+	//uint8_t scrollbar_cur_pos = cursor_position_cur;
+	uint8_t scroll_pos = ((1. * n_max * _LCDML_DISP_rows) / (scrollbar_max - 1) * cursor_position_cur);
+
+	// display content
+	// ==================
+	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows); n++) {
+		// set cursor
+		lcd.setCursor(1, n - scroll_row);
+		// set content
+		lcd.setCursor(1, n - scroll_row);
+		lcd.print(tipoAttivazione[n]);
+		lcd.setCursor(_LCDML_DISP_cols-3, n - scroll_row);
+
+		if (n==settings.zona)
+			lcd.print(F("*"));
+		else lcd.print( TXT_SPAZIO );
+	}
+	// set cursor and scrollbar
+	// =============================
+	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows); n++) {
+		lcd.setCursor(0, n - scroll_row);
+
+		// set cursor
+		// =====================
+		if (n == cursor_position_cur) {
+			lcd.write(_LCDML_DISP_cfg_cursor);
+			cursor_real_pos = n - scroll_row;
+		} else {
+			//lcd.write(' ');
+			lcd.print( TXT_SPAZIO );
+		}
+
+		// display scrollbar
+		// ==============================
+		// delete or reset scrollbar
+		if (scrollbar_max > n_max) {
+			lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
+			lcd.write((uint8_t) 0);
+		} else {
+			lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
+			lcd.print(TXT_SPAZIO);
+		}
+
+		// set scrollbar
+		if (scrollbar_max > n_max) {
+			//set scroll position
+			if (cursor_position_cur == scrollbar_min) {
+				// min pos
+				lcd.setCursor((_LCDML_DISP_cols - 1), 0);
+				lcd.write((uint8_t) 1);
+			} else if (cursor_position_cur == (scrollbar_max - 1)) {
+				// max pos
+				lcd.setCursor((_LCDML_DISP_cols - 1), (n_max - 1));
+				lcd.write((uint8_t) 4);
+			} else {
+				// between
+				lcd.setCursor((_LCDML_DISP_cols - 1), scroll_pos / n_max);
+				lcd.write((uint8_t) (scroll_pos % n_max) + 1);
+			}
+		}
+	}
+}
+
+void LCDML_DISP_setup(mnuTipoAttivazione) {
+	// use this to init some vars
+	// set max file counter
+	//current_max_list_count = 8;
+	// set current cursor position
+	cursor_position_cur = 0;
+	scroll_row = 0;
+	cursor_real_pos = 0;
+	mngTipoAttivazione();
+}
+
+void LCDML_DISP_loop(mnuTipoAttivazione) {
+
+	if (LCDML_BUTTON_checkAny()) {
+		// move up in list
+		if (LCDML_BUTTON_checkUp()) {
+			LCDML_BUTTON_resetAll();
+			// scroll up
+			if (cursor_position_cur > 0) { // check minimum cursor
+				cursor_position_cur--;      // scroll up
+				if (cursor_real_pos == 0) {
+					scroll_row--;             // scroll display rows
+				}
+			}
+			// update content above or remove this line and copy button checks on top of this function
+			LCDML_BACK_start (LCDML_BACKEND_menu);
+		}
+
+		// move down in list
+		if (LCDML_BUTTON_checkDown()) {
+			LCDML_BUTTON_resetAll();
+			// scroll down
+			if (cursor_position_cur < (3 - 1)) {    // check list end
+				cursor_position_cur++;                         // go to next element
+				if (cursor_real_pos == (_LCDML_DISP_rows - 1)) { // check if current cursor is in last display line
+					scroll_row++;                                  // scroll content
+				}
+			}
+			// update content above or remove this line and copy button checks on top of this function
+			LCDML_BACK_start (LCDML_BACKEND_menu);
+		}
+
+		// enter file name
+		if (LCDML_BUTTON_checkEnter()) {
+			LCDML_BUTTON_resetAll();
+			settings.zona=cursor_position_cur;
+		}
+		// clear display
+		lcd.clear();
+		mngTipoAttivazione();
+	}
+}
+
+void LCDML_DISP_loop_end(mnuTipoAttivazione) {
+
+}
 /* ===================================================================== *
  *                                                                       *
  * BACKEND SYSTEM                                                        *

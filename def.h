@@ -12,6 +12,7 @@ void attiva();
 void codiceErrato();
 void disattiva();
 void checkPassword();
+void primaDiAttivare();
 void printDate();
 String getDate();
 void alarmTriggered();

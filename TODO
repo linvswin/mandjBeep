@@ -9,9 +9,11 @@
 */
 
 
+- prevedere 2 zone
+- prevedere ritardo attivazione sensore ( quando disattivi )
 - linea tamper
-- memorizzare evento intrusione
 - azzerare coonta reed
 - commentare codice
 
 ok - menu
+ok - memorizzare evento intrusione (solo 2 eventi)
