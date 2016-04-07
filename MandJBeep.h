@@ -192,7 +192,7 @@ Keypad_I2C keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF85
 //Password
 Password password = Password(settings.alarmPassword1);
 // PCF8574
-PCF8574_Class PCF_24(0x24);
+PCF8574_Class PCF_24(0x22);
 // timer
 MandJTimer t;
 uint8_t conta = 0;

@@ -68,10 +68,11 @@ void setup() {
 	//DDRB &= ~(_BV(PB2));  //pinMode(PIR1_PIN, INPUT);
 	//DDRB &= ~(_BV(PB4));  //pinMode(PIR2_PIN, INPUT);
 
-	//PORTD |= _BV(PD7);    //digitalWrite(RELAY_SIRENA2, HIGH);
-	PORTD &= ~(_BV(PD6)); //digitalWrite(RELAY_SIRENA1, LOW);
-	PORTD &= ~(_BV(PD4)); //digitalWrite(RED_LED, LOW);
-	PORTD |= _BV(PD2);    //digitalWrite(GREEN_LED, HIGH);
+	//PORTD |= _BV(PD7);     //digitalWrite(RELAY_SIRENA2, HIGH);
+	PORTD |= _BV(PD6);       //digitalWrite(RELAY_SIRENA1, HIGH);
+	//PORTD &= ~(_BV(PD6));  //digitalWrite(RELAY_SIRENA1, LOW);
+	PORTD &= ~(_BV(PD4));    //digitalWrite(RED_LED, LOW);
+	PORTD |= _BV(PD2);       //digitalWrite(GREEN_LED, HIGH);
 
 	keypad.begin(makeKeymap(keys));
 	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
@@ -319,7 +320,8 @@ void disattiva() {
 
 	PORTD &= ~(_BV(PD4));	//digitalWrite(RED_LED, LOW);
 	PORTD |= _BV(PD2);	//digitalWrite(GREEN_LED, HIGH);
-	PORTD &= ~(_BV(PD6));	//digitalWrite(RELAY_SIRENA1, LOW);
+	//PORTD &= ~(_BV(PD6));	//digitalWrite(RELAY_SIRENA1, LOW);
+	PORTD |= _BV(PD6); 	//digitalWrite(RELAY_SIRENA1, HIGH);
 	//PORTD |= _BV(PD7); 	//digitalWrite(RELAY_SIRENA2, HIGH);
 
 	lcd.backlight();
@@ -340,7 +342,8 @@ void alarmTriggered() {
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
 
-	PORTD |= _BV(PD6);        //digitalWrite(RELAY_SIRENA1, HIGH);
+	//PORTD |= _BV(PD6);      //digitalWrite(RELAY_SIRENA1, HIGH);
+	PORTD &= ~(_BV(PD6));     //digitalWrite(RELAY_SIRENA1, LOW);
 	//PORTD &= ~(_BV(PD7));	  //digitalWrite(RELAY_SIRENA2, LOW);
 
 	password.reset();
@@ -409,7 +412,8 @@ void doAfterRitActivate() {
 void doAfterTimerT() {
 	Timer1.disablePwm(TIMER1_PIN1);
 
-	PORTD &= ~(_BV(PD6));  //	digitalWrite(RELAY_SIRENA1, LOW);
+	//PORTD &= ~(_BV(PD6));  //	digitalWrite(RELAY_SIRENA1, LOW);
+	PORTD |= _BV(PD6);     //	digitalWrite(RELAY_SIRENA1, HIGH);
 	//PORTD |= _BV(PD7);     //	digitalWrite(RELAY_SIRENA2, HIGH);
 
 	for(int i=0; i < numSens; i++){

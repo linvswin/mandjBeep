@@ -60,7 +60,7 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 
 #endif
 
-#define I2C_ADDR    0x20  // LCD: Define I2C Address for controller
+#define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
 #define BACKLIGHT_PIN  7
 #define En_pin  4
 #define Rw_pin  5
