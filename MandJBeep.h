@@ -42,69 +42,6 @@ enum tipoSensore {tpReed, tpPIR, tpSirena, tpTamper};
 #define I2C_PIR1_PIN  6
 #define I2C_PIR2_PIN  5
 
-/*
-class Sensore{
-protected:
-	char pin;
-	tipoSensore tipo;
-	statoSensore stato;
-	byte logica;
-	char messaggio[7];
-	int conta;
-	boolean ritardato;
-	char zona;
-
-public:
-	//      pin - tipoSensore - logica
-	Sensore(char p, tipoSensore tipo, byte logica){
-		this->pin=p;
-		this->tipo=tipo;
-		this->stato=sensAttivo;
-		this->logica=logica;
-		strcpy(this->messaggio, "S");
-		this->conta=0;
-		this->ritardato=false;
-		this->zona=znPerimetrale;
-	};
-
-	//         pin - tipoSensore - logica - messaggio - zona
-	Sensore(char p, tipoSensore tipo, byte logica, char *msg, char zona=znPerimetrale){
-		this->pin=p;
-		this->tipo=tipo;
-		this->stato=sensAttivo;
-		this->logica=logica;
-		strcpy(this->messaggio, msg);
-		this->conta=0;
-		this->ritardato=false;
-		this->zona=zona;
-	};
-
-	char getPin(){return this->pin;};
-	void setPin(char p){this->pin=p;};
-
-	tipoSensore getTipo(){return this->tipo;};
-	void setTipo(tipoSensore tipo){this->tipo=tipo;};
-
-	statoSensore getStato(){return this->stato;};
-	void setStato(statoSensore a){this->stato=a;};
-
-	byte getLogica(){return this->logica;};
-	void setLogica(byte logica){this->logica=logica;};
-
-	char *getMessaggio(){return this->messaggio;};
-	void setMessaggio(char *m){strcpy(this->messaggio, m);};
-
-	int getConta(){return this->conta;};
-	void setConta(int conta){this->conta=conta;};
-
-	boolean getRitardato(){return this->ritardato;};
-	void setRitardato(boolean m){this->ritardato=m;};
-
-	char getZona(){return this->zona;};
-	void setZona(char z){this->zona=z;};
-};
-*/
-
 class Sensore{
 protected:
 	uint8_t pin;

@@ -217,11 +217,17 @@ void keypadEvent(KeypadEvent eKey) {
 		case 'B':
 			if (mostraMenu==false)
 			{
-				t.stop(timerPrintData);
-				mostraMenu=true;
-				LCDML.goRoot();
-				LCDML_BUTTON_up();
+				passwd_pos = 9;
+				password.set(settings.menuPassword);
+				if (checkPassword2())
+				{
+					t.stop(timerPrintData);
+					mostraMenu=true;
+					LCDML.goRoot();
+					LCDML_BUTTON_up();
+				} else codiceErrato(1);
 			} else {
+				password.set(settings.alarmPassword1);
 				mostraMenu=false;
 				timerPrintData=t.every(1, printDate);
 				standby();
@@ -258,6 +264,10 @@ void keypadEvent(KeypadEvent eKey) {
 	}
 }
 
+bool checkPassword2() {
+	return password.evaluate();
+}
+
 void checkPassword() {           // To check if PIN is corrected, if not, retry!
 	if (password.evaluate()) {
 		if (alarmeAttivo == false && statoAllarme == false) {
@@ -265,15 +275,22 @@ void checkPassword() {           // To check if PIN is corrected, if not, retry!
 		} else if (alarmeAttivo == true || statoAllarme == true)
 			disattiva();
 	} else
-		codiceErrato();
+		codiceErrato(0);
 }
 
-void codiceErrato()
+void codiceErrato(char adm=0)
 {
 	password.reset();
 	lcd.clear();
-	lcd.setCursor(3, 0);
-	lcd.print(TXT_INVALID_PIN);
+
+	if (adm==0)
+	{
+		lcd.setCursor(3, 0);
+		lcd.print(TXT_INVALID_PIN);
+	}else{
+		lcd.setCursor(0, 0);
+		lcd.print(TXT_INVALID_ADMIN_PIN);
+	}
 	lcd.setCursor(5, 2);
 	lcd.print(TXT_RIPROVA_PIN);
 	delay(1000);

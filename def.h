@@ -9,8 +9,9 @@
 #define DEF_H_
 
 void attiva();
-void codiceErrato();
+void codiceErrato(char adm);
 void disattiva();
+bool checkPassword2();
 void checkPassword();
 void primaDiAttivare();
 void printDate();

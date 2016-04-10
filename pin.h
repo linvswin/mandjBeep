@@ -77,6 +77,7 @@ DateTime now;
 
 boolean alarmeAttivo=false;
 boolean statoAllarme=false;
+boolean adminZone=false;
 
 uint8_t passwd_pos=9;  // the postition of the password input
 
@@ -91,10 +92,11 @@ int8_t timerPrintData=0;
 #define TXT_SYS_ACTIVE         F("Attivo: ")
 #define TXT_ENTER_PIN          F("Codice: ")
 #define TXT_INVALID_PIN        F("Codice errato!")
+#define TXT_INVALID_ADMIN_PIN  F("Codice Admin errato!")
 #define TXT_RIPROVA_PIN        F("Riprova")
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
-#define TXT_INTRUSIONE   	    F("Intrusione")
-#define TXT_SPAZIO				F(" ")
+#define TXT_INTRUSIONE   	   F("Intrusione")
+#define TXT_SPAZIO			   F(" ")
 
 //#define TXT_MENU               "Menu"
 #define TXT_SICUREZZA			"Sicurezza"
