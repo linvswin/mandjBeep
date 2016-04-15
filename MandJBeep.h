@@ -12,11 +12,23 @@
 #include <avr/wdt.h>
 #include <EEPROM.h>
 #include "lib/MandJTimer/MandJTimer.h"
-#include <TimerOne.h>
+
+#include "SIM900.h"
+#include <SoftwareSerial.h>
+#include "sms.h"
+SMSGSM sms;
+boolean started = false;
+int i_serialh = 0;
+char inSerial[40];
+char position=0;
+char phone_number[20]; // array for the phone number string
+char sms_text[160];
+
 #include "lib/LCDMenuLib/LCDMenuLib.h"
 #include "lib/PCF8574/PCF8574_Class.h"
 #include <avr/pgmspace.h>
 #include <LiquidCrystal_I2C.h>
+
 #include "lib/Keypad_I2C/Keypad_I2C.h"
 #include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
 // cambia wuesta riga in RTClib.h
@@ -26,6 +38,11 @@
 
 #include "pin.h"
 #include "def.h"
+#if BOARD == 2
+#include "lib/TimerOneThree/TimerOneThree.h"  //https://github.com/heliosoph/TimerOneThree
+#else
+#include <TimerOne.h>
+#endif
 
 enum znZone {znTotale, znPerimetrale, znInterno};
 enum statoSensore {sensNonAttivo, sensAttivo, sensDisabilitato, sensTempDisabilitato, sensTrigged, sensMalfunzionamento};
@@ -101,6 +118,8 @@ struct AlarmSettings {
 	uint8_t maxReed_Conta;
 	uint8_t zona;
 	byte sens;
+	//byte adminpass;
+	uint8_t tempoRitardo;
 } settings = {
 	"1111",        // alarmPassword1,
 	"2222",        // alarmPassword2,
@@ -110,7 +129,9 @@ struct AlarmSettings {
 	5,             //maxReedConta
 	znPerimetrale, // zona
 	//B11000100		// sens
-	B00010001		// sens
+	B00010001,		// sens
+	//1,				// adminpass
+	20				// tempo ritardo
 };
 
 Sensore sensore[numSens]={

@@ -1,6 +1,6 @@
 # mandjBeep
 
-Centralina di allarme pilotata da un atmega328 ( o arduino uno / nano)
+Centralina di allarme pilotata da un atmega1284
 
 /**
  * Project Title: M&J Beep

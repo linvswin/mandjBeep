@@ -1,3 +1,9 @@
+
+AT+CMGL="ALL",1 // LISTA TUTTI GLI SMS
+AT+CMGD=1       // CANCELLA SMS POSIZIONE 1
+AT+CMGDA=<TYPE> 
+
+
 AVR Memory Usage
 ----------------
 Device: atmega328p

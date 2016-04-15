@@ -49,7 +49,7 @@
 #define ATTINYx4
 #elif defined (__AVR_ATmega640__) || defined (__AVR_ATmega1280__) || defined (__AVR_ATmega1281__) || defined (__AVR_ATmega2560__) || defined (__AVR_ATmega2561__)
 #define ATMEGAx0
-#elif defined (__AVR_ATmega344__) || defined (__AVR_ATmega344P__) || defined (__AVR_ATmega644__) || defined (__AVR_ATmega644P__) || defined (__AVR_ATmega644PA__) || defined (__AVR_ATmega1284P__)
+#elif defined (__AVR_ATmega344__) || defined (__AVR_ATmega344P__) || defined (__AVR_ATmega644__) || defined (__AVR_ATmega644P__) || defined (__AVR_ATmega644PA__) || defined (__AVR_ATmega1284P__) || defined (__AVR_ATmega1284__)
 #define ATMEGAx4
 #elif defined (__AVR_ATtiny2313__) || defined (__AVR_ATtiny4313__)
 #define ATTINYx313

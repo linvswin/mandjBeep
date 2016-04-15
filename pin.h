@@ -6,8 +6,10 @@
  * Licence: GPL ver 3
 **/
 
-#define BAUD_RATE  115200    //9600
-//#define DEBUG
+#define BAUD_RATE  9600  //115200    //9600
+#define MJGSM
+
+#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
@@ -16,6 +18,7 @@
 //	#define DEBUG_PIR
 //	#define DEBUG_SECTIMER
 //	#define DEBUG_PRINTDATA
+	#define DEBUG_SMS
 #endif
 
 #define ROWS  4  // Four rows
@@ -32,7 +35,7 @@ const char keys[ROWS][COLS] = { // Define the Keymap
 byte rowPins[ROWS] = {3, 2, 1, 0}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 
-#define BOARD 1  // 0 mega2560, 1 uno r3
+#define BOARD 2  // 0 mega2560, 1 uno r3
 #if ( BOARD==0 )
 //	#include <Keypad.h> //http://www.arduino.cc/playground/uploads/Code/Keypad.zip
 
@@ -45,19 +48,28 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	#define PIR_PIN1    47
 	#define RELAY_SIRENA1 4
 	#define RELAY_SIRENA2 5
-
-#else //if ( BOARD==1 )
+#endif
+#if ( BOARD==1 )
 
 	#define TIMER1_PIN1 9   //buzzer pin
 	//#define TIMER1_PIN2 10   //buzzer pin
 	//#define TIMER2_PIN1 3
 	//#define TIMER2_PIN2 11
-	//#define GREEN_LED  2
-	//#define RED_LED    4
+	#define GREEN_LED  2
+	#define RED_LED    4
 	//#define GIALLO_LED  8
 	//#define RELAY_SIRENA1 6
 	//#define RELAY_SIRENA2 7
+#endif
+#if ( BOARD==2 )
+	#define TIMER1_PIN1 13 //13   //buzzer pin
+	#define TIMER1_PIN2 12   //buzzer pin
 
+	#define GREEN_LED  2
+	#define RED_LED    3
+	#define GIALLO_LED  1
+	#define RELAY_SIRENA1 11
+	//#define RELAY_SIRENA2 7
 #endif
 
 #define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
@@ -109,6 +121,7 @@ int8_t timerPrintData=0;
 #define TXT_SAVE_TO_EPROM     	"Salva EPROM"
 #define TXT_LOAD_TO_EPROM      	"Carica EEPROM"
 #define TXT_TEMPO_SIRENA       	"Tempo Sirena"
+#define TXT_TEMPO_RITARDO      	"Tempo Ritardo"
 #define TXT_CONTA_REED			"ContaReed"
 #define TXT_LCDBACK_LIGHT_TIME 	"Retroillum"
 #define TXT_ADMIN_PASSWORD     	"Admin Password "

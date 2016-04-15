@@ -38,6 +38,11 @@ String leggiEventoEprom(byte a);
 
 void check_activity();
 void refresh_lcd();
+
+void serialhwread();
+void serialswread();
+void inviaSMScomando(char *number_str, char *message_str);
+
 //void menu_crea();
 //void menu_screen();
 //void menu_loadvar();

@@ -19,7 +19,13 @@ String printDigit(int digits)
 
 void setup() {
 	Serial.begin(BAUD_RATE);
+//	Serial1.begin(2400);
 	//salvaEventoEprom(-1);
+
+	if (gsm.begin(2400)) {
+	        Serial.println("\nGSM status=READY");
+	        started = true;
+	} else Serial.println("\nGSM status=IDLE");
 
 	//saveSettings();
 	loadSettings();
@@ -34,6 +40,9 @@ void setup() {
 	else
 		Serial.println(F("RTC run"));
 #endif
+	//Serial.println("GSM Shield testing.");
+	//Start configuration of shield with baudrate.
+	//For http uses is raccomanded to use 4800 or slower.
 
 	sensore[0].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
 	sensore[1].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
@@ -56,23 +65,32 @@ void setup() {
 	password.set(settings.alarmPassword1);
 
 	//DDRD=0b11011111;
-	DDRD |= _BV(PD2); //pinMode(GREEN_LED, OUTPUT);
-	DDRD |= _BV(PD4); //pinMode(RED_LED, OUTPUT);
-	DDRD |= _BV(PD6); //pinMode(RELAY_SIRENA1, OUTPUT);
+	//DDRD |= _BV(PD2);
+	pinMode(GREEN_LED, OUTPUT);
+	//DDRD |= _BV(PD4);
+	pinMode(RED_LED, OUTPUT);
+	//DDRD |= _BV(PD6);
+	pinMode(RELAY_SIRENA1, OUTPUT);
 	//DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
 
 	//DDRB=0b00101110;
-	DDRB |= _BV(PB0);  //pinMode(GIALLO_LED, OUTPUT);
-	DDRB |= _BV(PB1);  //pinMode(TIMER1_PIN1, OUTPUT);
-	DDRB |= _BV(PB2);  //pinMode(TIMER1_PIN2, OUTPUT);
+	//DDRB |= _BV(PB0);
+	pinMode(GIALLO_LED, OUTPUT);
+	//DDRB |= _BV(PB1);
+	pinMode(TIMER1_PIN1, OUTPUT);
+	//DDRB |= _BV(PB2);
+	pinMode(TIMER1_PIN2, OUTPUT);
 	//DDRB &= ~(_BV(PB2));  //pinMode(PIR1_PIN, INPUT);
 	//DDRB &= ~(_BV(PB4));  //pinMode(PIR2_PIN, INPUT);
 
 	//PORTD |= _BV(PD7);     //digitalWrite(RELAY_SIRENA2, HIGH);
-	PORTD |= _BV(PD6);       //digitalWrite(RELAY_SIRENA1, HIGH);
+	//PORTD |= _BV(PD6);
+	digitalWrite(RELAY_SIRENA1, HIGH);
 	//PORTD &= ~(_BV(PD6));  //digitalWrite(RELAY_SIRENA1, LOW);
-	PORTD &= ~(_BV(PD4));    //digitalWrite(RED_LED, LOW);
-	PORTD |= _BV(PD2);       //digitalWrite(GREEN_LED, HIGH);
+	//PORTD &= ~(_BV(PD4));
+	digitalWrite(RED_LED, LOW);
+	//PORTD |= _BV(PD2);
+	digitalWrite(GREEN_LED, HIGH);
 
 	keypad.begin(makeKeymap(keys));
 	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
@@ -92,7 +110,53 @@ void loop() {
 	now = RTC.now();
 	keypad.getKey();
 
-	if (alarmeAttivo) {
+	// read from port 1, send to port 0:
+	/*if (Serial1.available()) {
+		//int inByte = Serial1.read();
+		Serial.write(Serial1.read());
+	}
+
+	// read from port 0, send to port 1:
+	if (Serial.available()) {
+		//int inByte = Serial.read();
+		Serial1.write(Serial.read());
+	}*/
+
+	position = sms.IsSMSPresent(SMS_UNREAD);
+	if (position) {
+	  // read new SMS
+	  sms.GetSMS(position, phone_number, sms_text, 160);
+
+	  Serial.print("Num tel: ");
+	  Serial.println(phone_number);
+
+	  Serial.print("Text: ");
+	  Serial.println(sms_text);
+
+	  if (!strcmp(sms_text, "ATTIVA"))
+	  {
+		  if (alarmeAttivo == false && statoAllarme == false) {
+			  primaDiAttivare();
+		  }
+	  }else if (!strcmp(sms_text, "DISATTIVA"))
+	  {
+		  disattiva();
+	  }else if (!strcmp(sms_text, "DISSENTEMP"))
+	  {
+		  disattivaSensori();
+	  }
+	  sms.DeleteSMS(position);
+	} /*else {
+
+	//Read for new byte on serial hardware,
+	//and write them on NewSoftSerial.
+		serialhwread();
+	//Read for new byte on NewSoftSerial.
+		serialswread();
+	}*/
+
+	if (alarmeAttivo)
+	{
 		for(uint8_t i=0; i < numSens; i++){
 #ifdef DEBUG_SENS
 			Serial.print("sens ");
@@ -176,6 +240,8 @@ void keypadEvent(KeypadEvent eKey) {
 #ifdef DEBUG_KEY
 	Serial.print(F("Tasto: "));
 	Serial.println(eKey);
+	lcd.setCursor(0, 2);
+	lcd.print(eKey);
 #endif
 #endif
 
@@ -218,6 +284,7 @@ void keypadEvent(KeypadEvent eKey) {
 			if (mostraMenu==false)
 			{
 				passwd_pos = 9;
+
 				password.set(settings.menuPassword);
 				if (checkPassword2())
 				{
@@ -302,8 +369,8 @@ void primaDiAttivare(){
 		Serial.println(F("Ritardo attivazione ..........."));
 #endif
 	if (checkSensori()) {
-		t.after(settings.tempoSirena, doAfterRitActivate);
-		t.every(1, doPrintRitAttivazione, settings.tempoSirena-1);
+		t.after(settings.tempoRitardo, doAfterRitActivate);
+		t.every(1, doPrintRitAttivazione, settings.tempoRitardo-1);
 		standby();
 	}
 }
@@ -314,15 +381,15 @@ void attiva() // Activate the system if correct PIN entered and display message 
 	statoAllarme = true;
 	password.reset();
 
-	//digitalWrite(RED_LED, HIGH);
+	digitalWrite(RED_LED, HIGH);
 	//PORTD |= (1<<5);
-	PORTD |= (1<<PD4);
-	PORTD |= _BV(PD4);
+	//PORTD |= (1<<PD4);
+	//PORTD |= _BV(PD4);
 
-	//digitalWrite(GREEN_LED, LOW);
+	digitalWrite(GREEN_LED, LOW);
 	//PORTD &= ~(1<<2);
-	PORTD &= ~(1<<PD2);
-	PORTD &= ~(_BV(PD2));
+	//PORTD &= ~(1<<PD2);
+	//PORTD &= ~(_BV(PD2));
 
 	standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
@@ -335,10 +402,13 @@ void disattiva() {
 	password.reset();
 	Timer1.disablePwm(TIMER1_PIN1);
 
-	PORTD &= ~(_BV(PD4));	//digitalWrite(RED_LED, LOW);
-	PORTD |= _BV(PD2);	//digitalWrite(GREEN_LED, HIGH);
+	//PORTD &= ~(_BV(PD4));
+	digitalWrite(RED_LED, LOW);
+	//PORTD |= _BV(PD2);
+	digitalWrite(GREEN_LED, HIGH);
 	//PORTD &= ~(_BV(PD6));	//digitalWrite(RELAY_SIRENA1, LOW);
-	PORTD |= _BV(PD6); 	//digitalWrite(RELAY_SIRENA1, HIGH);
+	//PORTD |= _BV(PD6);
+	digitalWrite(RELAY_SIRENA1, HIGH);
 	//PORTD |= _BV(PD7); 	//digitalWrite(RELAY_SIRENA2, HIGH);
 
 	lcd.backlight();
@@ -360,7 +430,8 @@ void alarmTriggered() {
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
 
 	//PORTD |= _BV(PD6);      //digitalWrite(RELAY_SIRENA1, HIGH);
-	PORTD &= ~(_BV(PD6));     //digitalWrite(RELAY_SIRENA1, LOW);
+	//PORTD &= ~(_BV(PD6));
+	digitalWrite(RELAY_SIRENA1, LOW);
 	//PORTD &= ~(_BV(PD7));	  //digitalWrite(RELAY_SIRENA2, LOW);
 
 	password.reset();
@@ -375,6 +446,16 @@ void alarmTriggered() {
 		if ( sensore[i].getStato()==sensTrigged ) {
 			lcd.print( sensore[i].getMessaggio() );
 			salvaEventoEprom(i);
+
+#ifdef MJGSM
+			//if (position>0)
+			{
+				String msg="Intrusione: "+sensore[i].getMessaggio();
+				msg.toCharArray(sms_text, 160);
+				//Serial.println(sms_text);
+				inviaSMScomando(phone_number, sms_text);
+			}
+#endif
 		}
 	}
 
@@ -430,7 +511,8 @@ void doAfterTimerT() {
 	Timer1.disablePwm(TIMER1_PIN1);
 
 	//PORTD &= ~(_BV(PD6));  //	digitalWrite(RELAY_SIRENA1, LOW);
-	PORTD |= _BV(PD6);     //	digitalWrite(RELAY_SIRENA1, HIGH);
+	//PORTD |= _BV(PD6);
+	digitalWrite(RELAY_SIRENA1, HIGH);
 	//PORTD |= _BV(PD7);     //	digitalWrite(RELAY_SIRENA2, HIGH);
 
 	for(int i=0; i < numSens; i++){
@@ -450,7 +532,7 @@ bool setPulseWidth(long microseconds) {
 		int duty = map(microseconds, 0, period, 0, 1024);
 		if (duty < 1)
 			duty = 1;
-		if (microseconds > 0 && duty < TIMER1_RESOLUTION) {
+		if (microseconds > 0 && duty < RESOLUTION) {
 			Timer1.pwm(TIMER1_PIN1, duty);
 			return true;
 		}
@@ -488,6 +570,15 @@ boolean checkSensori(){
 					lcd.print(F("Err: "));
 					//lcd.setCursor(5, 2);
 					lcd.print( sensore[i].getMessaggio() );
+#ifdef MJGSM
+					if (position>0)
+					{
+						String msg="Err: "+sensore[i].getMessaggio();
+						msg.toCharArray(sms_text, 160);
+						//Serial.println(sms_text);
+						inviaSMScomando(phone_number, sms_text);
+					}
+#endif
 					password.reset();
 					passwd_pos = 9;
 					return false;
@@ -506,7 +597,8 @@ void disattivaSensori(){
 		if ( sensore[i].getStato()==sensMalfunzionamento )
 		{
 			sensore[i].setStato(sensTempDisabilitato);
-			PORTB |= _BV(PB0);
+			//PORTB |= _BV(PB0);
+			digitalWrite(GIALLO_LED, HIGH);
 		}
 	}
 	password.reset();
@@ -519,7 +611,8 @@ void riAttivaSensori(){
 		if (sensore[i].getStato()!=sensDisabilitato){
 			sensore[i].setStato(sensAttivo);
 			sensore[i].setConta(0);
-			PORTB &= ~(_BV(PB0)); //digitalWrite(GIALLO_LED, LOW);
+			//PORTB &= ~(_BV(PB0));
+			digitalWrite(GIALLO_LED, LOW);
 		}
 	}
 	password.reset();
@@ -554,4 +647,53 @@ String leggiEventoEprom(byte a)
 		return (String)sensore[EEPROM.read(6)].getMessaggio()+
 							F("|")+printDigit(EEPROM.read(7))+printDigit(EEPROM.read(8))+printDigit(EEPROM.read(9))+
 							F("|")+printDigit(EEPROM.read(10))+printDigit(EEPROM.read(11));
+}
+
+//LEGGE DALLA SERIALE HARDWARE
+void serialhwread() {
+	i_serialh = 0;
+    if (Serial.available() > 0) {
+        while (Serial.available() > 0) {
+            inSerial[i_serialh] = (Serial.read());
+            delay(10);
+            i_serialh++;
+        }
+
+        inSerial[i_serialh] = '\0';
+        if (!strcmp(inSerial, "/END")) {
+            Serial.println("_");
+            inSerial[0] = 0x1a;
+            inSerial[1] = '\0';
+            gsm.SimpleWriteln(inSerial);
+        }
+        //Send a saved AT command using serial port.
+        if (!strcmp(inSerial, "TEST")) {
+            Serial.println("SIGNAL QUALITY");
+            gsm.SimpleWriteln("AT+CSQ");
+            gsm.SimpleWriteln("AT+COPS?");
+        } else if(!strcmp(inSerial, "SMS")){
+            Serial.println("SMS TEST");
+            if (sms.SendSMS("3392160999", "Test SMS"))
+                Serial.println("\nSMS sent OK");
+        } else if(!strcmp(inSerial, "ALL")){
+            Serial.println("SMS LEGGI TUTTI");
+            gsm.SimpleWriteln("AT+CMGL=\"ALL\",1");
+        } else {
+            Serial.println(inSerial);
+            gsm.SimpleWriteln(inSerial);
+        }
+        inSerial[0] = '\0';
+    }
+}
+
+//LEGGE DALLA SERIALE SOFTWARE
+void serialswread() {
+    gsm.SimpleRead();
+}
+
+void inviaSMScomando(char *number_str, char *message_str)
+{
+	wdt_disable();
+	sms.SendSMS(number_str, message_str);
+	wdt_enable(WDTO_8S);
 }
