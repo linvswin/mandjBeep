@@ -13,6 +13,7 @@
 #include <EEPROM.h>
 #include "lib/MandJTimer/MandJTimer.h"
 
+#ifdef MJGSM
 #include "SIM900.h"
 #include <SoftwareSerial.h>
 #include "sms.h"
@@ -23,6 +24,7 @@ char inSerial[40];
 char position=0;
 char phone_number[20]; // array for the phone number string
 char sms_text[160];
+#endif
 
 #include "lib/LCDMenuLib/LCDMenuLib.h"
 #include "lib/PCF8574/PCF8574_Class.h"

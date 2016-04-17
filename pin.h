@@ -7,7 +7,7 @@
 **/
 
 #define BAUD_RATE  9600  //115200    //9600
-#define MJGSM
+//#define MJGSM
 
 #define DEBUG
 #ifdef DEBUG

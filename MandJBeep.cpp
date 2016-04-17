@@ -21,12 +21,12 @@ void setup() {
 	Serial.begin(BAUD_RATE);
 //	Serial1.begin(2400);
 	//salvaEventoEprom(-1);
-
+#ifdef MJGSM
 	if (gsm.begin(2400)) {
 	        Serial.println("\nGSM status=READY");
 	        started = true;
 	} else Serial.println("\nGSM status=IDLE");
-
+#endif
 	//saveSettings();
 	loadSettings();
 
@@ -121,7 +121,7 @@ void loop() {
 		//int inByte = Serial.read();
 		Serial1.write(Serial.read());
 	}*/
-
+#ifdef MJGSM
 	position = sms.IsSMSPresent(SMS_UNREAD);
 	if (position) {
 	  // read new SMS
@@ -154,7 +154,7 @@ void loop() {
 	//Read for new byte on NewSoftSerial.
 		serialswread();
 	}*/
-
+#endif
 	if (alarmeAttivo)
 	{
 		for(uint8_t i=0; i < numSens; i++){
@@ -355,6 +355,7 @@ void codiceErrato(char adm=0)
 		lcd.setCursor(3, 0);
 		lcd.print(TXT_INVALID_PIN);
 	}else{
+		password.set(settings.alarmPassword1);
 		lcd.setCursor(0, 0);
 		lcd.print(TXT_INVALID_ADMIN_PIN);
 	}
@@ -649,6 +650,7 @@ String leggiEventoEprom(byte a)
 							F("|")+printDigit(EEPROM.read(10))+printDigit(EEPROM.read(11));
 }
 
+#ifdef MJGSM
 //LEGGE DALLA SERIALE HARDWARE
 void serialhwread() {
 	i_serialh = 0;
@@ -697,3 +699,4 @@ void inviaSMScomando(char *number_str, char *message_str)
 	sms.SendSMS(number_str, message_str);
 	wdt_enable(WDTO_8S);
 }
+#endif
