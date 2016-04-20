@@ -7,7 +7,7 @@
 **/
 
 #define BAUD_RATE  9600  //115200    //9600
-//#define MJGSM
+
 
 #define DEBUG
 #ifdef DEBUG
@@ -18,7 +18,7 @@
 //	#define DEBUG_PIR
 //	#define DEBUG_SECTIMER
 //	#define DEBUG_PRINTDATA
-	#define DEBUG_SMS
+//	#define DEBUG_SMS
 #endif
 
 #define ROWS  4  // Four rows
