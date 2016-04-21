@@ -13,7 +13,7 @@
 #include <EEPROM.h>
 #include "lib/MandJTimer/MandJTimer.h"
 
-//#define MJGSM
+#define MJGSM
 
 #ifdef MJGSM
 #include "SIM900.h"

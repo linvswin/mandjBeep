@@ -369,6 +369,7 @@ void primaDiAttivare(){
 #ifdef DEBUG
 		Serial.println(F("Ritardo attivazione ..........."));
 #endif
+	lcd.backlight();
 	if (checkSensori()) {
 		t.after(settings.tempoRitardo, doAfterRitActivate);
 		t.every(1, doPrintRitAttivazione, settings.tempoRitardo-1);
