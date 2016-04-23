@@ -21,11 +21,15 @@
 #include "sms.h"
 SMSGSM sms;
 boolean started = false;
+//int started = 0;
 int i_serialh = 0;
 char inSerial[40];
 char position=0;
 char phone_number[20]; // array for the phone number string
 char sms_text[160];
+#else
+int i_serialh = 0;
+char inSerial[40];
 #endif
 
 #include "lib/LCDMenuLib/LCDMenuLib.h"

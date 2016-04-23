@@ -8,7 +8,7 @@
 
 #define BAUD_RATE  9600  //115200    //9600
 
-
+#define CTRL_Z 26
 #define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY

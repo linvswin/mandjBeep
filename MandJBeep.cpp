@@ -19,13 +19,24 @@ String printDigit(int digits)
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-//	Serial1.begin(2400);
+
 	//salvaEventoEprom(-1);
+
 #ifdef MJGSM
 	if (gsm.begin(2400)) {
 	        Serial.println("\nGSM status=READY");
+	        //started = gsm.getStatus();
 	        started = true;
-	} else Serial.println("\nGSM status=IDLE");
+	} else {
+		Serial.println("\nGSM status=IDLE");
+	    started = false;
+	}
+#else
+	//Serial1.begin(2400);
+	Serial1.begin(BAUD_RATE);
+
+	if (Serial1) Serial.println("Serila GSM connected");
+	else Serial.println("Serila GSM not connected");
 #endif
 	//saveSettings();
 	loadSettings();
@@ -110,50 +121,64 @@ void loop() {
 	now = RTC.now();
 	keypad.getKey();
 
+//	if (Serial1) Serial.println("Serila GSM connected");
+//	else Serial.println("Serila GSM not connected");
+
 	// read from port 1, send to port 0:
-	/*if (Serial1.available()) {
+	/*//if (Serial1.available()) {
+	while (Serial1.available()) {
 		//int inByte = Serial1.read();
 		Serial.write(Serial1.read());
-	}
-
+	}//else Serial.println("No sserial1");
+*/
 	// read from port 0, send to port 1:
-	if (Serial.available()) {
+	/*//if (Serial.available()) {
+	while (Serial.available()) {
 		//int inByte = Serial.read();
 		Serial1.write(Serial.read());
 	}*/
+
+
+
 #ifdef MJGSM
-	position = sms.IsSMSPresent(SMS_UNREAD);
-	if (position) {
-	  // read new SMS
-	  sms.GetSMS(position, phone_number, sms_text, 160);
+	if (started)
+	{
+		position = sms.IsSMSPresent(SMS_UNREAD);
+		if (position) {
+		  // read new SMS
+		  sms.GetSMS(position, phone_number, sms_text, 160);
 
-	  Serial.print("Num tel: ");
-	  Serial.println(phone_number);
+		  Serial.print("Num tel: ");
+		  Serial.println(phone_number);
 
-	  Serial.print("Text: ");
-	  Serial.println(sms_text);
+		  Serial.print("Text: ");
+		  Serial.println(sms_text);
 
-	  if (!strcmp(sms_text, "ATTIVA"))
-	  {
-		  if (alarmeAttivo == false && statoAllarme == false) {
-			  primaDiAttivare();
+		  if (!strcmp(sms_text, "ATTIVA"))
+		  {
+			  if (alarmeAttivo == false && statoAllarme == false) {
+				  primaDiAttivare();
+			  }
+		  }else if (!strcmp(sms_text, "DISATTIVA"))
+		  {
+			  disattiva();
+		  }else if (!strcmp(sms_text, "DISSENTEMP"))
+		  {
+			  disattivaSensori();
 		  }
-	  }else if (!strcmp(sms_text, "DISATTIVA"))
-	  {
-		  disattiva();
-	  }else if (!strcmp(sms_text, "DISSENTEMP"))
-	  {
-		  disattivaSensori();
-	  }
-	  sms.DeleteSMS(position);
-	} /*else {
+		  sms.DeleteSMS(position);
+		} /*else {
 
-	//Read for new byte on serial hardware,
-	//and write them on NewSoftSerial.
-		serialhwread();
-	//Read for new byte on NewSoftSerial.
-		serialswread();
-	}*/
+		//Read for new byte on serial hardware,
+		//and write them on NewSoftSerial.
+			serialhwread();
+		//Read for new byte on NewSoftSerial.
+			serialswread();
+		}*/
+	}
+#else
+	serialhwread();
+	gsmRead();
 #endif
 	if (alarmeAttivo)
 	{
@@ -451,10 +476,12 @@ void alarmTriggered() {
 
 #ifdef MJGSM
 			//if (position>0)
+			if (started)
 			{
 				String msg="Intrusione: "+sensore[i].getMessaggio();
 				msg.toCharArray(sms_text, 160);
 				//Serial.println(sms_text);
+
 				inviaSMScomando(phone_number, sms_text);
 			}
 #endif
@@ -573,12 +600,15 @@ boolean checkSensori(){
 					//lcd.setCursor(5, 2);
 					lcd.print( sensore[i].getMessaggio() );
 #ifdef MJGSM
-					if (position>0)
+					if (started)
 					{
-						String msg="Err: "+sensore[i].getMessaggio();
-						msg.toCharArray(sms_text, 160);
-						//Serial.println(sms_text);
-						inviaSMScomando(phone_number, sms_text);
+						if (position>0)
+						{
+							String msg="Err: "+sensore[i].getMessaggio();
+							msg.toCharArray(sms_text, 160);
+							//Serial.println(sms_text);
+							inviaSMScomando(phone_number, sms_text);
+						}
 					}
 #endif
 					password.reset();
@@ -653,7 +683,7 @@ String leggiEventoEprom(byte a)
 
 #ifdef MJGSM
 //LEGGE DALLA SERIALE HARDWARE
-void serialhwread() {
+/*void serialhwread() {
 	i_serialh = 0;
     if (Serial.available() > 0) {
         while (Serial.available() > 0) {
@@ -693,11 +723,78 @@ void serialhwread() {
 void serialswread() {
     gsm.SimpleRead();
 }
-
+*/
 void inviaSMScomando(char *number_str, char *message_str)
 {
 	wdt_disable();
 	sms.SendSMS(number_str, message_str);
 	wdt_enable(WDTO_8S);
+}
+
+#else
+
+void serialhwread() {
+	i_serialh = 0;
+    if (Serial.available() > 0) {
+        while (Serial.available() > 0) {
+            inSerial[i_serialh] = (Serial.read());
+            delay(10);
+            i_serialh++;
+        }
+
+        inSerial[i_serialh] = '\0';
+        if (!strcmp(inSerial, "/END")) {
+            Serial.println("_");
+            inSerial[0] = 0x1a;
+            inSerial[1] = '\0';
+           // gsm.SimpleWriteln(inSerial);
+        }
+        //Send a saved AT command using serial port.
+        if (!strcmp(inSerial, "TEST")) {
+            Serial.println("SIGNAL QUALITY");
+            Serial1.println("AT+CSQ");
+            Serial1.println("AT+COPS?");
+            //gsm.SimpleWriteln("AT+CSQ");
+            //gsm.SimpleWriteln("AT+COPS?");
+        } else if(!strcmp(inSerial, "SMS")){
+            Serial.println("SMS TEST");
+            sendSMS("3392160999", "Test SMS");
+            //if (sms.SendSMS("3392160999", "Test SMS"))
+             //   Serial.println("\nSMS sent OK");
+        } else if(!strcmp(inSerial, "ALL")){
+            Serial.println("SMS LEGGI TUTTI");
+            //gsm.SimpleWriteln("AT+CMGL=\"ALL\",1");
+        } else {
+            //Serial.println(inSerial);
+            ivioComandoAT(inSerial);
+            //gsm.SimpleWriteln(inSerial);
+        }
+        inSerial[0] = '\0';
+    }
+}
+
+void sendSMS(char *number_str, char *message_str){
+	Serial1.println("AT+CMGF=1\r\n");
+	delay(1000);
+	Serial1.println("AT+CMGS=\"3392160999\"\r\n");
+	delay(1000);
+	Serial1.write(message_str);
+	Serial1.write((char)CTRL_Z);
+}
+
+void gsmRead()
+{
+	char datain;
+	if(Serial1.available()>0){
+		datain=Serial1.read();
+		if(datain>0){
+			Serial.print(datain);
+		}
+	}
+}
+
+void ivioComandoAT(char *cmd)
+{
+	Serial1.println(cmd);
 }
 #endif

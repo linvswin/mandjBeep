@@ -39,14 +39,15 @@ String leggiEventoEprom(byte a);
 void check_activity();
 void refresh_lcd();
 
+#ifdef MJGSM
 void serialhwread();
 void serialswread();
 void inviaSMScomando(char *number_str, char *message_str);
-
-//void menu_crea();
-//void menu_screen();
-//void menu_loadvar();
-//void menu_savevar();
-//void menuSetup();
+#else
+void serialhwread();
+void gsmRead();
+void sendSMS(char *number_str, char *message_str);
+void ivioComandoAT(char *cmd);
+#endif
 
 #endif /* DEF_H_ */
