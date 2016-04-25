@@ -84,8 +84,14 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
 
 //Real Time Clock
+#ifndef CLKDS3231
 RTC_DS1307 RTC;
 DateTime now;
+#else
+RtcDS3231 RTC;
+RtcDateTime now;
+#endif
+
 
 boolean alarmeAttivo=false;
 boolean statoAllarme=false;

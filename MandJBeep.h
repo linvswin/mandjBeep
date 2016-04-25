@@ -10,6 +10,8 @@
 #include "Arduino.h"
 
 #include <avr/wdt.h>
+#include <avr/pgmspace.h>
+
 #include <EEPROM.h>
 #include "lib/MandJTimer/MandJTimer.h"
 
@@ -34,14 +36,21 @@ char inSerial[40];
 
 #include "lib/LCDMenuLib/LCDMenuLib.h"
 #include "lib/PCF8574/PCF8574_Class.h"
-#include <avr/pgmspace.h>
+
 #include <LiquidCrystal_I2C.h>
 
 #include "lib/Keypad_I2C/Keypad_I2C.h"
 #include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
+
+#define CLKDS3231
+
+#ifndef CLKDS3231
 // cambia wuesta riga in RTClib.h
 //enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
 #include "lib/RTClib/RTClib.h"
+#else
+#include <RtcDS3231.h>
+#endif
 //#include "lib/Flash/Flash.h"
 
 #include "pin.h"

@@ -42,14 +42,47 @@ void setup() {
 	loadSettings();
 
 	//Adding time
+#ifndef CLKDS3231
 	RTC.begin();
 	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
 	//RTC.adjust(DateTime(__DATE__, __TIME__));
+#else
+	RTC.Begin();
+	RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
+	if (!RTC.IsDateTimeValid())
+		RTC.SetDateTime(compiled);
+#endif
+
 #ifdef DEBUG
+#ifndef CLKDS3231
 	if (!RTC.isrunning())
+#else
+	if (!RTC.GetIsRunning())
+#endif
 		Serial.println(F("RTC NOT run"));
 	else
 		Serial.println(F("RTC run"));
+#endif
+
+#ifdef CLKDS3231
+	now = RTC.GetDateTime();
+	if (now < compiled)
+	{
+		Serial.println("RTC is older than compile time!  (Updating DateTime)");
+		RTC.SetDateTime(compiled);
+	}
+	else if (now > compiled)
+	{
+		Serial.println("RTC is newer than compile time. (this is expected)");
+	}
+	else if (now == compiled)
+	{
+		Serial.println("RTC is the same as compile time! (not expected but all is fine)");
+	}
+	// never assume the Rtc was last configured by you, so
+	// just clear them to your needed state
+	RTC.Enable32kHzPin(false);
+	RTC.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
 #endif
 	//Serial.println("GSM Shield testing.");
 	//Start configuration of shield with baudrate.
@@ -118,7 +151,11 @@ void setup() {
 }
 
 void loop() {
+#ifndef CLKDS3231
 	now = RTC.now();
+#else
+	now = RTC.GetDateTime();
+#endif
 	keypad.getKey();
 
 //	if (Serial1) Serial.println("Serila GSM connected");
@@ -243,6 +280,7 @@ void printDate() {
 
 String getDate() {
 	String txt = F("");
+#ifndef CLKDS3231
 	txt += printDigit(now.hour()) + F(":");
 	txt += printDigit(now.minute()) + F(":");
 	txt += printDigit(now.second());
@@ -250,6 +288,15 @@ String getDate() {
 	txt += printDigit(now.day()) + F("/");
 	txt += printDigit(now.month()) + F("/");
 	txt += printDigit(now.year());
+#else
+	txt += printDigit(now.Hour()) + F(":");
+	txt += printDigit(now.Minute()) + F(":");
+	txt += printDigit(now.Second());
+	txt += TXT_SPAZIO;
+	txt += printDigit(now.Day()) + F("/");
+	txt += printDigit(now.Month()) + F("/");
+	txt += printDigit(now.Year());
+#endif
 #ifdef  DEBUG
 #ifdef DEBUG_PRINTDATA
 	Serial.print(F("date: "));
@@ -662,11 +709,20 @@ void salvaEventoEprom(int num)
 	EEPROM.write(11, EEPROM.read(5));
 
 	EEPROM.write(0, num);
+
+#ifndef CLKDS3231
 	EEPROM.write(1, now.day());
 	EEPROM.write(2, now.month());
 	EEPROM.write(3, now.year()-2000);
 	EEPROM.write(4, now.hour());
 	EEPROM.write(5, now.minute());
+#else
+	EEPROM.write(1, now.Day());
+	EEPROM.write(2, now.Month());
+	EEPROM.write(3, now.Year()-2000);
+	EEPROM.write(4, now.Hour());
+	EEPROM.write(5, now.Minute());
+#endif
 }
 
 String leggiEventoEprom(byte a)
