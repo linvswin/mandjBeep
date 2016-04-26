@@ -139,6 +139,9 @@ private:
 protected:
 public:
 	void inizializza();
+
+	void saveSettings(void);
+	void loadSettings(void);
 };
 
 #endif /* _MandJBeep_H_ */

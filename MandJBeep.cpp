@@ -84,6 +84,7 @@ void setup() {
 	RTC.Enable32kHzPin(false);
 	RTC.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
 #endif
+
 	//Serial.println("GSM Shield testing.");
 	//Start configuration of shield with baudrate.
 	//For http uses is raccomanded to use 4800 or slower.
@@ -93,11 +94,6 @@ void setup() {
 	sensore[2].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
 	sensore[3].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
 	sensore[4].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
-
-	//sensore[4].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
-	//sensore[5].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
-	//sensore[6].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
-	//sensore[7].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -854,9 +850,22 @@ void ivioComandoAT(char *cmd)
 	myGSM.println(cmd);
 }
 
+/************* **************/
 void MandJBeep::inizializza(){
 	//saveSettings();
 	loadSettings();
 }
 
+void MandJBeep::saveSettings(void) {
+	byte* p = (byte*) &settings;
+	for (int i = 12; i < sizeof(AlarmSettings); i++)
+		EEPROM.write(i, p[i]);
+}
+
+void MandJBeep::loadSettings(void) {
+	byte* p = (byte*) &settings;
+	for (int i = 12; i < sizeof(AlarmSettings); i++)
+		p[i] = EEPROM.read(i);
+}
+/************* **************/
 #endif
