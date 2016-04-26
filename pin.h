@@ -6,10 +6,11 @@
  * Licence: GPL ver 3
 **/
 
-#define BAUD_RATE  9600  //115200    //9600
+#define BAUD_RATE  9600  //115200
 
 #define CTRL_Z 26
-#define DEBUG
+
+//#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
@@ -70,8 +71,11 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	#define GIALLO_LED  1
 	#define RELAY_SIRENA1 11
 	//#define RELAY_SIRENA2 7
+
+	#define myGSM	Serial1
 #endif
 
+/************* LCD *************/
 #define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
 #define BACKLIGHT_PIN  7
 #define En_pin  4
@@ -81,17 +85,22 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 #define D5_pin  1
 #define D6_pin  2
 #define D7_pin  3
-LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
+//LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
+/*===============================*/
 
-//Real Time Clock
-#ifndef CLKDS3231
-RTC_DS1307 RTC;
-DateTime now;
-#else
-RtcDS3231 RTC;
-RtcDateTime now;
-#endif
-
+/************ Sensori ************/
+//numero sensori
+#define numSens 5
+// pin del PCF8574 connessi al sensore
+#define I2C_REED1_PIN 0
+#define I2C_REED2_PIN 1
+#define I2C_REED3_PIN 2
+#define I2C_REED4_PIN 3
+#define I2C_REED5_PIN 4
+#define I2C_PIR0_PIN  7
+#define I2C_PIR1_PIN  6
+#define I2C_PIR2_PIN  5
+/*===============================*/
 
 boolean alarmeAttivo=false;
 boolean statoAllarme=false;

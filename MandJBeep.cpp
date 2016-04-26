@@ -32,10 +32,10 @@ void setup() {
 	    started = false;
 	}
 #else
-	//Serial1.begin(2400);
-	Serial1.begin(BAUD_RATE);
+	//myGSM.begin(2400);
+	myGSM.begin(BAUD_RATE);
 
-	if (Serial1) Serial.println("Serila GSM connected");
+	if (myGSM) Serial.println("Serila GSM connected");
 	else Serial.println("Serila GSM not connected");
 #endif
 	//saveSettings();
@@ -158,21 +158,21 @@ void loop() {
 #endif
 	keypad.getKey();
 
-//	if (Serial1) Serial.println("Serila GSM connected");
+//	if (myGSM) Serial.println("Serila GSM connected");
 //	else Serial.println("Serila GSM not connected");
 
 	// read from port 1, send to port 0:
-	/*//if (Serial1.available()) {
-	while (Serial1.available()) {
-		//int inByte = Serial1.read();
-		Serial.write(Serial1.read());
+	/*//if (myGSM.available()) {
+	while (myGSM.available()) {
+		//int inByte = myGSM.read();
+		Serial.write(myGSM.read());
 	}//else Serial.println("No sserial1");
 */
 	// read from port 0, send to port 1:
 	/*//if (Serial.available()) {
 	while (Serial.available()) {
 		//int inByte = Serial.read();
-		Serial1.write(Serial.read());
+		myGSM.write(Serial.read());
 	}*/
 
 
@@ -778,8 +778,8 @@ String leggiEventoEprom(byte a)
 //LEGGE DALLA SERIALE SOFTWARE
 void serialswread() {
     gsm.SimpleRead();
-}
-*/
+}*/
+
 void inviaSMScomando(char *number_str, char *message_str)
 {
 	wdt_disable();
@@ -808,8 +808,8 @@ void serialhwread() {
         //Send a saved AT command using serial port.
         if (!strcmp(inSerial, "TEST")) {
             Serial.println("SIGNAL QUALITY");
-            Serial1.println("AT+CSQ");
-            Serial1.println("AT+COPS?");
+            myGSM.println("AT+CSQ");
+            myGSM.println("AT+COPS?");
             //gsm.SimpleWriteln("AT+CSQ");
             //gsm.SimpleWriteln("AT+COPS?");
         } else if(!strcmp(inSerial, "SMS")){
@@ -830,19 +830,19 @@ void serialhwread() {
 }
 
 void sendSMS(char *number_str, char *message_str){
-	Serial1.println("AT+CMGF=1\r\n");
+	myGSM.println("AT+CMGF=1\r\n");
 	delay(1000);
-	Serial1.println("AT+CMGS=\"3392160999\"\r\n");
+	myGSM.println("AT+CMGS=\"3392160999\"\r\n");
 	delay(1000);
-	Serial1.write(message_str);
-	Serial1.write((char)CTRL_Z);
+	myGSM.write(message_str);
+	myGSM.write((char)CTRL_Z);
 }
 
 void gsmRead()
 {
 	char datain;
-	if(Serial1.available()>0){
-		datain=Serial1.read();
+	if(myGSM.available()>0){
+		datain=myGSM.read();
 		if(datain>0){
 			Serial.print(datain);
 		}
@@ -851,6 +851,12 @@ void gsmRead()
 
 void ivioComandoAT(char *cmd)
 {
-	Serial1.println(cmd);
+	myGSM.println(cmd);
 }
+
+void MandJBeep::inizializza(){
+	//saveSettings();
+	loadSettings();
+}
+
 #endif
