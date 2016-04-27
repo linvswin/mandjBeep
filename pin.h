@@ -36,7 +36,7 @@ const char keys[ROWS][COLS] = { // Define the Keymap
 byte rowPins[ROWS] = {3, 2, 1, 0}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 
-#define BOARD 2  // 0 mega2560, 1 uno r3
+#define BOARD 2  // 0 mega2560, 1 uno r3, 2 atmega1284
 #if ( BOARD==0 )
 //	#include <Keypad.h> //http://www.arduino.cc/playground/uploads/Code/Keypad.zip
 
@@ -49,8 +49,9 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	#define PIR_PIN1    47
 	#define RELAY_SIRENA1 4
 	#define RELAY_SIRENA2 5
-#endif
-#if ( BOARD==1 )
+
+	#define myGSM	Serial1
+#elif ( BOARD==1 )
 
 	#define TIMER1_PIN1 9   //buzzer pin
 	//#define TIMER1_PIN2 10   //buzzer pin
@@ -61,8 +62,7 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	//#define GIALLO_LED  8
 	//#define RELAY_SIRENA1 6
 	//#define RELAY_SIRENA2 7
-#endif
-#if ( BOARD==2 )
+#elif ( BOARD==2 )
 	#define TIMER1_PIN1 13 //13   //buzzer pin
 	#define TIMER1_PIN2 12   //buzzer pin
 
@@ -90,7 +90,7 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 
 /************ Sensori ************/
 //numero sensori
-#define numSens 5
+#define numSens 8
 // pin del PCF8574 connessi al sensore
 #define I2C_REED1_PIN 0
 #define I2C_REED2_PIN 1
@@ -102,9 +102,9 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 #define I2C_PIR2_PIN  5
 /*===============================*/
 
-boolean alarmeAttivo=false;
-boolean statoAllarme=false;
-boolean adminZone=false;
+//boolean alarmeAttivo=false;
+//boolean statoAllarme=false;
+//boolean adminZone=false;
 
 uint8_t passwd_pos=9;  // the postition of the password input
 
@@ -124,6 +124,7 @@ int8_t timerPrintData=0;
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
 #define TXT_INTRUSIONE   	   F("Intrusione")
 #define TXT_SPAZIO			   F(" ")
+#define TXT_INIZIALIZZA_GSM	   F("Inizializza GSM")
 
 //#define TXT_MENU               "Menu"
 #define TXT_SICUREZZA			"Sicurezza"

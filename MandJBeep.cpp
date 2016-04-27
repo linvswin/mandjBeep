@@ -20,13 +20,11 @@ String printDigit(int digits)
 void setup() {
 	Serial.begin(BAUD_RATE);
 
-	//salvaEventoEprom(-1);
-
 #ifdef MJGSM
 	if (gsm.begin(2400)) {
-	        Serial.println("\nGSM status=READY");
-	        //started = gsm.getStatus();
-	        started = true;
+		Serial.println("\nGSM status=READY");
+		//started = gsm.getStatus();
+		started = true;
 	} else {
 		Serial.println("\nGSM status=IDLE");
 	    started = false;
@@ -38,62 +36,11 @@ void setup() {
 	if (myGSM) Serial.println("Serila GSM connected");
 	else Serial.println("Serila GSM not connected");
 #endif
-	//saveSettings();
-	loadSettings();
 
+	allarm.inizializza();
 	//Adding time
-#ifndef CLKDS3231
-	RTC.begin();
-	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
-	//RTC.adjust(DateTime(__DATE__, __TIME__));
-#else
-	RTC.Begin();
-	RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
-	if (!RTC.IsDateTimeValid())
-		RTC.SetDateTime(compiled);
-#endif
-
-#ifdef DEBUG
-#ifndef CLKDS3231
-	if (!RTC.isrunning())
-#else
-	if (!RTC.GetIsRunning())
-#endif
-		Serial.println(F("RTC NOT run"));
-	else
-		Serial.println(F("RTC run"));
-#endif
-
-#ifdef CLKDS3231
-	now = RTC.GetDateTime();
-	if (now < compiled)
-	{
-		Serial.println("RTC is older than compile time!  (Updating DateTime)");
-		RTC.SetDateTime(compiled);
-	}
-	else if (now > compiled)
-	{
-		Serial.println("RTC is newer than compile time. (this is expected)");
-	}
-	else if (now == compiled)
-	{
-		Serial.println("RTC is the same as compile time! (not expected but all is fine)");
-	}
-	// never assume the Rtc was last configured by you, so
-	// just clear them to your needed state
-	RTC.Enable32kHzPin(false);
-	RTC.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
-#endif
-
-	//Serial.println("GSM Shield testing.");
-	//Start configuration of shield with baudrate.
-	//For http uses is raccomanded to use 4800 or slower.
-
-	sensore[0].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
-	sensore[1].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
-	sensore[2].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
-	sensore[3].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
-	sensore[4].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
+	allarm.inizializzaClock();
+	allarm.inizializzaSensori();
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -102,56 +49,36 @@ void setup() {
 	Serial.print(F("Setting sizeof: "));
 	Serial.println(sizeof(settings));
 #endif
-	password.set(settings.alarmPassword1);
 
-	//DDRD=0b11011111;
-	//DDRD |= _BV(PD2);
-	pinMode(GREEN_LED, OUTPUT);
-	//DDRD |= _BV(PD4);
-	pinMode(RED_LED, OUTPUT);
-	//DDRD |= _BV(PD6);
-	pinMode(RELAY_SIRENA1, OUTPUT);
-	//DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
-
-	//DDRB=0b00101110;
-	//DDRB |= _BV(PB0);
-	pinMode(GIALLO_LED, OUTPUT);
-	//DDRB |= _BV(PB1);
-	pinMode(TIMER1_PIN1, OUTPUT);
-	//DDRB |= _BV(PB2);
-	pinMode(TIMER1_PIN2, OUTPUT);
-	//DDRB &= ~(_BV(PB2));  //pinMode(PIR1_PIN, INPUT);
-	//DDRB &= ~(_BV(PB4));  //pinMode(PIR2_PIN, INPUT);
-
-	//PORTD |= _BV(PD7);     //digitalWrite(RELAY_SIRENA2, HIGH);
-	//PORTD |= _BV(PD6);
-	digitalWrite(RELAY_SIRENA1, HIGH);
-	//PORTD &= ~(_BV(PD6));  //digitalWrite(RELAY_SIRENA1, LOW);
-	//PORTD &= ~(_BV(PD4));
-	digitalWrite(RED_LED, LOW);
-	//PORTD |= _BV(PD2);
-	digitalWrite(GREEN_LED, HIGH);
-
-	keypad.begin(makeKeymap(keys));
-	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
+	allarm.inizializzaLed();
 
 #ifdef DEBUG_SETTINGS
 	printSettings();
 #endif
 
-	wdt_enable(WDTO_8S);
-	standby();
+	allarm.standby();
+
 	t.startTimer();
 	timerPrintData=t.every(1, printDate);
 	timerLCDbacklight = t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+
+	if (settings.gsm==1)
+	{
+		lcd.setCursor(0, 2);
+		lcd.println(TXT_INIZIALIZZA_GSM);
+		allarm.inizializzaGSM();
+	}
+
+	wdt_enable(WDTO_8S);
 }
 
 void loop() {
 #ifndef CLKDS3231
-	now = RTC.now();
+	allarm.now = allarm.RTC.now();
 #else
-	now = RTC.GetDateTime();
+	allarm.now = allarm.RTC.GetDateTime();
 #endif
+
 	keypad.getKey();
 
 //	if (myGSM) Serial.println("Serila GSM connected");
@@ -171,8 +98,6 @@ void loop() {
 		myGSM.write(Serial.read());
 	}*/
 
-
-
 #ifdef MJGSM
 	if (started)
 	{
@@ -189,15 +114,15 @@ void loop() {
 
 		  if (!strcmp(sms_text, "ATTIVA"))
 		  {
-			  if (alarmeAttivo == false && statoAllarme == false) {
+			  if (allarm.alarmeAttivo == false && allarm.statoAllarme == false) {
 				  primaDiAttivare();
 			  }
 		  }else if (!strcmp(sms_text, "DISATTIVA"))
 		  {
-			  disattiva();
+			  allarm.disattiva();
 		  }else if (!strcmp(sms_text, "DISSENTEMP"))
 		  {
-			  disattivaSensori();
+			  allarm.disattivaSensori();
 		  }
 		  sms.DeleteSMS(position);
 		} /*else {
@@ -213,7 +138,7 @@ void loop() {
 	serialhwread();
 	gsmRead();
 #endif
-	if (alarmeAttivo)
+	if (allarm.alarmeAttivo)
 	{
 		for(uint8_t i=0; i < numSens; i++){
 #ifdef DEBUG_SENS
@@ -230,7 +155,7 @@ void loop() {
 					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()!=sensTrigged)
 					{
 						sensore[i].setStato(sensTrigged);
-						alarmTriggered();
+						allarm.alarmTriggered();
 
 						if (sensore[i].getTipo()==tpReed){
 							if ( sensore[i].getConta() >= settings.maxReed_Conta){
@@ -256,7 +181,7 @@ void loop() {
 	wdt_reset();
 }
 
-void standby() {
+void MandJBeep::standby() {
 	//display time and date
 	lcd.clear();
 	lcd.setCursor(0, 0);
@@ -271,10 +196,10 @@ void standby() {
 void printDate() {
 	//TIME and DATE
 	lcd.setCursor(0, 1);
-	lcd.print(getDate());
+	lcd.print(allarm.getDate());
 }
 
-String getDate() {
+String MandJBeep::getDate() {
 	String txt = F("");
 #ifndef CLKDS3231
 	txt += printDigit(now.hour()) + F(":");
@@ -293,6 +218,7 @@ String getDate() {
 	txt += printDigit(now.Month()) + F("/");
 	txt += printDigit(now.Year());
 #endif
+
 #ifdef  DEBUG
 #ifdef DEBUG_PRINTDATA
 	Serial.print(F("date: "));
@@ -327,7 +253,7 @@ void keypadEvent(KeypadEvent eKey) {
 		case '#':
 			if (mostraMenu==false) {//# is to validate password
 				passwd_pos = 9;
-				checkPassword();
+				allarm.checkPassword();
 			} else {
 				LCDML_BUTTON_enter();
 			}
@@ -337,13 +263,13 @@ void keypadEvent(KeypadEvent eKey) {
 				password.reset();
 				passwd_pos = 9;
 				mostraMenu=false;
-				standby();
+				allarm.standby();
 			}else {
 				LCDML_BUTTON_quit();
 			}
 			break;
 		case 'A':
-			if (statoAllarme==false) {
+			if (allarm.statoAllarme==false) {
 				primaDiAttivare();
 			//	disattivaSensori();
 			}
@@ -354,18 +280,18 @@ void keypadEvent(KeypadEvent eKey) {
 				passwd_pos = 9;
 
 				password.set(settings.menuPassword);
-				if (checkPassword2())
+				if (allarm.checkPassword2())
 				{
 					t.stop(timerPrintData);
 					mostraMenu=true;
 					LCDML.goRoot();
 					LCDML_BUTTON_up();
-				} else codiceErrato(1);
+				} else allarm.codiceErrato(1);
 			} else {
 				password.set(settings.alarmPassword1);
 				mostraMenu=false;
 				timerPrintData=t.every(1, printDate);
-				standby();
+				allarm.standby();
 			}
 			break;
 		case 'C':
@@ -399,11 +325,11 @@ void keypadEvent(KeypadEvent eKey) {
 	}
 }
 
-bool checkPassword2() {
+bool MandJBeep::checkPassword2() {
 	return password.evaluate();
 }
 
-void checkPassword() {           // To check if PIN is corrected, if not, retry!
+void MandJBeep::checkPassword() {           // To check if PIN is corrected, if not, retry!
 	if (password.evaluate()) {
 		if (alarmeAttivo == false && statoAllarme == false) {
 			primaDiAttivare();
@@ -413,7 +339,7 @@ void checkPassword() {           // To check if PIN is corrected, if not, retry!
 		codiceErrato(0);
 }
 
-void codiceErrato(char adm=0)
+void MandJBeep::codiceErrato(char adm=0)
 {
 	password.reset();
 	lcd.clear();
@@ -430,7 +356,7 @@ void codiceErrato(char adm=0)
 	lcd.setCursor(5, 2);
 	lcd.print(TXT_RIPROVA_PIN);
 	delay(1000);
-	standby();
+	allarm.standby();
 }
 
 void primaDiAttivare(){
@@ -438,14 +364,14 @@ void primaDiAttivare(){
 		Serial.println(F("Ritardo attivazione ..........."));
 #endif
 	lcd.backlight();
-	if (checkSensori()) {
+	if (allarm.checkSensori()) {
 		t.after(settings.tempoRitardo, doAfterRitActivate);
 		t.every(1, doPrintRitAttivazione, settings.tempoRitardo-1);
-		standby();
+		allarm.standby();
 	}
 }
 
-void attiva() // Activate the system if correct PIN entered and display message on the screen
+void MandJBeep::attiva() // Activate the system if correct PIN entered and display message on the screen
 {
 	alarmeAttivo = true;
 	statoAllarme = true;
@@ -461,11 +387,11 @@ void attiva() // Activate the system if correct PIN entered and display message 
 	//PORTD &= ~(1<<PD2);
 	//PORTD &= ~(_BV(PD2));
 
-	standby();
+	allarm.standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
 
-void disattiva() {
+void MandJBeep::disattiva() {
 	statoAllarme = false;
 	alarmeAttivo = false;
 
@@ -490,12 +416,12 @@ void disattiva() {
 //		sensore[i].setStato(sensNonAttivo);
 
 	delay(5000);
-	standby();
+	allarm.standby();
 
-	riAttivaSensori();
+	allarm.riAttivaSensori();
 }
 
-void alarmTriggered() {
+void MandJBeep::alarmTriggered() {
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
 
@@ -515,7 +441,7 @@ void alarmTriggered() {
 	for(uint8_t i=0; i < numSens; i++){
 		if ( sensore[i].getStato()==sensTrigged ) {
 			lcd.print( sensore[i].getMessaggio() );
-			salvaEventoEprom(i);
+			allarm.salvaEventoEprom(i);
 
 #ifdef MJGSM
 			//if (position>0)
@@ -533,18 +459,6 @@ void alarmTriggered() {
 
 	//int afterEvent=t.after(settings.tempoSirena * 1000, doAfterTimerT);
 	t.after(settings.tempoSirena, doAfterTimerT);
-}
-
-void saveSettings(void) {
-	byte* p = (byte*) &settings;
-	for (int i = 12; i < sizeof(AlarmSettings); i++)
-		EEPROM.write(i, p[i]);
-}
-
-void loadSettings(void) {
-	byte* p = (byte*) &settings;
-	for (int i = 12; i < sizeof(AlarmSettings); i++)
-		p[i] = EEPROM.read(i);
 }
 
 #ifdef DEBUG_SETTINGS
@@ -574,9 +488,9 @@ void doAfterRitActivate() {
 	Serial.println(F("Attivo Allarme"));
 #endif
 	conta = 0;
-	attiva();
+	allarm.attiva();
 	mostraMenu=false;
-	standby();
+	allarm.standby();
 }
 
 void doAfterTimerT() {
@@ -622,115 +536,9 @@ void doPrintRitAttivazione() {
 void timerDoLCDbacklight() {
 	if (mostraMenu==true){
 		mostraMenu==false;
-		standby();
+		allarm.standby();
 	}
 	lcd.noBacklight();
-}
-
-boolean checkSensori(){
-	for(int i=0; i < numSens; i++){
-		//if (sensore[i].getStato()==sensAttivo)
-		if (sensore[i].getStato()!=sensDisabilitato and sensore[i].getStato()!=sensTempDisabilitato)
-		{
-			if (sensore[i].getTipo()==tpReed)
-			{
-				if ( PCF_24.read( sensore[i].getPin())==sensore[i].getLogica() ){
-					sensore[i].setStato(sensMalfunzionamento);
-
-					lcd.clear();
-					lcd.setCursor(0, 2);
-					lcd.print(F("Err: "));
-					//lcd.setCursor(5, 2);
-					lcd.print( sensore[i].getMessaggio() );
-#ifdef MJGSM
-					if (started)
-					{
-						if (position>0)
-						{
-							String msg="Err: "+sensore[i].getMessaggio();
-							msg.toCharArray(sms_text, 160);
-							//Serial.println(sms_text);
-							inviaSMScomando(phone_number, sms_text);
-						}
-					}
-#endif
-					password.reset();
-					passwd_pos = 9;
-					return false;
-				}
-			}
-		}
-	}
-	password.reset();
-	passwd_pos = 9;
-	standby();
-	return true;
-}
-
-void disattivaSensori(){
-	for(int i=0; i < numSens; i++){
-		if ( sensore[i].getStato()==sensMalfunzionamento )
-		{
-			sensore[i].setStato(sensTempDisabilitato);
-			//PORTB |= _BV(PB0);
-			digitalWrite(GIALLO_LED, HIGH);
-		}
-	}
-	password.reset();
-	passwd_pos = 9;
-	standby();
-}
-
-void riAttivaSensori(){
-	for(int i=0; i < numSens; i++){
-		if (sensore[i].getStato()!=sensDisabilitato){
-			sensore[i].setStato(sensAttivo);
-			sensore[i].setConta(0);
-			//PORTB &= ~(_BV(PB0));
-			digitalWrite(GIALLO_LED, LOW);
-		}
-	}
-	password.reset();
-	passwd_pos = 9;
-	standby();
-}
-
-void salvaEventoEprom(int num)
-{
-	EEPROM.write(5, EEPROM.read(0));
-	EEPROM.write(7, EEPROM.read(1));
-	EEPROM.write(8, EEPROM.read(2));
-	EEPROM.write(9, EEPROM.read(3));
-	EEPROM.write(10, EEPROM.read(4));
-	EEPROM.write(11, EEPROM.read(5));
-
-	EEPROM.write(0, num);
-
-#ifndef CLKDS3231
-	EEPROM.write(1, now.day());
-	EEPROM.write(2, now.month());
-	EEPROM.write(3, now.year()-2000);
-	EEPROM.write(4, now.hour());
-	EEPROM.write(5, now.minute());
-#else
-	EEPROM.write(1, now.Day());
-	EEPROM.write(2, now.Month());
-	EEPROM.write(3, now.Year()-2000);
-	EEPROM.write(4, now.Hour());
-	EEPROM.write(5, now.Minute());
-#endif
-}
-
-String leggiEventoEprom(byte a)
-{	// S:num sensore|gg/mm/yy|hh:mm
-	if (a==0)
-		return (String)sensore[EEPROM.read(0)].getMessaggio()+
-					F("|")+printDigit(EEPROM.read(1))+printDigit(EEPROM.read(2))+printDigit(EEPROM.read(3))+
-					F("|")+printDigit(EEPROM.read(4))+printDigit(EEPROM.read(5));
-	else
-		return (String)sensore[EEPROM.read(6)].getMessaggio()+
-							F("|")+printDigit(EEPROM.read(7))+printDigit(EEPROM.read(8))+printDigit(EEPROM.read(9))+
-							F("|")+printDigit(EEPROM.read(10))+printDigit(EEPROM.read(11));
 }
 
 #ifdef MJGSM
@@ -849,11 +657,22 @@ void ivioComandoAT(char *cmd)
 {
 	myGSM.println(cmd);
 }
+#endif
 
 /************* **************/
+MandJBeep::MandJBeep(){
+	alarmeAttivo=false;
+	statoAllarme=false;
+	adminZone=false;
+}
+
 void MandJBeep::inizializza(){
 	//saveSettings();
 	loadSettings();
+	password.set(settings.alarmPassword1);
+
+	keypad.begin(makeKeymap(keys));
+	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
 }
 
 void MandJBeep::saveSettings(void) {
@@ -867,5 +686,216 @@ void MandJBeep::loadSettings(void) {
 	for (int i = 12; i < sizeof(AlarmSettings); i++)
 		p[i] = EEPROM.read(i);
 }
-/************* **************/
+
+
+boolean MandJBeep::checkSensori(){
+	for(int i=0; i < numSens; i++){
+		//if (sensore[i].getStato()==sensAttivo)
+		if (sensore[i].getStato()!=sensDisabilitato and sensore[i].getStato()!=sensTempDisabilitato)
+		{
+			if (sensore[i].getTipo()==tpReed)
+			{
+				if ( PCF_24.read( sensore[i].getPin())==sensore[i].getLogica() ){
+					sensore[i].setStato(sensMalfunzionamento);
+
+					lcd.clear();
+					lcd.setCursor(0, 2);
+					lcd.print(F("Err: "));
+					//lcd.setCursor(5, 2);
+					lcd.print( sensore[i].getMessaggio() );
+#ifdef MJGSM
+					if (started)
+					{
+						if (position>0)
+						{
+							String msg="Err: "+sensore[i].getMessaggio();
+							msg.toCharArray(sms_text, 160);
+							//Serial.println(sms_text);
+							inviaSMScomando(phone_number, sms_text);
+						}
+					}
 #endif
+					password.reset();
+					passwd_pos = 9;
+					return false;
+				}
+			}
+		}
+	}
+	password.reset();
+	passwd_pos = 9;
+	standby();
+	return true;
+}
+
+void MandJBeep::disattivaSensori(){
+	for(int i=0; i < numSens; i++){
+		if ( sensore[i].getStato()==sensMalfunzionamento )
+		{
+			sensore[i].setStato(sensTempDisabilitato);
+			//PORTB |= _BV(PB0);
+			digitalWrite(GIALLO_LED, HIGH);
+		}
+	}
+	password.reset();
+	passwd_pos = 9;
+	standby();
+}
+
+void MandJBeep::riAttivaSensori(){
+	for(int i=0; i < numSens; i++){
+		if (sensore[i].getStato()!=sensDisabilitato){
+			sensore[i].setStato(sensAttivo);
+			sensore[i].setConta(0);
+			//PORTB &= ~(_BV(PB0));
+			digitalWrite(GIALLO_LED, LOW);
+		}
+	}
+	password.reset();
+	passwd_pos = 9;
+	standby();
+}
+
+void MandJBeep::salvaEventoEprom(int num)
+{
+	EEPROM.write(5, EEPROM.read(0));
+	EEPROM.write(7, EEPROM.read(1));
+	EEPROM.write(8, EEPROM.read(2));
+	EEPROM.write(9, EEPROM.read(3));
+	EEPROM.write(10, EEPROM.read(4));
+	EEPROM.write(11, EEPROM.read(5));
+
+	EEPROM.write(0, num);
+
+#ifndef CLKDS3231
+	EEPROM.write(1, now.day());
+	EEPROM.write(2, now.month());
+	EEPROM.write(3, now.year()-2000);
+	EEPROM.write(4, now.hour());
+	EEPROM.write(5, now.minute());
+#else
+	EEPROM.write(1, now.Day());
+	EEPROM.write(2, now.Month());
+	EEPROM.write(3, now.Year()-2000);
+	EEPROM.write(4, now.Hour());
+	EEPROM.write(5, now.Minute());
+#endif
+}
+
+String MandJBeep::leggiEventoEprom(byte a)
+{	// S:num sensore|gg/mm/yy|hh:mm
+	if (a==0)
+		return (String)sensore[EEPROM.read(0)].getMessaggio()+
+					F("|")+printDigit(EEPROM.read(1))+printDigit(EEPROM.read(2))+printDigit(EEPROM.read(3))+
+					F("|")+printDigit(EEPROM.read(4))+printDigit(EEPROM.read(5));
+	else
+		return (String)sensore[EEPROM.read(6)].getMessaggio()+
+							F("|")+printDigit(EEPROM.read(7))+printDigit(EEPROM.read(8))+printDigit(EEPROM.read(9))+
+							F("|")+printDigit(EEPROM.read(10))+printDigit(EEPROM.read(11));
+}
+
+void MandJBeep::inizializzaClock()
+{
+	//Adding time
+#ifndef CLKDS3231
+	RTC.begin();
+	//togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
+	//RTC.adjust(DateTime(__DATE__, __TIME__));
+#else
+	RTC.Begin();
+	RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
+	if (!RTC.IsDateTimeValid())
+		RTC.SetDateTime(compiled);
+#endif
+
+#ifdef DEBUG
+#ifndef CLKDS3231
+	if (!RTC.isrunning())
+#else
+	if (!RTC.GetIsRunning())
+#endif
+		Serial.println(F("RTC NOT run"));
+	else
+		Serial.println(F("RTC run"));
+#endif
+
+#ifdef CLKDS3231
+	now = RTC.GetDateTime();
+	if (now < compiled)
+	{
+		Serial.println("RTC is older than compile time!  (Updating DateTime)");
+		RTC.SetDateTime(compiled);
+	}
+	else if (now > compiled)
+	{
+		Serial.println("RTC is newer than compile time. (this is expected)");
+	}
+	else if (now == compiled)
+	{
+		Serial.println("RTC is the same as compile time! (not expected but all is fine)");
+	}
+	// never assume the Rtc was last configured by you, so
+	// just clear them to your needed state
+	RTC.Enable32kHzPin(false);
+	RTC.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
+#endif
+}
+
+void MandJBeep::inizializzaLed(){
+	//DDRD=0b11011111;
+	//DDRD |= _BV(PD2);
+	pinMode(GREEN_LED, OUTPUT);
+	//DDRD |= _BV(PD4);
+	pinMode(RED_LED, OUTPUT);
+	//DDRD |= _BV(PD6);
+	pinMode(RELAY_SIRENA1, OUTPUT);
+	//DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
+
+	//DDRB=0b00101110;
+	//DDRB |= _BV(PB0);
+	pinMode(GIALLO_LED, OUTPUT);
+	//DDRB |= _BV(PB1);
+	pinMode(TIMER1_PIN1, OUTPUT);
+	//DDRB |= _BV(PB2);
+	pinMode(TIMER1_PIN2, OUTPUT);
+	//DDRB &= ~(_BV(PB2));  //pinMode(PIR1_PIN, INPUT);
+	//DDRB &= ~(_BV(PB4));  //pinMode(PIR2_PIN, INPUT);
+
+	//PORTD |= _BV(PD7);     //digitalWrite(RELAY_SIRENA2, HIGH);
+	//PORTD |= _BV(PD6);
+	digitalWrite(RELAY_SIRENA1, HIGH);
+	//PORTD &= ~(_BV(PD6));  //digitalWrite(RELAY_SIRENA1, LOW);
+	//PORTD &= ~(_BV(PD4));
+	digitalWrite(RED_LED, LOW);
+	//PORTD |= _BV(PD2);
+	digitalWrite(GREEN_LED, HIGH);
+}
+
+void MandJBeep::inizializzaSensori()
+{
+	sensore[0].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
+	sensore[1].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
+	sensore[2].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
+	sensore[3].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
+	sensore[4].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
+}
+
+void MandJBeep::inizializzaGSM(){
+#ifdef MJGSM
+	if (gsm.begin(2400)) {
+		Serial.println("\nGSM status=READY");
+		//started = gsm.getStatus();
+		started = true;
+	} else {
+		Serial.println("\nGSM status=IDLE");
+	    started = false;
+	}
+#else
+	//myGSM.begin(2400);
+	myGSM.begin(BAUD_RATE);
+
+	if (myGSM) Serial.println("Serila GSM connected");
+	else Serial.println("Serila GSM not connected");
+#endif
+}
+/************* **************/
