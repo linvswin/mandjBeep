@@ -17,7 +17,6 @@
 #include "lib/MandJTimer/MandJTimer.h"
 
 #define MJGSM
-
 #ifdef MJGSM
 
 #include "SIM900.h"
@@ -39,9 +38,7 @@ char inSerial[40];
 
 #include "lib/LCDMenuLib/LCDMenuLib.h"
 #include "lib/PCF8574/PCF8574_Class.h"
-
 #include <LiquidCrystal_I2C.h>
-
 #include "lib/Keypad_I2C/Keypad_I2C.h"
 #include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
 
@@ -117,11 +114,7 @@ Password password = Password(settings.alarmPassword1);
 // PCF8574 modulo sensori 1
 PCF8574_Class PCF_24(0x22);
 
-
-
-// timer
-MandJTimer t;
-uint8_t conta = 0;
+uint8_t conta = 0;		// contatore ritardo attivazione
 
 // generare treno PWM
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
@@ -139,6 +132,8 @@ public:
 	boolean statoAllarme;
 	boolean adminZone;
 
+	// timer
+	MandJTimer t;
 	//Real Time Clock
 #ifndef CLKDS3231
 	RTC_DS1307 RTC;

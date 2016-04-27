@@ -39,8 +39,6 @@ void setup() {
 
 	allarm.inizializza();
 	//Adding time
-	allarm.inizializzaClock();
-	allarm.inizializzaSensori();
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -58,9 +56,9 @@ void setup() {
 
 	allarm.standby();
 
-	t.startTimer();
-	timerPrintData=t.every(1, printDate);
-	timerLCDbacklight = t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+	allarm.t.startTimer();
+	timerPrintData=allarm.t.every(1, printDate);
+	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
 
 	if (settings.gsm==1)
 	{
@@ -177,7 +175,7 @@ void loop() {
 	}
 
 	MenuLoop();
-	t.update();
+	allarm.t.update();
 	wdt_reset();
 }
 
@@ -246,8 +244,8 @@ void keypadEvent(KeypadEvent eKey) {
 			passwd_pos = 9;
 		}
 		lcd.backlight();
-		t.stop(timerLCDbacklight);
-		timerLCDbacklight = t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+		allarm.t.stop(timerLCDbacklight);
+		timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
 
 		switch (eKey) {
 		case '#':
@@ -282,7 +280,7 @@ void keypadEvent(KeypadEvent eKey) {
 				password.set(settings.menuPassword);
 				if (allarm.checkPassword2())
 				{
-					t.stop(timerPrintData);
+					allarm.t.stop(timerPrintData);
 					mostraMenu=true;
 					LCDML.goRoot();
 					LCDML_BUTTON_up();
@@ -290,7 +288,7 @@ void keypadEvent(KeypadEvent eKey) {
 			} else {
 				password.set(settings.alarmPassword1);
 				mostraMenu=false;
-				timerPrintData=t.every(1, printDate);
+				timerPrintData=allarm.t.every(1, printDate);
 				allarm.standby();
 			}
 			break;
@@ -365,8 +363,8 @@ void primaDiAttivare(){
 #endif
 	lcd.backlight();
 	if (allarm.checkSensori()) {
-		t.after(settings.tempoRitardo, doAfterRitActivate);
-		t.every(1, doPrintRitAttivazione, settings.tempoRitardo-1);
+		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
+		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo-1);
 		allarm.standby();
 	}
 }
@@ -667,12 +665,15 @@ MandJBeep::MandJBeep(){
 }
 
 void MandJBeep::inizializza(){
-	//saveSettings();
-	loadSettings();
+	//this->saveSettings();
+	this->loadSettings();
 	password.set(settings.alarmPassword1);
 
 	keypad.begin(makeKeymap(keys));
 	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
+
+	this->inizializzaClock();
+	this->inizializzaSensori();
 }
 
 void MandJBeep::saveSettings(void) {
