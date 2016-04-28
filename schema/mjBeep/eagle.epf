@@ -346,10 +346,11 @@ UsedLibrary="/home/peppe/eagle-7.5.0/lbr/xilinx-xc9.lbr"
 UsedLibrary="/home/peppe/eagle-7.5.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="/home/peppe/eagle-7.5.0/lbr/zetex.lbr"
 UsedLibrary="/home/peppe/eagle-7.5.0/lbr/zilog.lbr"
+UsedLibrary="/home/peppe/eagle/lbr/1284p.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="263 374 1209 1017"
+Loc="359 279 1305 922"
 State=2
 Number=0
 
