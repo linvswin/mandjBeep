@@ -341,9 +341,9 @@ void mngTempoSirena(uint8_t par){
 		break;
 	case 9:
 		lcd.setCursor(0, 1);
-		lcd.print(leggiEventoEprom(0));
+		lcd.print(allarm.leggiEventoEprom(0));
 		lcd.setCursor(0, 2);
-		lcd.print(leggiEventoEprom(1));
+		lcd.print(allarm.leggiEventoEprom(1));
 		lcd.noBlink();
 		break;
 	default:
@@ -408,19 +408,19 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				settings.lcdBacklightTime = newIntVal;
 				break;
 			case 3:
-				loadSettings();
+				allarm.loadSettings();
 #ifdef DEBUG_SETTINGS
 				printSettings();
 #endif
 				break;
 			case 4:
-				saveSettings();
+				allarm.saveSettings();
 #ifdef DEBUG_SETTINGS
 				printSettings();
 #endif
 				break;
 			case 5:
-				disattivaSensori();
+				allarm.disattivaSensori();
 				break;
 			case 8:
 				settings.maxReed_Conta=newIntVal;

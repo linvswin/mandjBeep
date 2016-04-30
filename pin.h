@@ -6,10 +6,11 @@
  * Licence: GPL ver 3
 **/
 
-#define BAUD_RATE  9600  //115200    //9600
+#define BAUD_RATE  9600  //115200
 
 #define CTRL_Z 26
-#define DEBUG
+
+//#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
@@ -35,7 +36,7 @@ const char keys[ROWS][COLS] = { // Define the Keymap
 byte rowPins[ROWS] = {3, 2, 1, 0}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 
-#define BOARD 2  // 0 mega2560, 1 uno r3
+#define BOARD 2  // 0 mega2560, 1 uno r3, 2 atmega1284
 #if ( BOARD==0 )
 //	#include <Keypad.h> //http://www.arduino.cc/playground/uploads/Code/Keypad.zip
 
@@ -48,8 +49,9 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	#define PIR_PIN1    47
 	#define RELAY_SIRENA1 4
 	#define RELAY_SIRENA2 5
-#endif
-#if ( BOARD==1 )
+
+	#define myGSM	Serial1
+#elif ( BOARD==1 )
 
 	#define TIMER1_PIN1 9   //buzzer pin
 	//#define TIMER1_PIN2 10   //buzzer pin
@@ -60,8 +62,7 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	//#define GIALLO_LED  8
 	//#define RELAY_SIRENA1 6
 	//#define RELAY_SIRENA2 7
-#endif
-#if ( BOARD==2 )
+#elif ( BOARD==2 )
 	#define TIMER1_PIN1 13 //13   //buzzer pin
 	#define TIMER1_PIN2 12   //buzzer pin
 
@@ -70,8 +71,11 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	#define GIALLO_LED  1
 	#define RELAY_SIRENA1 11
 	//#define RELAY_SIRENA2 7
+
+	#define myGSM	Serial1
 #endif
 
+/************* LCD *************/
 #define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
 #define BACKLIGHT_PIN  7
 #define En_pin  4
@@ -81,21 +85,26 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 #define D5_pin  1
 #define D6_pin  2
 #define D7_pin  3
-LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
+//LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
+/*===============================*/
 
-//Real Time Clock
-#ifndef CLKDS3231
-RTC_DS1307 RTC;
-DateTime now;
-#else
-RtcDS3231 RTC;
-RtcDateTime now;
-#endif
+/************ Sensori ************/
+//numero sensori
+#define numSens 8
+// pin del PCF8574 connessi al sensore
+#define I2C_REED1_PIN 0
+#define I2C_REED2_PIN 1
+#define I2C_REED3_PIN 2
+#define I2C_REED4_PIN 3
+#define I2C_REED5_PIN 4
+#define I2C_PIR0_PIN  7
+#define I2C_PIR1_PIN  6
+#define I2C_PIR2_PIN  5
+/*===============================*/
 
-
-boolean alarmeAttivo=false;
-boolean statoAllarme=false;
-boolean adminZone=false;
+//boolean alarmeAttivo=false;
+//boolean statoAllarme=false;
+//boolean adminZone=false;
 
 uint8_t passwd_pos=9;  // the postition of the password input
 
@@ -115,6 +124,7 @@ int8_t timerPrintData=0;
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
 #define TXT_INTRUSIONE   	   F("Intrusione")
 #define TXT_SPAZIO			   F(" ")
+#define TXT_INIZIALIZZA_GSM	   F("Inizializza GSM")
 
 //#define TXT_MENU               "Menu"
 #define TXT_SICUREZZA			"Sicurezza"
