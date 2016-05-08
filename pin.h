@@ -69,7 +69,8 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 	#define GREEN_LED  2
 	#define RED_LED    3
 	#define GIALLO_LED  1
-	#define RELAY_SIRENA1 11
+	//#define RELAY_SIRENA1 11
+	#define RELAY_SIRENA1 14
 	//#define RELAY_SIRENA2 7
 
 	#define myGSM	Serial1

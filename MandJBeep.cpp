@@ -19,7 +19,7 @@ String printDigit(int digits)
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-
+/*
 #ifdef MJGSM
 	if (gsm.begin(2400)) {
 		Serial.println("\nGSM status=READY");
@@ -36,9 +36,8 @@ void setup() {
 	if (myGSM) Serial.println("Serila GSM connected");
 	else Serial.println("Serila GSM not connected");
 #endif
-
+*/
 	allarm.inizializza();
-	//Adding time
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -46,11 +45,6 @@ void setup() {
 #ifdef DEBUG_SETTINGS
 	Serial.print(F("Setting sizeof: "));
 	Serial.println(sizeof(settings));
-#endif
-
-	allarm.inizializzaLed();
-
-#ifdef DEBUG_SETTINGS
 	printSettings();
 #endif
 
@@ -65,8 +59,8 @@ void setup() {
 		lcd.setCursor(0, 2);
 		lcd.println(TXT_INIZIALIZZA_GSM);
 		allarm.inizializzaGSM();
+		allarm.standby();
 	}
-
 	wdt_enable(WDTO_8S);
 }
 
@@ -99,6 +93,7 @@ void loop() {
 #ifdef MJGSM
 	if (started)
 	{
+		//Serial.println("ddddd");
 		position = sms.IsSMSPresent(SMS_UNREAD);
 		if (position) {
 		  // read new SMS
@@ -276,7 +271,6 @@ void keypadEvent(KeypadEvent eKey) {
 			if (mostraMenu==false)
 			{
 				passwd_pos = 9;
-
 				password.set(settings.menuPassword);
 				if (allarm.checkPassword2())
 				{
@@ -376,14 +370,7 @@ void MandJBeep::attiva() // Activate the system if correct PIN entered and displ
 	password.reset();
 
 	digitalWrite(RED_LED, HIGH);
-	//PORTD |= (1<<5);
-	//PORTD |= (1<<PD4);
-	//PORTD |= _BV(PD4);
-
 	digitalWrite(GREEN_LED, LOW);
-	//PORTD &= ~(1<<2);
-	//PORTD &= ~(1<<PD2);
-	//PORTD &= ~(_BV(PD2));
 
 	allarm.standby();
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
@@ -674,6 +661,7 @@ void MandJBeep::inizializza(){
 
 	this->inizializzaClock();
 	this->inizializzaSensori();
+	this->inizializzaLed();
 }
 
 void MandJBeep::saveSettings(void) {
@@ -687,7 +675,6 @@ void MandJBeep::loadSettings(void) {
 	for (int i = 12; i < sizeof(AlarmSettings); i++)
 		p[i] = EEPROM.read(i);
 }
-
 
 boolean MandJBeep::checkSensori(){
 	for(int i=0; i < numSens; i++){
