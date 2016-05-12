@@ -72,7 +72,7 @@ struct AlarmSettings {
 	uint8_t tempoSirena;						// tempo attivazione sirena
 	char menuPassword[PasswordLength_Max];		// password di accesso menu
 	uint8_t lcdBacklightTime;					// durata retroilluminazione
-	uint8_t maxReed_Conta;						// numero max di controllo sensore reed attivo, dopodichè disattiva temp il sensore
+	uint8_t maxReed_Conta;						// numero max di controllo sensore reed attivo, dopodichï¿½ disattiva temp il sensore
 	uint8_t zona;								// zona attiva
 	byte sens;									// configurazione sensori
 	//byte adminpass;
@@ -90,7 +90,7 @@ struct AlarmSettings {
 	B00010001,		// sens
 	//1,			// adminpass
 	20,				// tempo ritardo
-	1				// gsm
+	0				// gsm
 };
 /*========================================*/
 
