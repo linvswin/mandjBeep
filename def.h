@@ -13,7 +13,7 @@
 //void disattiva();
 //bool checkPassword2();
 //void checkPassword();
-void primaDiAttivare();
+//void primaDiAttivare();
 void printDate();
 //String getDate();
 //void alarmTriggered();

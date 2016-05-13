@@ -161,6 +161,7 @@ public:
 	String getDate();
 
 	void alarmTriggered();
+	void primaDiAttivare();
 	void attiva();
 	void codiceErrato(char adm);
 	void disattiva();

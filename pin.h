@@ -147,6 +147,9 @@ int8_t timerPrintData=0;
 #define TXT_CONFERMA			"#conferma"
 #define TXT_REPORT  			"Report"
 #define TXT_SENSORI				"Sensori"
+#define TXT_ATTIVA_GSM		    "Attiva GSM"
+#define TXT_DISATTIVA_GSM		"Disattiva GSM"
+//#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
 boolean mostraMenu=false;
 /**********************************************************/

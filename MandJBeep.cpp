@@ -108,7 +108,7 @@ void loop() {
 		  if (!strcmp(sms_text, "ATTIVA"))
 		  {
 			  if (allarm.alarmeAttivo == false && allarm.statoAllarme == false) {
-				  primaDiAttivare();
+				  allarm.primaDiAttivare();
 			  }
 		  }else if (!strcmp(sms_text, "DISATTIVA"))
 		  {
@@ -262,9 +262,13 @@ void keypadEvent(KeypadEvent eKey) {
 			}
 			break;
 		case 'A':
-			if (allarm.statoAllarme==false) {
-				primaDiAttivare();
-			//	disattivaSensori();
+			if (mostraMenu==false)
+			{
+				if (allarm.statoAllarme==false)
+				{
+					allarm.primaDiAttivare();
+				//	disattivaSensori();
+				}
 			}
 			break;
 		case 'B':
@@ -351,7 +355,7 @@ void MandJBeep::codiceErrato(char adm=0)
 	allarm.standby();
 }
 
-void primaDiAttivare(){
+void MandJBeep::primaDiAttivare(){
 #ifdef DEBUG
 		Serial.println(F("Ritardo attivazione ..........."));
 #endif
@@ -861,11 +865,16 @@ void MandJBeep::inizializzaLed(){
 
 void MandJBeep::inizializzaSensori()
 {
-	sensore[0].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
+	for (int i=0;i<numSens;i++)
+		sensore[i].setStato( (bitRead(settings.sens, i)==0?sensDisabilitato:sensAttivo ) );
+	/*sensore[0].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
 	sensore[1].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
 	sensore[2].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
 	sensore[3].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
 	sensore[4].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
+	sensore[5].setStato( (bitRead(settings.sens, 5)==0?sensDisabilitato:sensAttivo ) );
+	sensore[6].setStato( (bitRead(settings.sens, 6)==0?sensDisabilitato:sensAttivo ) );
+	sensore[7].setStato( (bitRead(settings.sens, 7)==0?sensDisabilitato:sensAttivo ) );*/
 }
 
 void MandJBeep::inizializzaGSM(){
