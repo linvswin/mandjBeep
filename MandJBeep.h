@@ -23,7 +23,8 @@
 #include <SoftwareSerial.h>
 #include "sms.h"
 SMSGSM sms;
-boolean started = false;
+//boolean started = false;
+int started = 0;
 //int started = 0;
 int i_serialh = 0;
 char inSerial[40];
@@ -78,6 +79,11 @@ struct AlarmSettings {
 	//byte adminpass;
 	uint8_t tempoRitardo;						// tempo ritardo attiazione
 	uint8_t gsm;								// attiva gms
+	char phoneNumber1[20]; // array for the phone number string
+	char phoneNumber2[20]; // array for the phone number string
+	char phoneNumber3[20]; // array for the phone number string
+	char phoneNumber4[20]; // array for the phone number string
+	char phoneNumber5[20]; // array for the phone number string
 } settings = {
 	"1111",			// alarmPassword1,
 	"2222",			// alarmPassword2,
@@ -90,7 +96,12 @@ struct AlarmSettings {
 	B00010001,		// sens
 	//1,			// adminpass
 	20,				// tempo ritardo
-	0				// gsm
+	1,				// gsm
+	"3392160999",	// phoneNumber1
+	"0000000000",	// phoneNumber2
+	"0000000000",	// phoneNumber3
+	"0000000000",	// phoneNumber4
+	"0000000000",	// phoneNumber5
 };
 /*========================================*/
 

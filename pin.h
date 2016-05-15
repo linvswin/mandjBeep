@@ -10,7 +10,7 @@
 
 #define CTRL_Z 26
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
@@ -19,7 +19,7 @@
 //	#define DEBUG_PIR
 //	#define DEBUG_SECTIMER
 //	#define DEBUG_PRINTDATA
-//	#define DEBUG_SMS
+	#define DEBUG_SMS
 #endif
 
 #define ROWS  4  // Four rows
@@ -125,7 +125,7 @@ int8_t timerPrintData=0;
 #define TXT_SISTEMA_DISATTIVO  F("Sistema Disattivato!")
 #define TXT_INTRUSIONE   	   F("Intrusione")
 #define TXT_SPAZIO			   F(" ")
-#define TXT_INIZIALIZZA_GSM	   F("Inizializza GSM")
+#define TXT_INIZIALIZZA_GSM	   "Inizializza GSM.."
 
 //#define TXT_MENU               "Menu"
 #define TXT_SICUREZZA			"Sicurezza"
@@ -149,6 +149,13 @@ int8_t timerPrintData=0;
 #define TXT_SENSORI				"Sensori"
 #define TXT_ATTIVA_GSM		    "Attiva GSM"
 #define TXT_DISATTIVA_GSM		"Disattiva GSM"
+#define TXT_GSM                 "GSM"
+#define TXT_NUMERI_GSM          "Numeri"
+#define TXT_NUMERI1_GSM          "Numero1"
+#define TXT_NUMERI2_GSM          "Numero2"
+#define TXT_NUMERI3_GSM          "Numero3"
+#define TXT_NUMERI4_GSM          "Numero4"
+#define TXT_NUMERI5_GSM          "Numero5"
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
 boolean mostraMenu=false;

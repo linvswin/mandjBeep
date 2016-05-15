@@ -17,6 +17,21 @@ String printDigit(int digits)
 	return temp;
 }
 
+//int timerBuzzer=0;
+//int buzzerstate=0;
+
+/*void playBuzzer()
+{
+	if (buzzerstate==0)
+	{
+		tone(12, 1000);
+		buzzerstate=1;
+	} else{
+		noTone(12);
+		buzzerstate=0;
+	}
+}*/
+
 void setup() {
 	Serial.begin(BAUD_RATE);
 /*
@@ -53,6 +68,7 @@ void setup() {
 	allarm.t.startTimer();
 	timerPrintData=allarm.t.every(1, printDate);
 	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+	//timerBuzzer= allarm.t.every(2, playBuzzer);
 
 	if (settings.gsm==1)
 	{
@@ -91,41 +107,63 @@ void loop() {
 	}*/
 
 #ifdef MJGSM
-	if (started)
+	if (settings.gsm)
 	{
-		//Serial.println("ddddd");
-		position = sms.IsSMSPresent(SMS_UNREAD);
-		if (position) {
-		  // read new SMS
-		  sms.GetSMS(position, phone_number, sms_text, 160);
+		started = gsm.getStatus();
+		if (started==gsm.READY)
+		{
+			//Serial.println("ddddd");
+			position = sms.IsSMSPresent(SMS_UNREAD);
+			if (position) {
+			  // read new SMS
+			  sms.GetSMS(position, phone_number, sms_text, 160);
 
-		  Serial.print("Num tel: ");
-		  Serial.println(phone_number);
+			  int telAutorizzato=0;
+			  char xx[20]="+39";
+			  strcat(xx, settings.phoneNumber1);
 
-		  Serial.print("Text: ");
-		  Serial.println(sms_text);
+			  if (strcmp(phone_number,settings.phoneNumber1) != 0) telAutorizzato=1;
+			  else if (strcmp(phone_number,settings.phoneNumber2) != 0) telAutorizzato=2;
+			  else if (strcmp(phone_number,settings.phoneNumber3) != 0) telAutorizzato=3;
+			  else if (strcmp(phone_number,settings.phoneNumber4) != 0) telAutorizzato=4;
+			  else if (strcmp(phone_number,settings.phoneNumber5) != 0) telAutorizzato=5;
 
-		  if (!strcmp(sms_text, "ATTIVA"))
-		  {
-			  if (allarm.alarmeAttivo == false && allarm.statoAllarme == false) {
-				  allarm.primaDiAttivare();
+#ifdef DEBUG_SMS
+			  Serial.print("Num tel: ");
+			  Serial.println(phone_number);
+
+			  Serial.print("Text: ");
+			  Serial.println(sms_text);
+
+			  Serial.print("Auth Tel: ");
+			  Serial.println(xx);
+
+			  Serial.print("Auth: ");
+			  Serial.println(telAutorizzato);
+#endif
+
+			  if (telAutorizzato>0)
+			  {
+				  if (!strcmp(sms_text, "ATTIVA")) {
+					  if (allarm.alarmeAttivo == false && allarm.statoAllarme == false) {
+						  allarm.primaDiAttivare();
+					  }
+				  }else if (!strcmp(sms_text, "DISATTIVA")) {
+					  allarm.disattiva();
+				  }else if (!strcmp(sms_text, "DISSENTEMP")) {
+					  allarm.disattivaSensori();
+				  }
+				  sms.DeleteSMS(position);
 			  }
-		  }else if (!strcmp(sms_text, "DISATTIVA"))
-		  {
-			  allarm.disattiva();
-		  }else if (!strcmp(sms_text, "DISSENTEMP"))
-		  {
-			  allarm.disattivaSensori();
-		  }
-		  sms.DeleteSMS(position);
-		} /*else {
+			} /*else {
 
-		//Read for new byte on serial hardware,
-		//and write them on NewSoftSerial.
-			serialhwread();
-		//Read for new byte on NewSoftSerial.
-			serialswread();
-		}*/
+			//Read for new byte on serial hardware,
+			//and write them on NewSoftSerial.
+				serialhwread();
+			//Read for new byte on NewSoftSerial.
+				serialswread();
+			}*/
+		}
 	}
 #else
 	serialhwread();
@@ -133,7 +171,8 @@ void loop() {
 #endif
 	if (allarm.alarmeAttivo)
 	{
-		for(uint8_t i=0; i < numSens; i++){
+		for(uint8_t i=0; i < numSens; i++)
+		{
 #ifdef DEBUG_SENS
 			Serial.print("sens ");
 			Serial.print(sensore[i].getMessaggio());
@@ -221,7 +260,8 @@ String MandJBeep::getDate() {
 	return txt;
 }
 
-void keypadEvent(KeypadEvent eKey) {
+void keypadEvent(KeypadEvent eKey)
+{
 
 #ifdef DEBUG
 #ifdef DEBUG_KEY
@@ -284,6 +324,7 @@ void keypadEvent(KeypadEvent eKey) {
 					LCDML_BUTTON_up();
 				} else allarm.codiceErrato(1);
 			} else {
+				password.reset();
 				password.set(settings.alarmPassword1);
 				mostraMenu=false;
 				timerPrintData=allarm.t.every(1, printDate);
@@ -310,10 +351,19 @@ void keypadEvent(KeypadEvent eKey) {
 				lcd.setCursor((passwd_pos++), 0);
 				lcd.print(F("*"));
 			} else {
-				if (indNewTxtVal<PasswordLength_Max-1)
+				if (mnuNewTxtVal==0)
 				{
-					newTxtVal[indNewTxtVal]=eKey;
-					indNewTxtVal++;
+					if (indNewTxtVal<PasswordLength_Max-1)
+					{
+						newTxtVal[indNewTxtVal]=eKey;
+						indNewTxtVal++;
+					}
+				} else if (mnuNewTxtVal==1){
+					if (indNewTxtVal2<19)
+					{
+						newTxtVal2[indNewTxtVal2]=eKey;
+						indNewTxtVal2++;
+					}
 				}
 			}
 			break;
@@ -355,14 +405,18 @@ void MandJBeep::codiceErrato(char adm=0)
 	allarm.standby();
 }
 
+int xxxx=0;
+
 void MandJBeep::primaDiAttivare(){
 #ifdef DEBUG
 		Serial.println(F("Ritardo attivazione ..........."));
 #endif
 	lcd.backlight();
 	if (allarm.checkSensori()) {
+		if (settings.tempoRitardo%2==0) xxxx=0;
+		else xxxx=1;
+		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
-		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo-1);
 		allarm.standby();
 	}
 }
@@ -485,11 +539,7 @@ void doAfterRitActivate() {
 void doAfterTimerT() {
 	Timer1.disablePwm(TIMER1_PIN1);
 
-	//PORTD &= ~(_BV(PD6));  //	digitalWrite(RELAY_SIRENA1, LOW);
-	//PORTD |= _BV(PD6);
 	digitalWrite(RELAY_SIRENA1, HIGH);
-	//PORTD |= _BV(PD7);     //	digitalWrite(RELAY_SIRENA2, HIGH);
-
 	for(int i=0; i < numSens; i++){
 		if (sensore[i].getStato()==sensTrigged )
 			sensore[i].setStato(sensAttivo);
@@ -520,6 +570,16 @@ void doPrintRitAttivazione() {
 	lcd.setCursor(0, 2);
 	lcd.print(F("Rit. "));
 	lcd.print(++conta);
+
+	if (xxxx==0)
+	{
+		xxxx=1;
+		Timer1.initialize(period); // initialize timer1, 1000 microseconds
+		setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
+	} else {
+		Timer1.disablePwm(TIMER1_PIN1);
+		xxxx=0;
+	}
 }
 
 void timerDoLCDbacklight() {
@@ -833,33 +893,17 @@ void MandJBeep::inizializzaClock()
 #endif
 }
 
-void MandJBeep::inizializzaLed(){
-	//DDRD=0b11011111;
-	//DDRD |= _BV(PD2);
+void MandJBeep::inizializzaLed()
+{
 	pinMode(GREEN_LED, OUTPUT);
-	//DDRD |= _BV(PD4);
 	pinMode(RED_LED, OUTPUT);
-	//DDRD |= _BV(PD6);
 	pinMode(RELAY_SIRENA1, OUTPUT);
-	//DDRD |= _BV(PD7); //pinMode(RELAY_SIRENA2, OUTPUT);
-
-	//DDRB=0b00101110;
-	//DDRB |= _BV(PB0);
 	pinMode(GIALLO_LED, OUTPUT);
-	//DDRB |= _BV(PB1);
 	pinMode(TIMER1_PIN1, OUTPUT);
-	//DDRB |= _BV(PB2);
 	pinMode(TIMER1_PIN2, OUTPUT);
-	//DDRB &= ~(_BV(PB2));  //pinMode(PIR1_PIN, INPUT);
-	//DDRB &= ~(_BV(PB4));  //pinMode(PIR2_PIN, INPUT);
 
-	//PORTD |= _BV(PD7);     //digitalWrite(RELAY_SIRENA2, HIGH);
-	//PORTD |= _BV(PD6);
 	digitalWrite(RELAY_SIRENA1, HIGH);
-	//PORTD &= ~(_BV(PD6));  //digitalWrite(RELAY_SIRENA1, LOW);
-	//PORTD &= ~(_BV(PD4));
 	digitalWrite(RED_LED, LOW);
-	//PORTD |= _BV(PD2);
 	digitalWrite(GREEN_LED, HIGH);
 }
 
@@ -867,14 +911,6 @@ void MandJBeep::inizializzaSensori()
 {
 	for (int i=0;i<numSens;i++)
 		sensore[i].setStato( (bitRead(settings.sens, i)==0?sensDisabilitato:sensAttivo ) );
-	/*sensore[0].setStato( (bitRead(settings.sens, 0)==0?sensDisabilitato:sensAttivo ) );
-	sensore[1].setStato( (bitRead(settings.sens, 1)==0?sensDisabilitato:sensAttivo ) );
-	sensore[2].setStato( (bitRead(settings.sens, 2)==0?sensDisabilitato:sensAttivo ) );
-	sensore[3].setStato( (bitRead(settings.sens, 3)==0?sensDisabilitato:sensAttivo ) );
-	sensore[4].setStato( (bitRead(settings.sens, 4)==0?sensDisabilitato:sensAttivo ) );
-	sensore[5].setStato( (bitRead(settings.sens, 5)==0?sensDisabilitato:sensAttivo ) );
-	sensore[6].setStato( (bitRead(settings.sens, 6)==0?sensDisabilitato:sensAttivo ) );
-	sensore[7].setStato( (bitRead(settings.sens, 7)==0?sensDisabilitato:sensAttivo ) );*/
 }
 
 void MandJBeep::inizializzaGSM(){
@@ -882,11 +918,13 @@ void MandJBeep::inizializzaGSM(){
 	if (gsm.begin(2400)) {
 		Serial.println("\nGSM status=READY");
 		//started = gsm.getStatus();
-		started = true;
+		//started = true;
 	} else {
 		Serial.println("\nGSM status=IDLE");
-	    started = false;
+	    //started = false;
+		if (settings.gsm) settings.gsm=0;
 	}
+	started = gsm.getStatus();
 #else
 	//myGSM.begin(2400);
 	myGSM.begin(BAUD_RATE);

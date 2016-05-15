@@ -35,14 +35,13 @@ uint8_t  scroll_bar[5][8] = {
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   16 // 26
+#define _LCDML_DISP_cnt   23 // 26
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
 // LCDML_root_X_X    => layer 2
 // LCDML_root_X_X_X  => layer 3
 // LCDML_root_... 	 => layer ...
-
 /**
  * LCDMenuLib_add     (id, group, prev_layer_element, new_element_num, lang_char_array, callback_function)
  * LCDMenuLib_addMenu (id, group, prev_layer_element, new_element_num, lang_char_array)
@@ -51,23 +50,30 @@ uint8_t  scroll_bar[5][8] = {
 
 LCDML_DISP_initParam(_LCDML_DISP_cnt);// enbable parameters (needs one byte per menu element)
 // Menu
-LCDML_DISP_addMenu          (0 , _LCDML_G1 , LCDML_root     , 1 , TXT_ATTIVA);
-	LCDML_DISP_add          (1 , _LCDML_G1 , LCDML_root_1   , 1 , TXT_ATTIVA ,             mnuTipoAttivazione);
-	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1   , 2 , TXT_DISATTIVA_SENSORI ,  mnuTempoSirena, 5);
-LCDML_DISP_addMenu          (3 , _LCDML_G1 , LCDML_root     , 2 , TXT_IMPOSTAZIONE);
-	LCDML_DISP_addMenu      (4 , _LCDML_G1 , LCDML_root_2   , 1 , TXT_SICUREZZA);
-		LCDML_DISP_addParam (5 , _LCDML_G1 , LCDML_root_2_1 , 1 , TXT_ADMIN_PASSWORD,      mnuPassword, 1);
-		LCDML_DISP_addParam (6 , _LCDML_G1 , LCDML_root_2_1 , 2 , TXT_PASSWORD1 ,          mnuPassword, 2);
-		LCDML_DISP_addParam (7 , _LCDML_G1 , LCDML_root_2_1 , 3 , TXT_PASSWORD2 ,          mnuPassword, 3);
-	LCDML_DISP_addParam     (8 , _LCDML_G1 , LCDML_root_2   , 2 , TXT_TEMPO_SIRENA ,       mnuTempoSirena, 1);
-	LCDML_DISP_addParam     (9 , _LCDML_G1 , LCDML_root_2  ,  7 , TXT_TEMPO_RITARDO,       mnuTempoSirena, 10);
-	LCDML_DISP_addParam     (10 , _LCDML_G1 , LCDML_root_2  , 8 , TXT_ATTIVA_GSM,          mnuTempoSirena, 11);
-	LCDML_DISP_addParam     (11 , _LCDML_G1 , LCDML_root_2   , 6 , TXT_CONTA_REED ,        mnuTempoSirena, 8);
-	LCDML_DISP_addParam     (12, _LCDML_G1 , LCDML_root_2   , 3 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	LCDML_DISP_addParam     (13, _LCDML_G1 , LCDML_root_2   , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	LCDML_DISP_addParam     (14, _LCDML_G1 , LCDML_root_2   , 4 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-	LCDML_DISP_addParam     (15, _LCDML_G1 , LCDML_root     , 4 , TXT_REPORT,              mnuTempoSirena, 9);
-LCDML_DISP_add              (16, _LCDML_G1 , LCDML_root     , 5 , TXT_SENSORI           ,  mnuSensori);
+LCDML_DISP_addMenu          (0 , _LCDML_G1 , LCDML_root      , 1 , TXT_ATTIVA);
+	LCDML_DISP_add          (1 , _LCDML_G1 , LCDML_root_1    , 1 , TXT_ATTIVA             , mnuTipoAttivazione);
+	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1    , 2 , TXT_DISATTIVA_SENSORI  , mnuTempoSirena, 5);
+LCDML_DISP_addMenu          (3 , _LCDML_G1 , LCDML_root      , 2 , TXT_IMPOSTAZIONE);
+	LCDML_DISP_addMenu      (4 , _LCDML_G1 , LCDML_root_2    , 1 , TXT_SICUREZZA);
+		LCDML_DISP_addParam (5 , _LCDML_G1 , LCDML_root_2_1  , 1 , TXT_ADMIN_PASSWORD     , mnuPassword, 1);
+		LCDML_DISP_addParam (6 , _LCDML_G1 , LCDML_root_2_1  , 2 , TXT_PASSWORD1          , mnuPassword, 2);
+		LCDML_DISP_addParam (7 , _LCDML_G1 , LCDML_root_2_1  , 3 , TXT_PASSWORD2          , mnuPassword, 3);
+	LCDML_DISP_addParam     (8 , _LCDML_G1 , LCDML_root_2    , 2 , TXT_TEMPO_SIRENA       , mnuTempoSirena, 1);
+	LCDML_DISP_addParam     (9 , _LCDML_G1 , LCDML_root_2    , 7 , TXT_TEMPO_RITARDO      , mnuTempoSirena, 10);
+LCDML_DISP_addMenu          (10, _LCDML_G1 , LCDML_root      , 3 , TXT_GSM);
+		LCDML_DISP_addParam (11, _LCDML_G1 , LCDML_root_3    , 1 , TXT_ATTIVA_GSM         , mnuTempoSirena, 11);
+	    LCDML_DISP_addMenu  (12, _LCDML_G1 , LCDML_root_3    , 2 , TXT_NUMERI_GSM);
+	     LCDML_DISP_addParam(13 , _LCDML_G1 , LCDML_root_3_2 , 1 , TXT_NUMERI1_GSM     , mnuGsmNumeri, 1);
+	     LCDML_DISP_addParam(14 , _LCDML_G1 , LCDML_root_3_2 , 2 , TXT_NUMERI2_GSM     , mnuGsmNumeri, 2);
+	     LCDML_DISP_addParam(15 , _LCDML_G1 , LCDML_root_3_2 , 3 , TXT_NUMERI3_GSM     , mnuGsmNumeri, 3);
+	     LCDML_DISP_addParam(16 , _LCDML_G1 , LCDML_root_3_2 , 4 , TXT_NUMERI4_GSM     , mnuGsmNumeri, 4);
+	     LCDML_DISP_addParam(17 , _LCDML_G1 , LCDML_root_3_2 , 5 , TXT_NUMERI5_GSM     , mnuGsmNumeri, 5);
+	LCDML_DISP_addParam     (18, _LCDML_G1 , LCDML_root_2    , 6 , TXT_CONTA_REED         , mnuTempoSirena, 8);
+	LCDML_DISP_addParam     (19, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
+	LCDML_DISP_addParam     (20, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+	LCDML_DISP_addParam     (21, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+	LCDML_DISP_addParam     (22, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
+LCDML_DISP_add              (23, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -299,8 +305,14 @@ void LCDML_lcd_menu_clear() {
 
 int newIntVal=0;
 uint8_t param=0;
+
 uint8_t indNewTxtVal=0;
 char newTxtVal[PasswordLength_Max];
+
+uint8_t indNewTxtVal2=0;
+char newTxtVal2[20];
+
+int mnuNewTxtVal=0;
 
 void mngTempoSirena(uint8_t par){
 	lcd.setCursor(0, 0);
@@ -365,27 +377,19 @@ void mngTempoSirena(uint8_t par){
 void LCDML_DISP_setup(mnuTempoSirena)
 // ********************************************************************* */
 {
-	// setup function
-	//LCDML_DISP_triggerMenu(500); // set trigger for this function to 1000 millisecounds
-	// print default value
-
 	param = LCDML_DISP_getParameter();
 	switch (param) {
 	case 1:
 		newIntVal = settings.tempoSirena;
-		//String(settings.tempoSirena).toCharArray(newTxtVal,PasswordLength_Max);
 		break;
 	case 2:
 		newIntVal = settings.lcdBacklightTime;
-		//String(settings.lcdBacklightTime).toCharArray(newTxtVal,PasswordLength_Max);
 		break;
 	case 8:
 		newIntVal = settings.maxReed_Conta;
-		//String(settings.maxReed_Conta).toCharArray(newTxtVal,PasswordLength_Max);
 		break;
 	case 10:
 		newIntVal = settings.tempoRitardo;
-		//String(settings.tempoRitardo).toCharArray(newTxtVal,PasswordLength_Max);
 		break;
 	}
 	mngTempoSirena(param);
@@ -438,7 +442,13 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				break;
 			case 11:
 				settings.gsm=(!settings.gsm);
-				//tempoRitardo=newIntVal;
+				if (settings.gsm)
+				{
+					lcd.setCursor(1, 2);
+					lcd.println(TXT_INIZIALIZZA_GSM);
+
+					allarm.inizializzaGSM();
+				}
 				break;
 			}
 			newIntVal = 0;
@@ -528,6 +538,105 @@ void LCDML_DISP_loop_end(mnuPassword) {  // loop end
 	param=0;
 	indNewTxtVal=0;
 	memset(newTxtVal,0,sizeof(newTxtVal));
+}
+
+void mngGsmNumeri(uint8_t par){
+	lcd.setCursor(0, 0);
+	switch(par)
+	{
+		case 1:
+			lcd.print(TXT_NUMERI1_GSM);
+			lcd.setCursor(1, 1);
+			lcd.print(settings.phoneNumber1);
+			break;
+		case 2:
+			lcd.print(TXT_NUMERI2_GSM);
+			lcd.setCursor(1, 1);
+			lcd.print(settings.phoneNumber2);
+			break;
+		case 3:
+			lcd.print(TXT_NUMERI3_GSM);
+			lcd.setCursor(1, 1);
+			lcd.print(settings.phoneNumber3);
+			break;
+		case 4:
+			lcd.print(TXT_NUMERI4_GSM);
+			lcd.setCursor(1, 1);
+			lcd.print(settings.phoneNumber4);
+			break;
+		case 5:
+			lcd.print(TXT_NUMERI5_GSM);
+			lcd.setCursor(1, 1);
+			lcd.print(settings.phoneNumber5);
+			break;
+	}
+	//lcd.setCursor(0, 1);
+	lcd.blink();
+	lcd.setCursor(1, 2);
+	/*if (par ==3 or par == 4 or par==5)
+		lcd.print(TXT_CONFERMA);
+	else*/
+		lcd.print(newTxtVal2);
+}
+// *********************************************************************
+void LCDML_DISP_setup(mnuGsmNumeri)
+// *********************************************************************
+{
+	mnuNewTxtVal=1;
+	param = LCDML_DISP_getParameter();
+	switch (param) {
+	case 1:
+		lcd.print(TXT_NUMERI1_GSM);
+		break;
+	case 2:
+		lcd.print(TXT_NUMERI2_GSM);
+		break;
+	case 3:
+		lcd.print(TXT_NUMERI3_GSM);
+		break;
+	case 4:
+		lcd.print(TXT_NUMERI5_GSM);
+		break;
+	case 5:
+		lcd.print(TXT_NUMERI5_GSM);
+		break;
+	}
+	mngGsmNumeri(param);
+	//LCDML_DISP_funcend();
+}
+
+void LCDML_DISP_loop(mnuGsmNumeri) {  // loop
+	//if (LCDML_BUTTON_checkAny())
+	if (LCDML_BUTTON_checkEnter()) {
+		switch (param) {
+		case 1:
+			strcpy(settings.phoneNumber1, newTxtVal2);
+			break;
+		case 2:
+			strcpy(settings.phoneNumber2, newTxtVal2);
+			break;
+		case 3:
+			strcpy(settings.phoneNumber3, newTxtVal2);
+			break;
+		case 4:
+			strcpy(settings.phoneNumber4, newTxtVal2);
+			break;
+		case 5:
+			strcpy(settings.phoneNumber5, newTxtVal2);
+			break;
+		}
+		LCDML_DISP_funcend();
+	}
+	lcd.clear();
+	mngGsmNumeri(param);
+}
+
+void LCDML_DISP_loop_end(mnuGsmNumeri) {  // loop end
+	lcd.noBlink();
+	param=0;
+	indNewTxtVal2=0;
+	mnuNewTxtVal=0;
+	memset(newTxtVal2,0,sizeof(newTxtVal2));
 }
 
 uint8_t scroll_row;          // scroll row position
@@ -808,6 +917,7 @@ void LCDML_DISP_loop(mnuTipoAttivazione) {
 void LCDML_DISP_loop_end(mnuTipoAttivazione) {
 
 }
+
 /* ===================================================================== *
  *                                                                       *
  * BACKEND SYSTEM                                                        *
