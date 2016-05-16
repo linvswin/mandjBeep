@@ -914,7 +914,7 @@ void MandJBeep::inizializzaGSM(){
 	} else {
 		Serial.println("\nGSM status=IDLE");
 	    //started = false;
-		if (settings.gsm) settings.gsm=0;
+		//if (settings.gsm) settings.gsm=0;
 	}
 	started = gsm.getStatus();
 #else
