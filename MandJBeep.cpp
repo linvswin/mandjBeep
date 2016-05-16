@@ -144,15 +144,7 @@ void loop() {
 
 			  if (telAutorizzato>0)
 			  {
-				  if (!strcmp(sms_text, "ATTIVA")) {
-					  if (allarm.alarmeAttivo == false && allarm.statoAllarme == false) {
-						  allarm.primaDiAttivare();
-					  }
-				  }else if (!strcmp(sms_text, "DISATTIVA")) {
-					  allarm.disattiva();
-				  }else if (!strcmp(sms_text, "DISSENTEMP")) {
-					  allarm.disattivaSensori();
-				  }
+				  allarm.eseguiSMSComando(sms_text);
 				  sms.DeleteSMS(position);
 			  }
 			} /*else {
@@ -710,9 +702,9 @@ void ivioComandoAT(char *cmd)
 
 /************* **************/
 MandJBeep::MandJBeep(){
-	alarmeAttivo=false;
-	statoAllarme=false;
-	adminZone=false;
+	this->alarmeAttivo=false;
+	this->statoAllarme=false;
+	this->adminZone=false;
 }
 
 void MandJBeep::inizializza(){
@@ -932,5 +924,18 @@ void MandJBeep::inizializzaGSM(){
 	if (myGSM) Serial.println("Serila GSM connected");
 	else Serial.println("Serila GSM not connected");
 #endif
+}
+
+void MandJBeep::eseguiSMSComando(char sms_text[])
+{
+	if (!strcmp(sms_text, "ATTIVA")) {
+		if (this->alarmeAttivo == false && this->statoAllarme == false) {
+			this->primaDiAttivare();
+		}
+	} else if (!strcmp(sms_text, "DISATTIVA")) {
+		this->disattiva();
+	} else if (!strcmp(sms_text, "DISSENTEMP")) {
+		this->disattivaSensori();
+	}
 }
 /************* **************/

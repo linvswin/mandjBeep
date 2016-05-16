@@ -135,9 +135,8 @@ const int prescale[] = { 0, 1, 8, 64, 256, 1024 }; // the range of prescale valu
 
 class MandJBeep
 {
-private:
-
-protected:
+//private:
+//protected:
 public:
 	boolean alarmeAttivo;
 	boolean statoAllarme;
@@ -182,6 +181,8 @@ public:
 
 	void saveSettings(void);
 	void loadSettings(void);
+
+	void eseguiSMSComando(char sms_text[]);
 };
 
 MandJBeep allarm; //=new MandJBeep();
