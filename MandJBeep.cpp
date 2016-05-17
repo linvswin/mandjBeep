@@ -701,13 +701,15 @@ void ivioComandoAT(char *cmd)
 #endif
 
 /************* **************/
-MandJBeep::MandJBeep(){
+MandJBeep::MandJBeep()
+{
 	this->alarmeAttivo=false;
 	this->statoAllarme=false;
 	this->adminZone=false;
 }
 
-void MandJBeep::inizializza(){
+void MandJBeep::inizializza()
+{
 	//this->saveSettings();
 	this->loadSettings();
 	password.set(settings.alarmPassword1);
@@ -720,19 +722,22 @@ void MandJBeep::inizializza(){
 	this->inizializzaLed();
 }
 
-void MandJBeep::saveSettings(void) {
+void MandJBeep::saveSettings(void)
+{
 	byte* p = (byte*) &settings;
 	for (int i = 12; i < sizeof(AlarmSettings); i++)
 		EEPROM.write(i, p[i]);
 }
 
-void MandJBeep::loadSettings(void) {
+void MandJBeep::loadSettings(void)
+{
 	byte* p = (byte*) &settings;
 	for (int i = 12; i < sizeof(AlarmSettings); i++)
 		p[i] = EEPROM.read(i);
 }
 
-boolean MandJBeep::checkSensori(){
+boolean MandJBeep::checkSensori()
+{
 	for(int i=0; i < numSens; i++){
 		//if (sensore[i].getStato()==sensAttivo)
 		if (sensore[i].getStato()!=sensDisabilitato and sensore[i].getStato()!=sensTempDisabilitato)
@@ -772,7 +777,8 @@ boolean MandJBeep::checkSensori(){
 	return true;
 }
 
-void MandJBeep::disattivaSensori(){
+void MandJBeep::disattivaSensori()
+{
 	for(int i=0; i < numSens; i++){
 		if ( sensore[i].getStato()==sensMalfunzionamento )
 		{
@@ -786,7 +792,8 @@ void MandJBeep::disattivaSensori(){
 	standby();
 }
 
-void MandJBeep::riAttivaSensori(){
+void MandJBeep::riAttivaSensori()
+{
 	for(int i=0; i < numSens; i++){
 		if (sensore[i].getStato()!=sensDisabilitato){
 			sensore[i].setStato(sensAttivo);
@@ -939,3 +946,15 @@ void MandJBeep::eseguiSMSComando(char sms_text[])
 	}
 }
 /************* **************/
+
+unsigned int timeout = 0;
+void waitResponse() {
+	while (myGSM.available() == 0) {
+		if (++timeout > 10000) { // set this to your timeout value in milliseconds
+			// your error handling code here
+			break;
+		}
+	}
+	timeout = 0; // got a char so reset timeout
+	// code hear to read data
+}
