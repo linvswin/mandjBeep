@@ -7365,6 +7365,7 @@ DIN A4, landscape with location and doc. field</description>
 <part name="C4" library="rcl" deviceset="CPOL-EU" device="E2.5-6" value="100nF"/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="C1" library="rcl" deviceset="CPOL-EU" device="E2.5-6" value="10uF"/>
+<part name="J4" library="Libreria-componenti" deviceset="MORSETTIERA" device="" value="OUT"/>
 </parts>
 <sheets>
 <sheet>
@@ -7395,6 +7396,7 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="C4" gate="G$1" x="162.56" y="111.76"/>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="C1" gate="G$1" x="91.44" y="109.22"/>
+<instance part="J4" gate="1" x="185.42" y="139.7" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -7488,6 +7490,10 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="91.44" y1="104.14" x2="91.44" y2="83.82" width="0.1524" layer="91"/>
 <junction x="91.44" y="83.82"/>
 <label x="177.8" y="116.84" size="1.778" layer="95"/>
+<pinref part="J4" gate="1" pin="2"/>
+<wire x1="177.8" y1="137.16" x2="175.26" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="137.16" x2="175.26" y2="119.38" width="0.1524" layer="91"/>
+<junction x="175.26" y="119.38"/>
 </segment>
 </net>
 <net name="-BAT" class="0">
@@ -7547,7 +7553,7 @@ DIN A4, landscape with location and doc. field</description>
 <junction x="71.12" y="104.14"/>
 </segment>
 </net>
-<net name="N$9" class="0">
+<net name="13.8V" class="0">
 <segment>
 <pinref part="D3" gate="1" pin="K"/>
 <wire x1="106.68" y1="124.46" x2="114.3" y2="124.46" width="0.1524" layer="91"/>
@@ -7557,9 +7563,15 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="137.16" y1="124.46" x2="129.54" y2="124.46" width="0.1524" layer="91"/>
 <junction x="114.3" y="124.46"/>
 <pinref part="C3" gate="G$1" pin="+"/>
-<wire x1="129.54" y1="124.46" x2="114.3" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="124.46" x2="121.92" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="124.46" x2="114.3" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="129.54" y1="114.3" x2="129.54" y2="124.46" width="0.1524" layer="91"/>
 <junction x="129.54" y="124.46"/>
+<pinref part="J4" gate="1" pin="1"/>
+<wire x1="177.8" y1="142.24" x2="121.92" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="142.24" x2="121.92" y2="124.46" width="0.1524" layer="91"/>
+<junction x="121.92" y="124.46"/>
+<label x="175.26" y="142.24" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="5V" class="0">
