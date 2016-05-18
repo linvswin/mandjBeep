@@ -1,29 +1,13 @@
 
+AT+CMEE=2 //enable the extended error codes to get a verbose format,
+AT+CPIN?  //get the status of SIM presense,
+
 AT+CMGL="ALL",1 // LISTA TUTTI GLI SMS
 AT+CMGD=1       // CANCELLA SMS POSIZIONE 1
 AT+CMGDA=<TYPE> 
  AT+CPOWD=1  //shutdown
 ATD+91xxxxxxxxxx; // ???
 
-AVR Memory Usage
-----------------
-Device: atmega328p
-
-Program:   23198 bytes (70.8% Full)
-(.text + .data + .bootloader)
-
-Data:       1694 bytes (82.7% Full)
-(.data + .bss + .noinit)
-
-AVR Memory Usage
-----------------
-Device: atmega328p
-
-Program:   22084 bytes (67.4% Full)
-(.text + .data + .bootloader)
-
-Data:       1614 bytes (78.8% Full)
-(.data + .bss + .noinit)
 
 I2C scanner. Scanning ...
 Found address: 32 (0x20)
@@ -32,6 +16,99 @@ Found address: 36 (0x24)
 Found address: 104 (0x68)
 Done.
 Found 4 device(s).
+
+
+#include "Arduino.h"
+
+#define myGSM Serial1
+/*
+void setup()
+{
+// Add your initialization code here
+	Serial.begin(9600);
+	myGSM.begin(2400);
+}
+
+// The loop function is called in an endless loop
+void loop()
+{
+//Add your repeated code here
+	// read from port 1, send to port 0:
+		if (myGSM.available()) {
+		//while (Serial1.available()) {
+			//int inByte = Serial1.read();
+			Serial.write(myGSM.read());
+		}
+
+		// read from port 0, send to port 1:
+		if (Serial.available()) {
+		//while (Serial.available()) {
+			//int inByte = Serial.read();
+			myGSM.write(Serial.read());
+		}
+}
+*/
+
+/*unsigned int timeout = 0;
+void waitResponse() {
+	while (myGSM.available() == 0) {
+		if (++timeout > 10000) { // set this to your timeout value in milliseconds
+			// your error handling code here
+			break;
+		}
+	}
+	timeout = 0; // got a char so reset timeout
+	// code hear to read data
+}*/
+
+String responseString = "";         // a string to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+
+void setup() {
+  // initialize serial:
+  Serial.begin(9600);
+  myGSM.begin(2400);
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
+}
+
+void loop() {
+  // print the string when a newline arrives:
+  if (stringComplete) {
+    Serial.println(responseString);
+    // clear the string:
+    responseString = "";
+    stringComplete = false;
+  }
+  // read from port 0, send to port 1:
+  if (Serial.available()) {
+	  //while (Serial.available()) {
+	  //int inByte = Serial.read();
+	  myGSM.write(Serial.read());
+	}
+}
+
+/*
+  SerialEvent occurs whenever a new data comes in the
+ hardware serial RX.  This routine is run between each
+ time loop() runs, so using delay inside loop can delay
+ response.  Multiple bytes of data may be available.
+ */
+void serialEvent1() {
+  while (Serial1.available()) {
+    // get the new byte:
+    char inChar = (char)Serial1.read();
+    // add it to the inputString:
+    responseString += inChar;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+  }
+}
+
+
 
 --- Tamper
 La liena sabotaggio nei sistemi di allarme

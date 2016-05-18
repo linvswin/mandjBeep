@@ -34,24 +34,7 @@ String printDigit(int digits)
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-/*
-#ifdef MJGSM
-	if (gsm.begin(2400)) {
-		Serial.println("\nGSM status=READY");
-		//started = gsm.getStatus();
-		started = true;
-	} else {
-		Serial.println("\nGSM status=IDLE");
-	    started = false;
-	}
-#else
-	//myGSM.begin(2400);
-	myGSM.begin(BAUD_RATE);
 
-	if (myGSM) Serial.println("Serila GSM connected");
-	else Serial.println("Serila GSM not connected");
-#endif
-*/
 	allarm.inizializza();
 
 	lcd.begin(20, 4);
@@ -107,10 +90,11 @@ void loop() {
 	}*/
 
 #ifdef MJGSM
-	if (settings.gsm)
+	if (settings.gsm==1)
 	{
-		started = gsm.getStatus();
-		if (started==gsm.READY)
+		//started = gsm.getStatus();
+		//if (started==gsm.READY)
+		if (started==true)
 		{
 			//Serial.println("ddddd");
 			position = sms.IsSMSPresent(SMS_UNREAD);
@@ -413,7 +397,7 @@ void MandJBeep::primaDiAttivare(){
 	}
 }
 
-void MandJBeep::attiva() // Activate the system if correct PIN entered and display message on the screen
+void MandJBeep::attiva()
 {
 	alarmeAttivo = true;
 	statoAllarme = true;
@@ -423,6 +407,8 @@ void MandJBeep::attiva() // Activate the system if correct PIN entered and displ
 	digitalWrite(GREEN_LED, LOW);
 
 	allarm.standby();
+	char txtTemp[13]="ATTIVO";
+	inviaSMScomando(phone_number, txtTemp);
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
 
@@ -480,7 +466,7 @@ void MandJBeep::alarmTriggered() {
 
 #ifdef MJGSM
 			//if (position>0)
-			if (started)
+			if (started==true)
 			{
 				String msg="Intrusione: "+sensore[i].getMessaggio();
 				msg.toCharArray(sms_text, 160);
@@ -753,7 +739,7 @@ boolean MandJBeep::checkSensori()
 					//lcd.setCursor(5, 2);
 					lcd.print( sensore[i].getMessaggio() );
 #ifdef MJGSM
-					if (started)
+					if (started==true)
 					{
 						if (position>0)
 						{
@@ -916,14 +902,14 @@ void MandJBeep::inizializzaGSM(){
 #ifdef MJGSM
 	if (gsm.begin(2400)) {
 		Serial.println("\nGSM status=READY");
-		//started = gsm.getStatus();
-		//started = true;
+		Serial.println(gsm.getStatus());
+		started = true;
 	} else {
 		Serial.println("\nGSM status=IDLE");
-	    //started = false;
+	    started = false;
 		//if (settings.gsm) settings.gsm=0;
 	}
-	started = gsm.getStatus();
+	//started = gsm.getStatus();
 #else
 	//myGSM.begin(2400);
 	myGSM.begin(BAUD_RATE);
@@ -943,8 +929,16 @@ void MandJBeep::eseguiSMSComando(char sms_text[])
 		this->disattiva();
 	} else if (!strcmp(sms_text, "DISSENTEMP")) {
 		this->disattivaSensori();
+	} else if (!strcmp(sms_text, "STATUS")) {
+		char txtTemp[13]="";
+		if (this->getAllarmStatus()==true)
+			strcpy(txtTemp, "ATTIVO");
+		else strcpy(txtTemp, "NON ATTIVO");
+		inviaSMScomando(phone_number, txtTemp);
 	}
 }
+
+
 /************* **************/
 
 unsigned int timeout = 0;

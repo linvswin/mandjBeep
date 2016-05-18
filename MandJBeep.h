@@ -23,9 +23,9 @@
 #include <SoftwareSerial.h>
 #include "sms.h"
 SMSGSM sms;
-//boolean started = false;
-int started = 0;
+boolean started = false;
 //int started = 0;
+
 int i_serialh = 0;
 char inSerial[40];
 char position=0;
@@ -183,6 +183,7 @@ public:
 	void loadSettings(void);
 
 	void eseguiSMSComando(char sms_text[]);
+	bool getAllarmStatus(){return this->alarmeAttivo;};
 };
 
 MandJBeep allarm; //=new MandJBeep();
