@@ -156,6 +156,7 @@ int8_t timerPrintData=0;
 #define TXT_NUMERI3_GSM          "Numero3"
 #define TXT_NUMERI4_GSM          "Numero4"
 #define TXT_NUMERI5_GSM          "Numero5"
+#define TXT_TEMPERATURA			"Temperatura: "
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
 boolean mostraMenu=false;

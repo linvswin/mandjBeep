@@ -35,7 +35,7 @@ uint8_t  scroll_bar[5][8] = {
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   23 // 26
+#define _LCDML_DISP_cnt   24 // 26
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
@@ -69,11 +69,12 @@ LCDML_DISP_addMenu          (10, _LCDML_G1 , LCDML_root      , 3 , TXT_GSM);
 	     LCDML_DISP_addParam(16 , _LCDML_G1 , LCDML_root_3_2 , 4 , TXT_NUMERI4_GSM     , mnuGsmNumeri, 4);
 	     LCDML_DISP_addParam(17 , _LCDML_G1 , LCDML_root_3_2 , 5 , TXT_NUMERI5_GSM     , mnuGsmNumeri, 5);
 	LCDML_DISP_addParam     (18, _LCDML_G1 , LCDML_root_2    , 6 , TXT_CONTA_REED         , mnuTempoSirena, 8);
-	LCDML_DISP_addParam     (19, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	LCDML_DISP_addParam     (20, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	LCDML_DISP_addParam     (21, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-	LCDML_DISP_addParam     (22, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
-LCDML_DISP_add              (23, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
+	LCDML_DISP_addParam     (19, _LCDML_G1 , LCDML_root_2    , 9 , TXT_TEMPERATURA        , mnuTempoSirena, 12);
+	LCDML_DISP_addParam     (20, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
+	LCDML_DISP_addParam     (21, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+	LCDML_DISP_addParam     (22, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+	LCDML_DISP_addParam     (23, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
+LCDML_DISP_add              (24, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -346,6 +347,9 @@ void mngTempoSirena(uint8_t par){
 			if (settings.gsm) lcd.print(TXT_DISATTIVA_GSM);
 			else lcd.print(TXT_ATTIVA_GSM);
 			break;
+		case 12:
+			lcd.print(TXT_TEMPERATURA);
+			break;
 	}
 	lcd.setCursor(0, 1);
 	lcd.blink();
@@ -363,6 +367,9 @@ void mngTempoSirena(uint8_t par){
 		lcd.setCursor(0, 2);
 		lcd.print(allarm.leggiEventoEprom(1));
 		lcd.noBlink();
+		break;
+	case 12:
+		lcd.print(allarm.RTC.GetTemperature().AsFloat());
 		break;
 	default:
 		lcd.print(newIntVal);
@@ -450,6 +457,9 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 					allarm.inizializzaGSM();
 					wdt_enable(WDTO_8S);
 				}
+				break;
+			case 12:
+				//settings.tempoRitardo=newIntVal;
 				break;
 			}
 			newIntVal = 0;
