@@ -1,10 +1,10 @@
 # mandjBeep
-## Cosa è 
+## Cosa &egrave;? 
 Centralina di allarme modulare pilotata da un atmega1284. 
 ### Storia
-Il progetto è nato dall'esigenza di in stallare un sistema di allarme in casa. La prima bozza prevedeva l'uso di un atmega328, ma poi con crescere delle
-funzionalità, sono stato costretto a trovare un microcontrollore con un po di memoria in più. La scelta è ricaduta su un atmega1284. Di seguito un comparazione 
-tra i microcontrollori più diffusi (Arduino like) 
+Il progetto &egrave; nato dall'esigenza di in stallare un sistema di allarme in casa. La prima bozza prevedeva l'uso di un atmega328, ma poi con crescere delle
+funzionalit&agrave;, sono stato costretto a trovare un microcontrollore con un po di memoria in pi&ugrave;. La scelta &egrave; ricaduta su un atmega1284. Di seguito un comparazione 
+tra i microcontrollori pi&ugrave; diffusi (Arduino like) 
 
 
 ### Caratteristiche:
@@ -15,9 +15,10 @@ tra i microcontrollori più diffusi (Arduino like)
 * 2 zone (da implementare)
 * avviso tramite modulo GSM (al momento solo tramite sms)
  
-##  Author: M&J - (http://siatienfalla.altervista.org/)
-
- * Started Date: 09/02/2016
- * Version: 1.0
+##  Author: M&J - [siatienfalla](http://siatienfalla.altervista.org/)
+ * M&J - 
+ * Sito: [siatienfalla](http://siatienfalla.altervista.org/)
+ * Data inizio: 09/02/2016
+ * Versione: 1.0
  
 ## Licence: GPL ver 3
