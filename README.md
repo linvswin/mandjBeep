@@ -14,11 +14,13 @@ tra i microcontrollori pi&ugrave; diffusi (Arduino like)
 * tastierino 4x4 (tastierino a membrana classico x arduino collegato ad un PCF8574 che lo rende I2C)
 * 2 zone (da implementare)
 * avviso tramite modulo GSM (al momento solo tramite sms)
+* relay per attivizione sirena.
+* batteria tampone al piombo 12v 7A
  
-##  Author: M&J - [siatienfalla](http://siatienfalla.altervista.org/)
- * M&J - 
+##  Author
+ * M&J 
  * Sito: [siatienfalla](http://siatienfalla.altervista.org/)
  * Data inizio: 09/02/2016
  * Versione: 1.0
  
-## Licence: GPL ver 3
+## Licence: GPL ver. 3
