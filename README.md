@@ -6,6 +6,17 @@ Il progetto &egrave; nato dall'esigenza di in stallare un sistema di allarme in 
 funzionalit&agrave;, sono stato costretto a trovare un microcontrollore con un po di memoria in pi&ugrave;. La scelta &egrave; ricaduta su un atmega1284. Di seguito un comparazione 
 tra i microcontrollori pi&ugrave; diffusi (Arduino like) 
 
+<table>
+	<tr><th>Feature</th><th>328P</th><th>1284P</th><th>2560P</th></tr>
+	<tr><th>Price</th><td>$2.99</td><td>$4.66</td><td>$11.28</td></tr>
+	<tr><th>RAM</th><td>2k</td><td>16k</td><td>8k</td></tr>
+	<tr><th>Flash</th><td>32k</td><td>128k</td><td>256k</td></tr>
+	<tr><th>EEPROM</th><td>1k</td><td>4k</td><td>4k</td></tr>
+	<tr><th>UART</th><td>1</td><td>2</td><td>4</td></tr>
+	<tr><th>IO Pins</th><td>23</td><td>32</td><td>86</td></tr>
+	<tr><th>Interrupts</th><td>2</td><td>3</td><td>8</td></tr>
+	<tr><th>Analog Inputs</th><td>6</td><td>8</td><td>16</td></tr>
+</table>
 
 ### Caratteristiche:
 
@@ -18,6 +29,7 @@ tra i microcontrollori pi&ugrave; diffusi (Arduino like)
 * batteria tampone al piombo 12v 7A
  
 ##  Author
+
  * M&J 
  * Sito: [siatienfalla](http://siatienfalla.altervista.org/)
  * Data inizio: 09/02/2016
