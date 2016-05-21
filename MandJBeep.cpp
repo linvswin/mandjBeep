@@ -724,6 +724,10 @@ void MandJBeep::loadSettings(void)
 
 boolean MandJBeep::checkSensori()
 {
+	for(int i=0; i < numSens; i++)
+		if (sensore[i].getStato()==sensMalfunzionamento)
+			sensore[i].setStato(sensAttivo);
+
 	for(int i=0; i < numSens; i++){
 		//if (sensore[i].getStato()==sensAttivo)
 		if (sensore[i].getStato()!=sensDisabilitato and sensore[i].getStato()!=sensTempDisabilitato)
@@ -754,7 +758,7 @@ boolean MandJBeep::checkSensori()
 					passwd_pos = 9;
 					return false;
 				}
-			}
+			}// else sensore[i].setStato(sensAttivo);
 		}
 	}
 	password.reset();
