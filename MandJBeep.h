@@ -97,7 +97,7 @@ struct AlarmSettings {
 	//1,			// adminpass
 	20,				// tempo ritardo
 	1,				// gsm
-	"3392160999",	// phoneNumber1
+	"0000000000",	// phoneNumber1
 	"0000000000",	// phoneNumber2
 	"0000000000",	// phoneNumber3
 	"0000000000",	// phoneNumber4
@@ -170,6 +170,8 @@ public:
 	void printDate();
 	String getDate();
 
+	void checkAttivita();
+	void checkSMS();
 	void alarmTriggered();
 	void primaDiAttivare();
 	void attiva();

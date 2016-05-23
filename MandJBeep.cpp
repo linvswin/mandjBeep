@@ -17,21 +17,6 @@ String printDigit(int digits)
 	return temp;
 }
 
-//int timerBuzzer=0;
-//int buzzerstate=0;
-
-/*void playBuzzer()
-{
-	if (buzzerstate==0)
-	{
-		tone(12, 1000);
-		buzzerstate=1;
-	} else{
-		noTone(12);
-		buzzerstate=0;
-	}
-}*/
-
 void setup() {
 	Serial.begin(BAUD_RATE);
 
@@ -89,100 +74,15 @@ void loop() {
 		myGSM.write(Serial.read());
 	}*/
 
-#ifdef MJGSM
-	if (settings.gsm==1)
-	{
-		//started = gsm.getStatus();
-		//if (started==gsm.READY)
-		if (started==true)
-		{
-			//Serial.println("ddddd");
-			position = sms.IsSMSPresent(SMS_UNREAD);
-			if (position) {
-			  // read new SMS
-			  sms.GetSMS(position, phone_number, sms_text, 160);
+	/*
+	 * legge la presenza di messaggi sms
+	 */
+	allarm.checkSMS();
 
-			  int telAutorizzato=0;
-			  char xx[20]="+39";
-			  strcat(xx, settings.phoneNumber1);
-
-			  if (strcmp(phone_number,settings.phoneNumber1) != 0) telAutorizzato=1;
-			  else if (strcmp(phone_number,settings.phoneNumber2) != 0) telAutorizzato=2;
-			  else if (strcmp(phone_number,settings.phoneNumber3) != 0) telAutorizzato=3;
-			  else if (strcmp(phone_number,settings.phoneNumber4) != 0) telAutorizzato=4;
-			  else if (strcmp(phone_number,settings.phoneNumber5) != 0) telAutorizzato=5;
-
-#ifdef DEBUG_SMS
-			  Serial.print("Num tel: ");
-			  Serial.println(phone_number);
-
-			  Serial.print("Text: ");
-			  Serial.println(sms_text);
-
-			  Serial.print("Auth Tel: ");
-			  Serial.println(xx);
-
-			  Serial.print("Auth: ");
-			  Serial.println(telAutorizzato);
-#endif
-
-			  if (telAutorizzato>0)
-			  {
-				  allarm.eseguiSMSComando(sms_text);
-				  sms.DeleteSMS(position);
-			  }
-			} /*else {
-
-			//Read for new byte on serial hardware,
-			//and write them on NewSoftSerial.
-				serialhwread();
-			//Read for new byte on NewSoftSerial.
-				serialswread();
-			}*/
-		}
-	}
-#else
-	serialhwread();
-	gsmRead();
-#endif
-	if (allarm.alarmeAttivo)
-	{
-		for(uint8_t i=0; i < numSens; i++)
-		{
-#ifdef DEBUG_SENS
-			Serial.print("sens ");
-			Serial.print(sensore[i].getMessaggio());
-			Serial.print(" - stato");
-			Serial.println(sensore[i].getStato());
-#endif
-
-			if ( (sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato) )
-			{
-				if ( sensore[i].getZona()==settings.zona or settings.zona==znTotale )
-				{
-					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()!=sensTrigged)
-					{
-						sensore[i].setStato(sensTrigged);
-						allarm.alarmTriggered();
-
-						if (sensore[i].getTipo()==tpReed){
-							if ( sensore[i].getConta() >= settings.maxReed_Conta){
-								sensore[i].setStato(sensTempDisabilitato);
-							}
-							sensore[i].setConta( (sensore[i].getConta()+1) );
-						}
-					}
-#ifdef DEBUG_PIR
-					if (sensore[i].getTipo()==tpPIR)
-					{
-						Serial.print("PIR: ");
-						Serial.println( PCF_24.read(sensore[i].getPin()) );
-					}
-#endif
-				}
-			}
-		}
-	}
+	/*
+	 * legge lo stato dei sensori
+	 */
+	allarm.checkAttivita();
 
 	MenuLoop();
 	allarm.t.update();
@@ -942,6 +842,99 @@ void MandJBeep::eseguiSMSComando(char sms_text[])
 	}
 }
 
+void MandJBeep::checkAttivita()
+{
+	if (allarm.alarmeAttivo)
+	{
+		for(uint8_t i=0; i < numSens; i++)
+		{
+#ifdef DEBUG_SENS
+			Serial.print("sens ");
+			Serial.print(sensore[i].getMessaggio());
+			Serial.print(" - stato");
+			Serial.println(sensore[i].getStato());
+#endif
+
+			if ( (sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato) )
+			{
+				if ( sensore[i].getZona()==settings.zona or settings.zona==znTotale )
+				{
+					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()!=sensTrigged)
+					{
+						sensore[i].setStato(sensTrigged);
+						allarm.alarmTriggered();
+
+						if (sensore[i].getTipo()==tpReed){
+							if ( sensore[i].getConta() >= settings.maxReed_Conta){
+								sensore[i].setStato(sensTempDisabilitato);
+							}
+							sensore[i].setConta( (sensore[i].getConta()+1) );
+						}
+					}
+#ifdef DEBUG_PIR
+					if (sensore[i].getTipo()==tpPIR)
+					{
+						Serial.print("PIR: ");
+						Serial.println( PCF_24.read(sensore[i].getPin()) );
+					}
+#endif
+				}
+			}
+		}
+	}
+}
+
+void MandJBeep::checkSMS(){
+#ifdef MJGSM
+	if (settings.gsm==1)
+	{
+		//started = gsm.getStatus();
+		//if (started==gsm.READY)
+		if (started==true)
+		{
+			//Serial.println("ddddd");
+			position = sms.IsSMSPresent(SMS_UNREAD);
+			if (position) {
+			  // read new SMS
+			  sms.GetSMS(position, phone_number, sms_text, 160);
+
+			  int telAutorizzato=0;
+			  char xx[20]="+39";
+			  strcat(xx, settings.phoneNumber1);
+
+			  if (strcmp(phone_number,settings.phoneNumber1) != 0) telAutorizzato=1;
+			  else if (strcmp(phone_number,settings.phoneNumber2) != 0) telAutorizzato=2;
+			  else if (strcmp(phone_number,settings.phoneNumber3) != 0) telAutorizzato=3;
+			  else if (strcmp(phone_number,settings.phoneNumber4) != 0) telAutorizzato=4;
+			  else if (strcmp(phone_number,settings.phoneNumber5) != 0) telAutorizzato=5;
+
+#ifdef DEBUG_SMS
+			  Serial.print("Num tel: ");
+			  Serial.println(phone_number);
+
+			  Serial.print("Text: ");
+			  Serial.println(sms_text);
+
+			  Serial.print("Auth Tel: ");
+			  Serial.println(xx);
+
+			  Serial.print("Auth: ");
+			  Serial.println(telAutorizzato);
+#endif
+
+			  if (telAutorizzato>0)
+			  {
+				  allarm.eseguiSMSComando(sms_text);
+				  sms.DeleteSMS(position);
+			  }
+			}
+		}
+	}
+#else
+	serialhwread();
+	gsmRead();
+#endif
+}
 
 /************* **************/
 
