@@ -34,9 +34,10 @@ void setup() {
 	allarm.standby();
 
 	allarm.t.startTimer();
+	// avvia evento stampa data ogni secondo
 	timerPrintData=allarm.t.every(1, printDate);
+	// attiva evento spegni LCD dopo lcdBacklightTime secondi
 	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
-	//timerBuzzer= allarm.t.every(2, playBuzzer);
 
 	if (settings.gsm==1)
 	{
@@ -45,10 +46,12 @@ void setup() {
 		allarm.inizializzaGSM();
 		allarm.standby();
 	}
+	// attivo watchdog 8s
 	wdt_enable(WDTO_8S);
 }
 
 void loop() {
+
 #ifndef CLKDS3231
 	allarm.now = allarm.RTC.now();
 #else
@@ -74,66 +77,15 @@ void loop() {
 		myGSM.write(Serial.read());
 	}*/
 
-	/*
-	 * legge la presenza di messaggi sms
-	 */
+	// legge la presenza di messaggi sms
 	allarm.checkSMS();
-
-	/*
-	 * legge lo stato dei sensori
-	 */
+	// legge lo stato dei sensori
 	allarm.checkAttivita();
 
 	MenuLoop();
 	allarm.t.update();
+	// reset il  watchdog
 	wdt_reset();
-}
-
-void MandJBeep::standby() {
-	//display time and date
-	lcd.clear();
-	lcd.setCursor(0, 0);
-	if (alarmeAttivo) lcd.print(TXT_SYS_ACTIVE);
-	else lcd.print(TXT_ENTER_PIN);
-//	lcd.setCursor(0, 1);
-//	lcd.print(getDate());
-	lcd.setCursor(5, 3);
-	lcd.print(TXT_AUTOR);
-}
-
-void printDate() {
-	//TIME and DATE
-	lcd.setCursor(0, 1);
-	lcd.print(allarm.getDate());
-}
-
-String MandJBeep::getDate() {
-	String txt = F("");
-#ifndef CLKDS3231
-	txt += printDigit(now.hour()) + F(":");
-	txt += printDigit(now.minute()) + F(":");
-	txt += printDigit(now.second());
-	txt += TXT_SPAZIO;
-	txt += printDigit(now.day()) + F("/");
-	txt += printDigit(now.month()) + F("/");
-	txt += printDigit(now.year());
-#else
-	txt += printDigit(now.Hour()) + F(":");
-	txt += printDigit(now.Minute()) + F(":");
-	txt += printDigit(now.Second());
-	txt += TXT_SPAZIO;
-	txt += printDigit(now.Day()) + F("/");
-	txt += printDigit(now.Month()) + F("/");
-	txt += printDigit(now.Year());
-#endif
-
-#ifdef  DEBUG
-#ifdef DEBUG_PRINTDATA
-	Serial.print(F("date: "));
-	Serial.println(txt);
-#endif
-#endif
-	return txt;
 }
 
 void keypadEvent(KeypadEvent eKey)
@@ -247,140 +199,12 @@ void keypadEvent(KeypadEvent eKey)
 	}
 }
 
-bool MandJBeep::checkPassword2() {
-	return password.evaluate();
+void printDate() {
+	//TIME and DATE
+	lcd.setCursor(0, 1);
+	lcd.print(allarm.getDate());
 }
 
-void MandJBeep::checkPassword() {           // To check if PIN is corrected, if not, retry!
-	if (password.evaluate()) {
-		if (alarmeAttivo == false && statoAllarme == false) {
-			primaDiAttivare();
-		} else if (alarmeAttivo == true || statoAllarme == true)
-			disattiva();
-	} else
-		codiceErrato(0);
-}
-
-void MandJBeep::codiceErrato(char adm=0)
-{
-	password.reset();
-	lcd.clear();
-
-	if (adm==0)
-	{
-		lcd.setCursor(3, 0);
-		lcd.print(TXT_INVALID_PIN);
-	}else{
-		password.set(settings.alarmPassword1);
-		lcd.setCursor(0, 0);
-		lcd.print(TXT_INVALID_ADMIN_PIN);
-	}
-	lcd.setCursor(5, 2);
-	lcd.print(TXT_RIPROVA_PIN);
-	delay(1000);
-	allarm.standby();
-}
-
-int xxxx=0;
-
-void MandJBeep::primaDiAttivare(){
-#ifdef DEBUG
-		Serial.println(F("Ritardo attivazione ..........."));
-#endif
-	lcd.backlight();
-	if (allarm.checkSensori()) {
-		if (settings.tempoRitardo%2==0) xxxx=0;
-		else xxxx=1;
-		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
-		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
-		allarm.standby();
-	}
-}
-
-void MandJBeep::attiva()
-{
-	alarmeAttivo = true;
-	statoAllarme = true;
-	password.reset();
-
-	digitalWrite(RED_LED, HIGH);
-	digitalWrite(GREEN_LED, LOW);
-
-	allarm.standby();
-	char txtTemp[13]="ATTIVO";
-	inviaSMScomando(phone_number, txtTemp);
-/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
-}
-
-void MandJBeep::disattiva() {
-	statoAllarme = false;
-	alarmeAttivo = false;
-
-	password.reset();
-	Timer1.disablePwm(TIMER1_PIN1);
-
-	//PORTD &= ~(_BV(PD4));
-	digitalWrite(RED_LED, LOW);
-	//PORTD |= _BV(PD2);
-	digitalWrite(GREEN_LED, HIGH);
-	//PORTD &= ~(_BV(PD6));	//digitalWrite(RELAY_SIRENA1, LOW);
-	//PORTD |= _BV(PD6);
-	digitalWrite(RELAY_SIRENA1, HIGH);
-	//PORTD |= _BV(PD7); 	//digitalWrite(RELAY_SIRENA2, HIGH);
-
-	lcd.backlight();
-	lcd.clear();
-	lcd.setCursor(0, 0);
-	lcd.print(TXT_SISTEMA_DISATTIVO);
-
-//	for(int i=0; i < numSens; i++)
-//		sensore[i].setStato(sensNonAttivo);
-
-	delay(5000);
-	allarm.standby();
-
-	allarm.riAttivaSensori();
-}
-
-void MandJBeep::alarmTriggered() {
-	Timer1.initialize(period); // initialize timer1, 1000 microseconds
-	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
-
-	//PORTD |= _BV(PD6);      //digitalWrite(RELAY_SIRENA1, HIGH);
-	//PORTD &= ~(_BV(PD6));
-	digitalWrite(RELAY_SIRENA1, LOW);
-	//PORTD &= ~(_BV(PD7));	  //digitalWrite(RELAY_SIRENA2, LOW);
-
-	password.reset();
-	statoAllarme = true;
-
-	lcd.clear();
-	lcd.setCursor(5, 2);
-	lcd.print(TXT_INTRUSIONE);
-	lcd.setCursor(0, 3);
-
-	for(uint8_t i=0; i < numSens; i++){
-		if ( sensore[i].getStato()==sensTrigged ) {
-			lcd.print( sensore[i].getMessaggio() );
-			allarm.salvaEventoEprom(i);
-
-#ifdef MJGSM
-			//if (position>0)
-			if (started==true)
-			{
-				String msg="Intrusione: "+sensore[i].getMessaggio();
-				msg.toCharArray(sms_text, 160);
-				//Serial.println(sms_text);
-
-				inviaSMScomando(phone_number, sms_text);
-			}
-#endif
-		}
-	}
-
-	//int afterEvent=t.after(settings.tempoSirena * 1000, doAfterTimerT);
-	t.after(settings.tempoSirena, doAfterTimerT);
-}
 
 #ifdef DEBUG_SETTINGS
 void printSettings()
@@ -404,6 +228,9 @@ void printSettings()
 }
 #endif
 
+/*
+ * evento dopo ritardo attivazione
+ */
 void doAfterRitActivate() {
 #ifdef DEBUG
 	Serial.println(F("Attivo Allarme"));
@@ -414,6 +241,12 @@ void doAfterRitActivate() {
 	allarm.standby();
 }
 
+/*
+ * evento dopo tempoSirena:
+ *   - disattiva Timer1PWM
+ *   - disattiva sirena
+ *   - cambia stato al sensore attivato
+ */
 void doAfterTimerT() {
 	Timer1.disablePwm(TIMER1_PIN1);
 
@@ -442,6 +275,8 @@ bool setPulseWidth(long microseconds) {
 	}
 	return false;
 }
+
+int xxxx=0;
 
 void doPrintRitAttivazione() {
 	//standby();
@@ -586,7 +421,211 @@ void ivioComandoAT(char *cmd)
 }
 #endif
 
-/************* **************/
+/********************************************************/
+/*
+ * funzione che stampa su LCD
+ */
+void MandJBeep::standby() {
+	//display time and date
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	if (alarmeAttivo) lcd.print(TXT_SYS_ACTIVE);
+	else lcd.print(TXT_ENTER_PIN);
+//	lcd.setCursor(0, 1);
+//	lcd.print(getDate());
+	lcd.setCursor(5, 3);
+	lcd.print(TXT_AUTOR);
+}
+
+/*
+ * funzione che formatta per stampa su LCD di data e ora
+ */
+String MandJBeep::getDate() {
+	String txt = F("");
+#ifndef CLKDS3231
+	txt += printDigit(now.hour()) + F(":");
+	txt += printDigit(now.minute()) + F(":");
+	txt += printDigit(now.second());
+	txt += TXT_SPAZIO;
+	txt += printDigit(now.day()) + F("/");
+	txt += printDigit(now.month()) + F("/");
+	txt += printDigit(now.year());
+#else
+	txt += printDigit(now.Hour()) + F(":");
+	txt += printDigit(now.Minute()) + F(":");
+	txt += printDigit(now.Second());
+	txt += TXT_SPAZIO;
+	txt += printDigit(now.Day()) + F("/");
+	txt += printDigit(now.Month()) + F("/");
+	txt += printDigit(now.Year());
+#endif
+
+#ifdef  DEBUG
+#ifdef DEBUG_PRINTDATA
+	Serial.print(F("date: "));
+	Serial.println(txt);
+#endif
+#endif
+	return txt;
+}
+
+/*
+ * check la password di admin
+ */
+bool MandJBeep::checkPassword2() {
+	return password.evaluate();
+}
+
+/*
+ * check la password di attivazione
+ * 	se corretta e l'allarme non attivo ==>  fa i controlli prima dell'attivazione
+ * 		altrimento lo disattiva
+ */
+void MandJBeep::checkPassword() {
+	if (password.evaluate()) {
+		if (alarmeAttivo == false && statoAllarme == false) {
+			primaDiAttivare();
+		} else if (alarmeAttivo == true || statoAllarme == true)
+			disattiva();
+	} else
+		codiceErrato(0);
+}
+
+/*
+ *
+ */
+void MandJBeep::codiceErrato(char adm=0)
+{
+	password.reset();
+	lcd.clear();
+
+	if (adm==0)
+	{
+		lcd.setCursor(3, 0);
+		lcd.print(TXT_INVALID_PIN);
+	}else{
+		password.set(settings.alarmPassword1);
+		lcd.setCursor(0, 0);
+		lcd.print(TXT_INVALID_ADMIN_PIN);
+	}
+	lcd.setCursor(5, 2);
+	lcd.print(TXT_RIPROVA_PIN);
+	delay(1000);
+	allarm.standby();
+}
+
+/*
+ *  esegue il checkSensori, se tutto ok attiva gli eventi:
+ *    - ritardo attivazione
+ *    - dopo ritardo attiva allarme
+ */
+void MandJBeep::primaDiAttivare(){
+#ifdef DEBUG
+		Serial.println(F("Ritardo attivazione ..........."));
+#endif
+	lcd.backlight();
+	if (allarm.checkSensori()) {
+		if (settings.tempoRitardo%2==0) xxxx=0;
+		else xxxx=1;
+		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
+		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
+		allarm.standby();
+	}
+}
+
+/*
+ * attiva allarme, azzera password, attiva/disattiva led, se il comando è arrivato tramite sms
+ * invia sms
+ */
+void MandJBeep::attiva()
+{
+	alarmeAttivo = true;
+	statoAllarme = true;
+	password.reset();
+
+	digitalWrite(RED_LED, HIGH);
+	digitalWrite(GREEN_LED, LOW);
+
+	allarm.standby();
+	char txtTemp[13]="ATTIVO";
+	if (position>0)
+		inviaSMScomando(phone_number, txtTemp);
+/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
+}
+
+/*
+ * diattiva allarme, azzera password, attiva/disattiva led, disattiva TImer1PWM, disattiva sirena
+ * se il comando è arrivato tramite sms invia sms
+ */
+void MandJBeep::disattiva() {
+	statoAllarme = false;
+	alarmeAttivo = false;
+
+	password.reset();
+	Timer1.disablePwm(TIMER1_PIN1);
+
+	digitalWrite(RED_LED, LOW);
+	digitalWrite(GREEN_LED, HIGH);
+	digitalWrite(RELAY_SIRENA1, HIGH);
+
+	lcd.backlight();
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	lcd.print(TXT_SISTEMA_DISATTIVO);
+
+	delay(4000);
+	allarm.standby();
+
+	allarm.riAttivaSensori();
+	char txtTemp[13]="DISATTIVO";
+	if (position>0)
+		inviaSMScomando(phone_number, txtTemp);
+}
+
+/*
+ * Intrusione:
+ *   - attiva Timer1PWM
+ *   - attiva sirena
+ *   - invio sms
+ *   - salva evento nella EPROM
+ *   - dopo tempoSirena secondi disattiva la sirena
+ */
+void MandJBeep::alarmTriggered() {
+	Timer1.initialize(period); // initialize timer1, 1000 microseconds
+	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
+
+	digitalWrite(RELAY_SIRENA1, LOW);
+
+	password.reset();
+	statoAllarme = true;
+
+	lcd.clear();
+	lcd.setCursor(5, 2);
+	lcd.print(TXT_INTRUSIONE);
+	lcd.setCursor(0, 3);
+
+	for(uint8_t i=0; i < numSens; i++){
+		if ( sensore[i].getStato()==sensTrigged ) {
+			lcd.print( sensore[i].getMessaggio() );
+			allarm.salvaEventoEprom(i);
+
+#ifdef MJGSM
+			if (started==true)
+			{
+				String msg="Intrusione: "+sensore[i].getMessaggio();
+				msg.toCharArray(sms_text, 160);
+				//Serial.println(sms_text);
+
+				inviaSMScomando(phone_number, sms_text);
+			}
+#endif
+		}
+	}
+
+	//int afterEvent=t.after(settings.tempoSirena * 1000, doAfterTimerT);
+	t.after(settings.tempoSirena, doAfterTimerT);
+}
+
 MandJBeep::MandJBeep()
 {
 	this->alarmeAttivo=false;
