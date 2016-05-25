@@ -37,3 +37,5 @@ tra i microcontrollori pi&ugrave; diffusi (Arduino like)
  * Versione: 1.0
  
 ## Licence: GPL ver. 3
+## Immagini
+![Allarme](img/allarme.jpg)
