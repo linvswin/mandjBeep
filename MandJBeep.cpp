@@ -205,7 +205,6 @@ void printDate() {
 	lcd.print(allarm.getDate());
 }
 
-
 #ifdef DEBUG_SETTINGS
 void printSettings()
 {
@@ -738,7 +737,7 @@ void MandJBeep::riAttivaSensori()
 
 void MandJBeep::salvaEventoEprom(int num)
 {
-	EEPROM.write(5, EEPROM.read(0));
+	EEPROM.write(6, EEPROM.read(0));
 	EEPROM.write(7, EEPROM.read(1));
 	EEPROM.write(8, EEPROM.read(2));
 	EEPROM.write(9, EEPROM.read(3));

@@ -26,7 +26,6 @@ protected:
 
 public:
 	Sensore(int p, tipoSensore tipo, byte logica, const String msg, znZone zona);
-
 	virtual ~Sensore();
 
 	uint8_t getPin(){return this->pin;};
