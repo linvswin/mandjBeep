@@ -103,10 +103,6 @@ byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 #define I2C_PIR2_PIN  5
 /*===============================*/
 
-//boolean alarmeAttivo=false;
-//boolean statoAllarme=false;
-//boolean adminZone=false;
-
 uint8_t passwd_pos=9;  // the postition of the password input
 
 // id timer event

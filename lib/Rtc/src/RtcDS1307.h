@@ -4,7 +4,7 @@
 #define __RTCDS1307_H__
 
 #include <Arduino.h>
-#include <RtcDateTime.h>
+#include "RtcDateTime.h"
 
 enum DS1307SquareWaveOut
 {
