@@ -26,46 +26,48 @@
 #define MAX_NUMBER_OF_RTCEVENTS (10)
 
 class RTCTimer;
-class RTCEvent
-{
-  friend class RTCTimer;
+class RTCEvent {
+	friend class RTCTimer;
 public:
-  enum RTCEventType {
-    RTCEvent_None = 0,
-    RTCEvent_Every,
-  };
-  //RTCEvent();
+	enum RTCEventType {
+		RTCEvent_None = 0, RTCEvent_Every,
+	};
+	//RTCEvent();
 
-  bool update(uint32_t now);
+	bool update(uint32_t now);
 
 protected:
-  enum RTCEventType _eventType;
-  uint32_t _lastEventTime;
-  uint32_t _period;
-  int _count;
-  int _repeatCount;
-  void (*_callback)(uint32_t now);
+	enum RTCEventType _eventType;
+	uint32_t _lastEventTime;
+	uint32_t _period;
+	int _count;
+	int _repeatCount;
+	void (*_callback)(uint32_t now);
 };
 
-class RTCTimer
-{
+class RTCTimer {
 public:
-  //RTCTimer();
+	//RTCTimer();
 
-  int8_t every(uint32_t period, void (*callback)(uint32_t ts), int repeatCount=-1);
+	int8_t every(uint32_t period, void (*callback)(uint32_t ts),
+			int repeatCount = -1);
 
-  void resetAll(uint32_t now);
-  void setNowCallback(uint32_t (*now)()) { _now = now; }
-  void adjust(uint32_t old, uint32_t now);
-  void update();
-  void update(uint32_t now);
-  void allowMultipleEvents(bool allow=true) { _noMultipleEvents = !allow; }
+	void resetAll(uint32_t now);
+	void setNowCallback(uint32_t (*now)()) {
+		_now = now;
+	}
+	void adjust(uint32_t old, uint32_t now);
+	void update();
+	void update(uint32_t now);
+	void allowMultipleEvents(bool allow = true) {
+		_noMultipleEvents = !allow;
+	}
 
 protected:
-  int8_t        findFreeEventIndex();
-  uint32_t      (*_now)();
-  RTCEvent      _events[MAX_NUMBER_OF_RTCEVENTS];
-  bool          _noMultipleEvents;
+	int8_t findFreeEventIndex();
+	uint32_t (*_now)();
+	RTCEvent _events[MAX_NUMBER_OF_RTCEVENTS];
+	bool _noMultipleEvents;
 };
 
 #endif /* RTCTIMER_H_ */
