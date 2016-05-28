@@ -60,23 +60,6 @@ void loop() {
 
 	keypad.getKey();
 
-//	if (myGSM) Serial.println("Serila GSM connected");
-//	else Serial.println("Serila GSM not connected");
-
-	// read from port 1, send to port 0:
-	/*//if (myGSM.available()) {
-	while (myGSM.available()) {
-		//int inByte = myGSM.read();
-		Serial.write(myGSM.read());
-	}//else Serial.println("No sserial1");
-*/
-	// read from port 0, send to port 1:
-	/*//if (Serial.available()) {
-	while (Serial.available()) {
-		//int inByte = Serial.read();
-		myGSM.write(Serial.read());
-	}*/
-
 	// legge la presenza di messaggi sms
 	allarm.checkSMS();
 	// legge lo stato dei sensori
