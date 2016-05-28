@@ -28,14 +28,29 @@ tra i microcontrollori pi&ugrave; diffusi (Arduino like)
 * avviso tramite modulo GSM (al momento solo tramite sms)
 * relay per attivizione sirena.
 * batteria tampone al piombo 12v 7A
+
+## Librerie usate
+
+* [Keypad_I2C](https://github.com/joeyoung/arduino_keypads/tree/master/Keypad_I2C): libreria per la gestione del tastierino I2C.
+* [LCDMenuLib](https://github.com/Jomelo/LCDMenuLib): libreria per la gestione del menu.
+* [secTimer](https://github.com/leomil72/secTimer): Simple seconds counter for Arduino boards and Atmel microcontrollers.
+The library can count from 0 to (2^32)-1 seconds. This is a really HUGE
+interval of time since (2^32)-1 seconds are about 136 years! So your
+device will cease to function before the library will overflow!
+* MandjTimer: modificato la libreria [Timer](http://playground.arduino.cc/Code/Timer) per utilizzare secTimer al posto di millis().
+* [Password](http://playground.arduino.cc/Code/Password): libreria per la gestione del codice di accesso.
+* [PCF8574](https://github.com/RobTillaart/Arduino/tree/master/libraries/PCF8574): libreria per la gestione dei moduli sensore, gestione dell'integrato PCF8574.
+* [Rtc_by_Makuna](https://github.com/Makuna/Rtc): liberia per la gestione del modulo DS3231 pe la gestione del tempo.
+* [TimerOneThree](https://github.com/heliosoph/TimerOneThree):  The arduino TimerOne library adapted for ATmega1284P and extended for timer3.
  
 ##  Author
 
- * M&J 
- * Sito: [siatienfalla](http://siatienfalla.altervista.org/)
- * Data inizio: 09/02/2016
- * Versione: 1.0
+* M&J 
+* Sito: [siatienfalla](http://siatienfalla.altervista.org/)
+* Data inizio: 09/02/2016
+* Versione: 1.0
  
 ## Licence: GPL ver. 3
+
 ## Immagini
 ![Allarme](img/allarme.jpg)

@@ -50,7 +50,7 @@ char inSerial[40];
 //enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
 #include "lib/RTClib/RTClib.h"
 #else
-#include <RtcDS3231.h>
+#include "lib/Rtc/src/RtcDS3231.h"
 #endif
 
 #include "pin.h"
