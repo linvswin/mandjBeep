@@ -970,3 +970,22 @@ void waitResponse() {
 	timeout = 0; // got a char so reset timeout
 	// code hear to read data
 }
+
+/*
+#define TIMEOUT 1000
+
+void modem_command(String command){
+  mySerial.println(command);
+  Serial.println(command);
+  while (mySerial.available() == 0);  // wait for first char
+
+  unsigned long lastRead = millis();   // last time a char was available
+  while (millis() - lastRead < TIMEOUT){
+    while (mySerial.available()){
+      Serial.write(mySerial.read());
+      lastRead = millis();   // update the lastRead timestamp
+    }
+  }
+  // No need for extra line feed since most responses contain them anyways
+}*/
+
