@@ -331,6 +331,12 @@ void serialswread() {
 void inviaSMScomando(char *number_str, char *message_str)
 {
 	wdt_disable();
+#ifdef DEBUG_SMS
+	Serial.print("Num: ");
+	Serial.println(number_str);
+	Serial.print("Msg: ");
+	Serial.println(message_str);
+#endif
 	sms.SendSMS(number_str, message_str);
 	wdt_enable(WDTO_8S);
 }
@@ -598,7 +604,16 @@ void MandJBeep::alarmTriggered() {
 				msg.toCharArray(sms_text, 160);
 				//Serial.println(sms_text);
 
-				inviaSMScomando(phone_number, sms_text);
+				if (strcmp(settings.phoneNumber1, "0000000000") != 0)
+					inviaSMScomando(settings.phoneNumber1, sms_text);
+				if (strcmp(settings.phoneNumber2, "0000000000") != 0)
+					inviaSMScomando(settings.phoneNumber2, sms_text);
+				if (strcmp(settings.phoneNumber3, "0000000000") != 0)
+					inviaSMScomando(settings.phoneNumber3, sms_text);
+				if (strcmp(settings.phoneNumber4, "0000000000") != 0)
+					inviaSMScomando(settings.phoneNumber4, sms_text);
+				if (strcmp(settings.phoneNumber5, "0000000000") != 0)
+					inviaSMScomando(settings.phoneNumber5, sms_text);
 			}
 #endif
 		}

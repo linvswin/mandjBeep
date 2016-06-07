@@ -10,7 +10,7 @@
 
 #define CTRL_Z 26
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
 //	#define DEBUG_SETTINGS
@@ -19,7 +19,7 @@
 //	#define DEBUG_PIR
 //	#define DEBUG_SECTIMER
 //	#define DEBUG_PRINTDATA
-//	#define DEBUG_SMS
+	#define DEBUG_SMS
 #endif
 
 #define ROWS  4  // Four rows
