@@ -386,7 +386,7 @@ void serialhwread() {
 void sendSMS(char *number_str, char *message_str){
 	myGSM.println("AT+CMGF=1\r\n");
 	delay(1000);
-	myGSM.println("AT+CMGS=\"3392160999\"\r\n");
+	myGSM.println("AT+CMGS=\"33900000\"\r\n");
 	delay(1000);
 	myGSM.write(message_str);
 	myGSM.write((char)CTRL_Z);
