@@ -310,7 +310,7 @@ void timerDoLCDbacklight() {
             gsm.SimpleWriteln("AT+COPS?");
         } else if(!strcmp(inSerial, "SMS")){
             Serial.println("SMS TEST");
-            if (sms.SendSMS("3392160999", "Test SMS"))
+            if (sms.SendSMS("33900000", "Test SMS"))
                 Serial.println("\nSMS sent OK");
         } else if(!strcmp(inSerial, "ALL")){
             Serial.println("SMS LEGGI TUTTI");
@@ -368,8 +368,8 @@ void serialhwread() {
             //gsm.SimpleWriteln("AT+COPS?");
         } else if(!strcmp(inSerial, "SMS")){
             Serial.println("SMS TEST");
-            sendSMS("3392160999", "Test SMS");
-            //if (sms.SendSMS("3392160999", "Test SMS"))
+            sendSMS("33900000", "Test SMS");
+            //if (sms.SendSMS("33900000", "Test SMS"))
              //   Serial.println("\nSMS sent OK");
         } else if(!strcmp(inSerial, "ALL")){
             Serial.println("SMS LEGGI TUTTI");
