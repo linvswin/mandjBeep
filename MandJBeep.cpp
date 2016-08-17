@@ -417,7 +417,7 @@ void MandJBeep::standby() {
 	//display time and date
 	lcd.clear();
 	lcd.setCursor(0, 0);
-	if (alarmeAttivo) lcd.print(TXT_SYS_ACTIVE);
+	if (this->alarmeAttivo) lcd.print(TXT_SYS_ACTIVE);
 	else lcd.print(TXT_ENTER_PIN);
 //	lcd.setCursor(0, 1);
 //	lcd.print(getDate());
@@ -471,9 +471,9 @@ bool MandJBeep::checkPassword2() {
  */
 void MandJBeep::checkPassword() {
 	if (password.evaluate()) {
-		if (alarmeAttivo == false && statoAllarme == false) {
+		if (this->alarmeAttivo == false && this->statoAllarme == false) {
 			primaDiAttivare();
-		} else if (alarmeAttivo == true || statoAllarme == true)
+		} else if (this->alarmeAttivo == true || this->statoAllarme == true)
 			disattiva();
 	} else
 		codiceErrato(0);
@@ -527,17 +527,19 @@ void MandJBeep::primaDiAttivare(){
  */
 void MandJBeep::attiva()
 {
-	alarmeAttivo = true;
-	statoAllarme = true;
+	this->alarmeAttivo = true;
+	this->statoAllarme = true;
 	password.reset();
 
 	digitalWrite(RED_LED, HIGH);
 	digitalWrite(GREEN_LED, LOW);
 
-	allarm.standby();
-	char txtTemp[13]="ATTIVO";
+	this->standby();
 	if (position>0)
+	{
+		char txtTemp[13]="ATTIVO";
 		inviaSMScomando(phone_number, txtTemp);
+	}
 /*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
 
@@ -546,8 +548,8 @@ void MandJBeep::attiva()
  * se il comando è arrivato tramite sms invia sms
  */
 void MandJBeep::disattiva() {
-	statoAllarme = false;
-	alarmeAttivo = false;
+	this->statoAllarme = false;
+	this->alarmeAttivo = false;
 
 	password.reset();
 	Timer1.disablePwm(TIMER1_PIN1);
@@ -562,12 +564,14 @@ void MandJBeep::disattiva() {
 	lcd.print(TXT_SISTEMA_DISATTIVO);
 
 	delay(4000);
-	allarm.standby();
+	this->standby();
+	this->riAttivaSensori();
 
-	allarm.riAttivaSensori();
-	char txtTemp[13]="DISATTIVO";
 	if (position>0)
+	{
+		char txtTemp[13]="DISATTIVO";
 		inviaSMScomando(phone_number, txtTemp);
+	}
 }
 
 /*
@@ -585,7 +589,7 @@ void MandJBeep::alarmTriggered() {
 	digitalWrite(RELAY_SIRENA1, LOW);
 
 	password.reset();
-	statoAllarme = true;
+	this->statoAllarme = true;
 
 	lcd.clear();
 	lcd.setCursor(5, 2);
@@ -596,7 +600,6 @@ void MandJBeep::alarmTriggered() {
 		if ( sensore[i].getStato()==sensTrigged ) {
 			lcd.print( sensore[i].getMessaggio() );
 			allarm.salvaEventoEprom(i);
-
 #ifdef MJGSM
 			if (started==true)
 			{
@@ -618,8 +621,6 @@ void MandJBeep::alarmTriggered() {
 #endif
 		}
 	}
-
-	//int afterEvent=t.after(settings.tempoSirena * 1000, doAfterTimerT);
 	t.after(settings.tempoSirena, doAfterTimerT);
 }
 
@@ -665,7 +666,6 @@ boolean MandJBeep::checkSensori()
 			sensore[i].setStato(sensAttivo);
 
 	for(int i=0; i < numSens; i++){
-		//if (sensore[i].getStato()==sensAttivo)
 		if (sensore[i].getStato()!=sensDisabilitato and sensore[i].getStato()!=sensTempDisabilitato)
 		{
 			if (sensore[i].getTipo()==tpReed)
@@ -676,7 +676,6 @@ boolean MandJBeep::checkSensori()
 					lcd.clear();
 					lcd.setCursor(0, 2);
 					lcd.print(F("Err: "));
-					//lcd.setCursor(5, 2);
 					lcd.print( sensore[i].getMessaggio() );
 #ifdef MJGSM
 					if (started==true)
@@ -694,7 +693,7 @@ boolean MandJBeep::checkSensori()
 					passwd_pos = 9;
 					return false;
 				}
-			}// else sensore[i].setStato(sensAttivo);
+			}
 		}
 	}
 	password.reset();
@@ -880,7 +879,7 @@ void MandJBeep::eseguiSMSComando(char sms_text[])
 
 void MandJBeep::checkAttivita()
 {
-	if (allarm.alarmeAttivo)
+	if (this->alarmeAttivo)
 	{
 		for(uint8_t i=0; i < numSens; i++)
 		{
@@ -898,7 +897,7 @@ void MandJBeep::checkAttivita()
 					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()!=sensTrigged)
 					{
 						sensore[i].setStato(sensTrigged);
-						allarm.alarmTriggered();
+						this->alarmTriggered();
 
 						if (sensore[i].getTipo()==tpReed){
 							if ( sensore[i].getConta() >= settings.maxReed_Conta){
@@ -930,7 +929,7 @@ void MandJBeep::checkSMS(){
 		{
 			//Serial.println("ddddd");
 			position = sms.IsSMSPresent(SMS_UNREAD);
-			if (position) {
+			if (position>0) {
 			  // read new SMS
 			  sms.GetSMS(position, phone_number, sms_text, 160);
 
@@ -947,20 +946,16 @@ void MandJBeep::checkSMS(){
 #ifdef DEBUG_SMS
 			  Serial.print("Num tel: ");
 			  Serial.println(phone_number);
-
 			  Serial.print("Text: ");
 			  Serial.println(sms_text);
-
 			  Serial.print("Auth Tel: ");
 			  Serial.println(xx);
-
 			  Serial.print("Auth: ");
 			  Serial.println(telAutorizzato);
 #endif
-
 			  if (telAutorizzato>0)
 			  {
-				  allarm.eseguiSMSComando(sms_text);
+				  this->eseguiSMSComando(sms_text);
 				  sms.DeleteSMS(position);
 			  }
 			}
