@@ -916,7 +916,27 @@ void MandJBeep::checkAttivita()
 				}
 			}
 		}
+	} else {
+		for(uint8_t i=0; i < numSens; i++)
+		{
+			if (sensore[i].getTipo()==tpTamper)
+			{
+				if ( (sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato) )
+				{
+					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()!=sensTrigged)
+					{
+						//PORTB |= _BV(PB0);
+						digitalWrite(GIALLO_LED, HIGH);
+					}else digitalWrite(GIALLO_LED, LOW);
+				}
+
+			} else if (sensore[i].getTipo()==tpSirena){
+
+			}
+
+		}
 	}
+
 }
 
 void MandJBeep::checkSMS(){

@@ -93,10 +93,10 @@ struct AlarmSettings {
 	5,				//maxReedConta
 	znPerimetrale,	// zona
 	//B11000100		// sens
-	B00010001,		// sens
+	B10000001,		// sens
 	//1,			// adminpass
 	20,				// tempo ritardo
-	1,				// gsm
+	0,				// gsm
 	"0000000000",	// phoneNumber1
 	"0000000000",	// phoneNumber2
 	"0000000000",	// phoneNumber3
@@ -111,9 +111,9 @@ Sensore sensore[numSens]={
 	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale),
 	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale),
 	Sensore(I2C_REED5_PIN,  tpReed,  LOW, "REED5",  znPerimetrale),
-	Sensore(I2C_PIR2_PIN,    tpPIR,  HIGH, "PIR3",  znInterno),
-	Sensore(I2C_PIR1_PIN,    tpPIR,  HIGH, "PIR2",  znInterno),
-	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR1",  znInterno),
+	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR3",  znInterno),
+	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale),
+	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale),
 };
 
 // Create the Keypad
