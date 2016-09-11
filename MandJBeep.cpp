@@ -921,13 +921,24 @@ void MandJBeep::checkAttivita()
 		{
 			if (sensore[i].getTipo()==tpTamper)
 			{
+#ifdef DEBUG_SENS
+			Serial.print("sens ");
+			Serial.print(sensore[i].getMessaggio());
+			Serial.print(" - stato");
+			Serial.println(sensore[i].getStato());
+#endif
 				if ( (sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato) )
 				{
 					if (PCF_24.read(sensore[i].getPin())==sensore[i].getLogica() and sensore[i].getStato()!=sensTrigged)
 					{
-						//PORTB |= _BV(PB0);
+						//sensore[i].setStato(sensTrigged);
+
 						digitalWrite(GIALLO_LED, HIGH);
-					}else digitalWrite(GIALLO_LED, LOW);
+					}/*else{
+						sensore[i].setStato(sensAttivo);
+						digitalWrite(GIALLO_LED, LOW);
+
+					}*/
 				}
 
 			} else if (sensore[i].getTipo()==tpSirena){
