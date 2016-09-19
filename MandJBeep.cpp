@@ -998,6 +998,20 @@ void MandJBeep::checkSMS(){
 #endif
 }
 
+
+void MandJBeep::sendI2CCmd(String cmd, int ch) {
+  // Serial.println(cmd);
+  Wire.beginTransmission(ch);
+  for (int i = 0; i < cmd.length(); i++)
+  {
+    Wire.write(cmd[i]);
+  }
+  Wire.endTransmission();
+}
+
+
+
+
 /************* **************/
 
 unsigned int timeout = 0;

@@ -186,6 +186,8 @@ public:
 
 	void eseguiSMSComando(char sms_text[]);
 	bool getAllarmStatus(){return this->alarmeAttivo;};
+
+	void sendI2CCmd(String cmd, int ch);
 };
 
 MandJBeep allarm; //=new MandJBeep();
