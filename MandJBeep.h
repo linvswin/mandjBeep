@@ -19,11 +19,11 @@
 #define MJGSM
 #ifdef MJGSM
 
-#include "SIM900.h"
-#include <SoftwareSerial.h>
-#include "sms.h"
-SMSGSM sms;
-boolean started = false;
+//#include "SIM900.h"
+//#include <SoftwareSerial.h>
+//#include "sms.h"
+//SMSGSM sms;
+//boolean started = false;
 //int started = 0;
 
 int i_serialh = 0;

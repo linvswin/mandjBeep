@@ -39,6 +39,8 @@ void timerDoLCDbacklight();
 //void check_activity();
 //void refresh_lcd();
 
+//void sendI2CCmd(String cmd, int ch);
+
 #ifdef MJGSM
 void serialhwread();
 void serialswread();
