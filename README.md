@@ -42,6 +42,11 @@ device will cease to function before the library will overflow!
 * [PCF8574](https://github.com/RobTillaart/Arduino/tree/master/libraries/PCF8574): libreria per la gestione dei moduli sensore, gestione dell'integrato PCF8574.
 * [Rtc_by_Makuna](https://github.com/Makuna/Rtc): liberia per la gestione del modulo DS3231 pe la gestione del tempo.
 * [TimerOneThree](https://github.com/heliosoph/TimerOneThree):  The arduino TimerOne library adapted for ATmega1284P and extended for timer3.
+* [GSM Shield](http://www.gsmlib.org): a library developed for Arduino's shields that support SIM900/SIM908.
+* [Keypad](http://playground.arduino.cc/Code/Keypad): a library for using <em>matrix</em> style keypads with the Arduino. As of version 3.0 it now supports mulitple keypresses.
+* [NewLiquidCrystal](https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home): the <em>LCD Library</em> for <strong>Arduino</strong> and <strong>Chipkit</strong>. It is a derivate of the original LiquidCrystal Library as sourced in the Arduino SDK. It has been developed to be compatible with the current LiquidCrystal library, its performance is almost 5 times faster and fully extendable if need be.
+* [SoftwareSerial](https://www.arduino.cc/en/Reference/SoftwareSerial): library has been developed to allow serial communication on other digital pins of the Arduino, using software to replicate the functionality.
+* [Wire](https://www.arduino.cc/en/Reference/Wire): library allows you to communicate with <span class="wikiword">I2C</span> / TWI devices.
  
 ##  Author
 
