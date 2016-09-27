@@ -28,8 +28,10 @@
 #define COLS  4  // Four columns
 
 const char keys[ROWS][COLS] = { // Define the Keymap
-		{ '1', '2', '3', 'A' }, { '4', '5', '6', 'B' }, { '7', '8', '9', 'C' },
-				{ '*', '0', '#', 'D' } };
+	{ '1', '2', '3', 'A' },
+	{ '4', '5', '6', 'B' },
+	{ '7', '8', '9', 'C' },
+	{ '*', '0', '#', 'D' } };
 
 #define I2CADDR 0x21 //keypad
 byte rowPins[ROWS] = { 3, 2, 1, 0 }; //connect to the row pinouts of the keypad
@@ -72,12 +74,11 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define RELAY_SIRENA1 14
 //#define RELAY_SIRENA2 7
 
-//Indirizzo I2C Slave GSM
-#define GSMI2C 8
-
 #define myGSM	Serial1
 #endif
 
+//Indirizzo I2C Slave GSM
+#define GSMI2C 0x08
 /************* LCD *************/
 #define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
 #define BACKLIGHT_PIN  7

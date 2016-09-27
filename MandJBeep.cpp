@@ -41,20 +41,24 @@ void setup() {
 	// avvia evento stampa data ogni secondo
 	timerPrintData = allarm.t.every(1, printDate);
 	// attiva evento spegni LCD dopo lcdBacklightTime secondi
-	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime,
-			timerDoLCDbacklight);
+	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
 
 	if (settings.gsm == 1) {
 		lcd.setCursor(0, 2);
 		lcd.println(TXT_INIZIALIZZA_GSM);
-		allarm.inizializzaGSM();
+		//allarm.inizializzaGSM();
 		allarm.standby();
 	}
-	allarm.sendI2CCmd("1|status", GSMI2C);
-
+	Wire.begin();
 	// attivo watchdog 8s
 	wdt_enable(WDTO_8S);
 }
+
+
+//int maxT=10000;
+//int prevT=0;
+//int x=0;
+//String mm="1|status\n";
 
 void loop() {
 
@@ -65,22 +69,25 @@ void loop() {
 #endif
 
 	keypad.getKey();
-
-	// legge la presenza di messaggi sms
-	allarm.checkSMS();
-	// legge lo stato dei sensori
-	allarm.checkAttivita();
+	allarm.checkSMS();			// legge la presenza di messaggi sms
+	allarm.checkAttivita();		// legge lo stato dei sensori
 
 	MenuLoop();
 	allarm.t.update();
-	if (stringComplete == true) {
+	/*if (stringComplete == true) {
 		Wire.requestFrom(8, 2);    // request 6 bytes from slave device #8
 		while (Wire.available()) { // slave may send less than requested
 			char c = Wire.read(); // receive a byte as character
 			Serial.print(c);         // print the character
 		}
-	}
+	}*/
 
+	/*int xlt=millis();
+	if ( (xlt-prevT) > maxT)
+	{
+		allarm.sendI2CCmd(mm, GSMI2C);
+		prevT=xlt;
+	}*/
 	// reset il  watchdog
 	wdt_reset();
 }
@@ -297,51 +304,8 @@ void timerDoLCDbacklight() {
 	lcd.noBacklight();
 }
 
-#ifdef MJGSM
-//LEGGE DALLA SERIALE HARDWARE
-/*void serialhwread() {
- i_serialh = 0;
- if (Serial.available() > 0) {
- while (Serial.available() > 0) {
- inSerial[i_serialh] = (Serial.read());
- delay(10);
- i_serialh++;
- }
-
- inSerial[i_serialh] = '\0';
- if (!strcmp(inSerial, "/END")) {
- Serial.println("_");
- inSerial[0] = 0x1a;
- inSerial[1] = '\0';
- gsm.SimpleWriteln(inSerial);
- }
- //Send a saved AT command using serial port.
- if (!strcmp(inSerial, "TEST")) {
- Serial.println("SIGNAL QUALITY");
- gsm.SimpleWriteln("AT+CSQ");
- gsm.SimpleWriteln("AT+COPS?");
- } else if(!strcmp(inSerial, "SMS")){
- Serial.println("SMS TEST");
- if (sms.SendSMS("33900000", "Test SMS"))
- Serial.println("\nSMS sent OK");
- } else if(!strcmp(inSerial, "ALL")){
- Serial.println("SMS LEGGI TUTTI");
- gsm.SimpleWriteln("AT+CMGL=\"ALL\",1");
- } else {
- Serial.println(inSerial);
- gsm.SimpleWriteln(inSerial);
- }
- inSerial[0] = '\0';
- }
- }
-
- //LEGGE DALLA SERIALE SOFTWARE
- void serialswread() {
- gsm.SimpleRead();
- }*/
-
 void inviaSMScomando(char *number_str, char *message_str) {
-	//wdt_disable();
+
 #ifdef DEBUG_SMS
 	Serial.print("Num: ");
 	Serial.println(number_str);
@@ -350,9 +314,6 @@ void inviaSMScomando(char *number_str, char *message_str) {
 #endif
 	String cmd = "2|" + String(number_str) + "|" + String(message_str) + "\n";
 	allarm.sendI2CCmd(cmd, GSMI2C);
-
-	//sms.SendSMS(number_str, message_str);
-	//wdt_enable(WDTO_8S);
 }
 
 /*void inviaSMScomando(char *number_str, char *message_str)
@@ -368,76 +329,8 @@ void inviaSMScomando(char *number_str, char *message_str) {
  wdt_enable(WDTO_8S);
  }*/
 
-#else
-
-void serialhwread() {
-	i_serialh = 0;
-	if (Serial.available() > 0) {
-		while (Serial.available() > 0) {
-			inSerial[i_serialh] = (Serial.read());
-			delay(10);
-			i_serialh++;
-		}
-
-		inSerial[i_serialh] = '\0';
-		if (!strcmp(inSerial, "/END")) {
-			Serial.println("_");
-			inSerial[0] = 0x1a;
-			inSerial[1] = '\0';
-			// gsm.SimpleWriteln(inSerial);
-		}
-		//Send a saved AT command using serial port.
-		if (!strcmp(inSerial, "TEST")) {
-			Serial.println("SIGNAL QUALITY");
-			myGSM.println("AT+CSQ");
-			myGSM.println("AT+COPS?");
-			//gsm.SimpleWriteln("AT+CSQ");
-			//gsm.SimpleWriteln("AT+COPS?");
-		} else if(!strcmp(inSerial, "SMS")) {
-			Serial.println("SMS TEST");
-			sendSMS("33900000", "Test SMS");
-			//if (sms.SendSMS("33900000", "Test SMS"))
-			//   Serial.println("\nSMS sent OK");
-		} else if(!strcmp(inSerial, "ALL")) {
-			Serial.println("SMS LEGGI TUTTI");
-			//gsm.SimpleWriteln("AT+CMGL=\"ALL\",1");
-		} else {
-			//Serial.println(inSerial);
-			ivioComandoAT(inSerial);
-			//gsm.SimpleWriteln(inSerial);
-		}
-		inSerial[0] = '\0';
-	}
-}
-
-void sendSMS(char *number_str, char *message_str) {
-	myGSM.println("AT+CMGF=1\r\n");
-	delay(1000);
-	myGSM.println("AT+CMGS=\"33900000\"\r\n");
-	delay(1000);
-	myGSM.write(message_str);
-	myGSM.write((char)CTRL_Z);
-}
-
-void gsmRead()
-{
-	char datain;
-	if(myGSM.available()>0) {
-		datain=myGSM.read();
-		if(datain>0) {
-			Serial.print(datain);
-		}
-	}
-}
-
-void ivioComandoAT(char *cmd)
-{
-	myGSM.println(cmd);
-}
-#endif
-
 /********************************************************/
-/*
+/**
  * funzione che stampa su LCD
  */
 void MandJBeep::standby() {
@@ -626,7 +519,7 @@ void MandJBeep::alarmTriggered() {
 		if (sensore[i].getStato() == sensTrigged) {
 			lcd.print(sensore[i].getMessaggio());
 			allarm.salvaEventoEprom(i);
-#ifdef MJGSM
+
 			//if (started==true)
 			if (settings.gsm == 1) {
 				String msg = "Intrusione: " + sensore[i].getMessaggio();
@@ -644,7 +537,7 @@ void MandJBeep::alarmTriggered() {
 				if (strcmp(settings.phoneNumber5, "0000000000") != 0)
 					inviaSMScomando(settings.phoneNumber5, sms_text);
 			}
-#endif
+
 		}
 	}
 	t.after(settings.tempoSirena, doAfterTimerT);
@@ -698,7 +591,7 @@ boolean MandJBeep::checkSensori() {
 					lcd.setCursor(0, 2);
 					lcd.print(F("Err: "));
 					lcd.print(sensore[i].getMessaggio());
-#ifdef MJGSM
+
 					if (settings.gsm) {
 						if (position > 0) {
 							String msg = "Err: " + sensore[i].getMessaggio();
@@ -707,7 +600,7 @@ boolean MandJBeep::checkSensori() {
 							inviaSMScomando(phone_number, sms_text);
 						}
 					}
-#endif
+
 					password.reset();
 					passwd_pos = 9;
 					return false;
@@ -849,7 +742,6 @@ void MandJBeep::inizializzaSensori() {
 
 void MandJBeep::inizializzaGSM() {
 	//if (settings.gsm)
-#ifdef MJGSM
 	/*	if (gsm.begin(2400)) {
 	 Serial.println("\nGSM status=READY");
 	 Serial.println(gsm.getStatus());
@@ -861,13 +753,6 @@ void MandJBeep::inizializzaGSM() {
 	 }
 	 */
 	//started = gsm.getStatus();
-#else
-	//myGSM.begin(2400);
-	myGSM.begin(BAUD_RATE);
-
-	if (myGSM) Serial.println("Serila GSM connected");
-	else Serial.println("Serila GSM not connected");
-#endif
 }
 
 void MandJBeep::eseguiSMSComando(char sms_text[]) {
@@ -959,7 +844,6 @@ void MandJBeep::checkAttivita() {
 }
 
 void MandJBeep::checkSMS() {
-#ifdef MJGSM
 	if (settings.gsm == 1) {
 		//started = gsm.getStatus();
 		//if (started==gsm.READY)
@@ -1000,30 +884,28 @@ void MandJBeep::checkSMS() {
 			 }*/
 		}
 	}
-#else
-	serialhwread();
-	gsmRead();
-#endif
+
 }
 
 //void MandJBeep::sendI2CCmd(String cmd, int ch) {
 void MandJBeep::sendI2CCmd(String xCmd, int ch) {
-	Wire.beginTransmission(8);
-	for (int i = 0; i < xCmd.length(); i++) {
+	for (int i = 0; i < xCmd.length()+1; i++) {
+		Wire.beginTransmission(ch);
 		Wire.write(xCmd[i]);
+		Wire.endTransmission();
 	}
-	Wire.endTransmission();
-
-	//delay(500);
+	//Wire.endTransmission();
+	delay(500);
 	/*Wire.requestFrom(ch, 2);    // request 6 bytes from slave device #8
 	 while (Wire.available()) { // slave may send less than requested
 	 char c = Wire.read(); // receive a byte as character
 	 Serial.print(c);         // print the character
 	 }*/
-	//Serial.println();
+	Serial.print("m: ");
+	Serial.println(xCmd);
 }
 
-void serialEvent() {
+/*void serialEvent() {
 	while (Serial.available()) {
 		char inChar = Serial.read();
 		outputString += inChar;
@@ -1031,36 +913,4 @@ void serialEvent() {
 			stringComplete = true;
 		}
 	}
-}
-/************* **************/
-
-unsigned int timeout = 0;
-void waitResponse() {
-	while (myGSM.available() == 0) {
-		if (++timeout > 10000) { // set this to your timeout value in milliseconds
-			// your error handling code here
-			break;
-		}
-	}
-	timeout = 0; // got a char so reset timeout
-	// code hear to read data
-}
-
-/*
- #define TIMEOUT 1000
-
- void modem_command(String command){
- mySerial.println(command);
- Serial.println(command);
- while (mySerial.available() == 0);  // wait for first char
-
- unsigned long lastRead = millis();   // last time a char was available
- while (millis() - lastRead < TIMEOUT){
- while (mySerial.available()){
- Serial.write(mySerial.read());
- lastRead = millis();   // update the lastRead timestamp
- }
- }
- // No need for extra line feed since most responses contain them anyways
- }*/
-
+}*/
