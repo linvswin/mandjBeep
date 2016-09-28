@@ -54,11 +54,10 @@ void setup() {
 	wdt_enable(WDTO_8S);
 }
 
-
-//int maxT=10000;
-//int prevT=0;
-//int x=0;
-//String mm="1|status\n";
+int maxT=10000;
+int prevT=0;
+int x=0;
+String mm="|status~";
 
 void loop() {
 
@@ -81,12 +80,14 @@ void loop() {
 			Serial.print(c);         // print the character
 		}
 	}*/
-
 	/*int xlt=millis();
 	if ( (xlt-prevT) > maxT)
 	{
-		allarm.sendI2CCmd(mm, GSMI2C);
+		//mm=(x+mm);
+		allarm.sendI2CCmd((x+mm), GSMI2C);
 		prevT=xlt;
+		x++;
+		if (x>100) x=0;
 	}*/
 	// reset il  watchdog
 	wdt_reset();
@@ -312,7 +313,7 @@ void inviaSMScomando(char *number_str, char *message_str) {
 	Serial.print("Msg: ");
 	Serial.println(message_str);
 #endif
-	String cmd = "2|" + String(number_str) + "|" + String(message_str) + "\n";
+	String cmd = "2|" + String(number_str) + "|" + String(message_str) + "~";
 	allarm.sendI2CCmd(cmd, GSMI2C);
 }
 
@@ -832,10 +833,8 @@ void MandJBeep::checkAttivita() {
 					} else {
 						sensore[i].setStato(sensAttivo);
 						digitalWrite(GIALLO_LED, LOW);
-
 					}
 				}
-
 			} else if (sensore[i].getTipo() == tpSirena) {
 
 			}
@@ -884,25 +883,22 @@ void MandJBeep::checkSMS() {
 			 }*/
 		}
 	}
-
 }
 
-//void MandJBeep::sendI2CCmd(String cmd, int ch) {
 void MandJBeep::sendI2CCmd(String xCmd, int ch) {
 	for (int i = 0; i < xCmd.length()+1; i++) {
 		Wire.beginTransmission(ch);
 		Wire.write(xCmd[i]);
 		Wire.endTransmission();
 	}
-	//Wire.endTransmission();
 	delay(500);
 	/*Wire.requestFrom(ch, 2);    // request 6 bytes from slave device #8
 	 while (Wire.available()) { // slave may send less than requested
 	 char c = Wire.read(); // receive a byte as character
 	 Serial.print(c);         // print the character
 	 }*/
-	Serial.print("m: ");
-	Serial.println(xCmd);
+	//Serial.print("m: ");
+	//Serial.println(xCmd);
 }
 
 /*void serialEvent() {
