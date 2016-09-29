@@ -42,6 +42,8 @@ void setup() {
 	timerPrintData = allarm.t.every(1, printDate);
 	// attiva evento spegni LCD dopo lcdBacklightTime secondi
 	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+	//
+	timerReadGSMSlave= allarm.t.every(5, readGSMSlave);
 
 	if (settings.gsm == 1) {
 		lcd.setCursor(0, 2);
@@ -53,12 +55,12 @@ void setup() {
 	// attivo watchdog 8s
 	wdt_enable(WDTO_8S);
 }
-
+/*
 int maxT=10000;
 int prevT=0;
 int x=0;
 String mm="|status~";
-
+*/
 void loop() {
 
 #ifndef CLKDS3231
@@ -73,22 +75,7 @@ void loop() {
 
 	MenuLoop();
 	allarm.t.update();
-	/*if (stringComplete == true) {
-		Wire.requestFrom(8, 2);    // request 6 bytes from slave device #8
-		while (Wire.available()) { // slave may send less than requested
-			char c = Wire.read(); // receive a byte as character
-			Serial.print(c);         // print the character
-		}
-	}*/
-	/*int xlt=millis();
-	if ( (xlt-prevT) > maxT)
-	{
-		//mm=(x+mm);
-		allarm.sendI2CCmd((x+mm), GSMI2C);
-		prevT=xlt;
-		x++;
-		if (x>100) x=0;
-	}*/
+
 	// reset il  watchdog
 	wdt_reset();
 }
@@ -230,6 +217,18 @@ void printSettings()
 	Serial.println(settings.alarmPassword2);
 }
 #endif
+
+void readGSMSlave()
+{
+	//*if (stringComplete == true) {
+		Wire.requestFrom(GSMI2C, 1);    // request 6 bytes from slave device #8
+		while (Wire.available()) { // slave may send less than requested
+			//byte c = Wire.read(); // receive a byte as character
+			risposteGSMSlave=Wire.read(); // receive a byte as character
+			//Serial.println(c);         // print the character
+		}
+	//}*/
+}
 
 /*
  * evento dopo ritardo attivazione
@@ -844,9 +843,26 @@ void MandJBeep::checkAttivita() {
 
 void MandJBeep::checkSMS() {
 	if (settings.gsm == 1) {
+		switch(risposteGSMSlave){
+		case 1:
+			Serial.println("GSM READY !!");
+			break;
+		case 2:
+			Serial.println("SMS Inviato !!!");
+			break;
+		case 3:
+			Serial.println("SMS non inviato!!");
+			break;
+		/*default:
+			Serial.println("Nulla !!");
+			break;*/
+		}
+		risposteGSMSlave=0;
+	}
+
 		//started = gsm.getStatus();
 		//if (started==gsm.READY)
-		if (settings.gsm) {
+	//	if (settings.gsm) {
 			//Serial.println("ddddd");
 			/**** DA RIVEDERE ***/
 			/*position = sms.IsSMSPresent(SMS_UNREAD);
@@ -881,8 +897,8 @@ void MandJBeep::checkSMS() {
 			 sms.DeleteSMS(position);
 			 }
 			 }*/
-		}
-	}
+		//}
+	//}
 }
 
 void MandJBeep::sendI2CCmd(String xCmd, int ch) {
@@ -900,13 +916,3 @@ void MandJBeep::sendI2CCmd(String xCmd, int ch) {
 	//Serial.print("m: ");
 	//Serial.println(xCmd);
 }
-
-/*void serialEvent() {
-	while (Serial.available()) {
-		char inChar = Serial.read();
-		outputString += inChar;
-		if (inChar == '\n') {
-			stringComplete = true;
-		}
-	}
-}*/

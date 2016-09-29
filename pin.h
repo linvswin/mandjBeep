@@ -111,6 +111,7 @@ uint8_t passwd_pos = 9;  // the postition of the password input
 // id timer event
 int8_t timerLCDbacklight = 0;
 int8_t timerPrintData = 0;
+int8_t timerReadGSMSlave = 0;
 
 /**********************************************************
  **    Definizione di stringhe

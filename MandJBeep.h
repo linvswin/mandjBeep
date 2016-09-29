@@ -111,6 +111,7 @@ Password password = Password(settings.alarmPassword1);
 PCF8574_Class PCF_24(0x22);
 
 uint8_t conta = 0;		// contatore ritardo attivazione
+byte risposteGSMSlave=0;
 
 // generare treno PWM
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
