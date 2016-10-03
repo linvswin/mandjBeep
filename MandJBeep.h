@@ -19,7 +19,7 @@
 int i_serialh = 0;
 char inSerial[40];
 char position=0;
-char phone_number[20]; // array for the phone number string
+//char phone_number[20]; // array for the phone number string
 char sms_text[160];
 
 #include "lib/LCDMenuLib/LCDMenuLib.h"
@@ -144,7 +144,7 @@ public:
 	void inizializzaClock();
 	void inizializzaLed();
 	void inizializzaSensori();
-	void inizializzaGSM();
+	//void inizializzaGSM();
 
 	boolean checkSensori();
 	void disattivaSensori();
@@ -170,7 +170,7 @@ public:
 	void saveSettings(void);
 	void loadSettings(void);
 
-	void eseguiSMSComando(char sms_text[]);
+	//void eseguiSMSComando(char sms_text[]);
 	bool getAllarmStatus(){return this->alarmeAttivo;};
 
 	void sendI2CCmd(String cmd, int ch);

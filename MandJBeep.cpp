@@ -218,6 +218,9 @@ void printSettings()
 }
 #endif
 
+/**
+ * evento che si ripete ogni 5s. Interroga lo slaveGSM per valutarne lo stato
+ **/
 void readGSMSlave()
 {
 	//*if (stringComplete == true) {
@@ -304,7 +307,7 @@ void timerDoLCDbacklight() {
 	lcd.noBacklight();
 }
 
-void inviaSMScomando(char *number_str, char *message_str) {
+void inviaSMScomando(/*char *number_str,*/ char *message_str) {
 
 #ifdef DEBUG_SMS
 	Serial.print("Num: ");
@@ -312,7 +315,8 @@ void inviaSMScomando(char *number_str, char *message_str) {
 	Serial.print("Msg: ");
 	Serial.println(message_str);
 #endif
-	String cmd = "2|" + String(number_str) + "|" + String(message_str) + "~";
+	//String cmd = "2|" + String(number_str) + "|" + String(message_str) + "~";
+	String cmd = "2|" + String(message_str) + "~";
 	allarm.sendI2CCmd(cmd, GSMI2C);
 }
 
@@ -458,7 +462,7 @@ void MandJBeep::attiva() {
 	this->standby();
 	if (position > 0) {
 		char txtTemp[13] = "ATTIVO";
-		inviaSMScomando(phone_number, txtTemp);
+		inviaSMScomando(/*phone_number,*/ txtTemp);
 	}
 	/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
@@ -489,7 +493,7 @@ void MandJBeep::disattiva() {
 
 	if (position > 0) {
 		char txtTemp[13] = "DISATTIVO";
-		inviaSMScomando(phone_number, txtTemp);
+		inviaSMScomando(/*phone_number,*/ txtTemp);
 	}
 }
 
@@ -527,17 +531,16 @@ void MandJBeep::alarmTriggered() {
 				//Serial.println(sms_text);
 
 				if (strcmp(settings.phoneNumber1, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber1, sms_text);
+					inviaSMScomando(/*settings.phoneNumber1,*/ sms_text);
 				if (strcmp(settings.phoneNumber2, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber2, sms_text);
+					inviaSMScomando(/*settings.phoneNumber2,*/ sms_text);
 				if (strcmp(settings.phoneNumber3, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber3, sms_text);
+					inviaSMScomando(/*settings.phoneNumber3,*/ sms_text);
 				if (strcmp(settings.phoneNumber4, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber4, sms_text);
+					inviaSMScomando(/*settings.phoneNumber4,*/ sms_text);
 				if (strcmp(settings.phoneNumber5, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber5, sms_text);
+					inviaSMScomando(/*settings.phoneNumber5,*/ sms_text);
 			}
-
 		}
 	}
 	t.after(settings.tempoSirena, doAfterTimerT);
@@ -583,8 +586,7 @@ boolean MandJBeep::checkSensori() {
 		if (sensore[i].getStato() != sensDisabilitato
 				and sensore[i].getStato() != sensTempDisabilitato) {
 			if (sensore[i].getTipo() == tpReed) {
-				if (PCF_24.read(sensore[i].getPin())
-						== sensore[i].getLogica()) {
+				if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica()) {
 					sensore[i].setStato(sensMalfunzionamento);
 
 					lcd.clear();
@@ -596,8 +598,7 @@ boolean MandJBeep::checkSensori() {
 						if (position > 0) {
 							String msg = "Err: " + sensore[i].getMessaggio();
 							msg.toCharArray(sms_text, 160);
-							//Serial.println(sms_text);
-							inviaSMScomando(phone_number, sms_text);
+							inviaSMScomando(/*phone_number,*/ sms_text);
 						}
 					}
 
@@ -740,9 +741,9 @@ void MandJBeep::inizializzaSensori() {
 				(bitRead(settings.sens, i) == 0 ? sensDisabilitato : sensAttivo));
 }
 
-void MandJBeep::inizializzaGSM() {
+/*void MandJBeep::inizializzaGSM() {
 	//if (settings.gsm)
-	/*	if (gsm.begin(2400)) {
+		if (gsm.begin(2400)) {
 	 Serial.println("\nGSM status=READY");
 	 Serial.println(gsm.getStatus());
 	 started = true;
@@ -751,11 +752,11 @@ void MandJBeep::inizializzaGSM() {
 	 started = false;
 	 //if (settings.gsm) settings.gsm=0;
 	 }
-	 */
-	//started = gsm.getStatus();
-}
 
-void MandJBeep::eseguiSMSComando(char sms_text[]) {
+	//started = gsm.getStatus();
+}*/
+
+/*void MandJBeep::eseguiSMSComando(char sms_text[]) {
 	if (!strcmp(sms_text, "ATTIVA")) {
 		if (this->alarmeAttivo == false && this->statoAllarme == false) {
 			this->primaDiAttivare();
@@ -772,7 +773,7 @@ void MandJBeep::eseguiSMSComando(char sms_text[]) {
 			strcpy(txtTemp, "NON ATTIVO");
 		inviaSMScomando(phone_number, txtTemp);
 	}
-}
+}*/
 
 void MandJBeep::checkAttivita() {
 	if (this->alarmeAttivo) {
@@ -842,7 +843,9 @@ void MandJBeep::checkAttivita() {
 }
 
 void MandJBeep::checkSMS() {
+
 	if (settings.gsm == 1) {
+		position=1;
 		switch(risposteGSMSlave){
 		case 1:
 			Serial.println("GSM READY !!");
@@ -853,52 +856,29 @@ void MandJBeep::checkSMS() {
 		case 3:
 			Serial.println("SMS non inviato!!");
 			break;
-		/*default:
-			Serial.println("Nulla !!");
-			break;*/
+		case 4:
+			if (this->alarmeAttivo == false && this->statoAllarme == false) {
+				this->primaDiAttivare();
+			}
+			break;
+		case 5:
+			this->disattiva();
+			break;
+		case 6:
+			this->disattivaSensori();
+			break;
+		case 7:
+			char txtTemp[13] = "";
+			if (this->getAllarmStatus() == true) strcpy(txtTemp, "ATTIVO");
+			else strcpy(txtTemp, "NON ATTIVO");
+
+			//strcpy(phone_number, "0");
+			inviaSMScomando(/*phone_number,*/ txtTemp);
+			break;
 		}
+		position=0;
 		risposteGSMSlave=0;
 	}
-
-		//started = gsm.getStatus();
-		//if (started==gsm.READY)
-	//	if (settings.gsm) {
-			//Serial.println("ddddd");
-			/**** DA RIVEDERE ***/
-			/*position = sms.IsSMSPresent(SMS_UNREAD);
-			 if (position>0) {
-			 // read new SMS
-			 sms.GetSMS(position, phone_number, sms_text, 160);
-
-			 int telAutorizzato=0;
-			 char xx[20]="+39";
-			 strcat(xx, settings.phoneNumber1);
-
-			 if (strcmp(phone_number,settings.phoneNumber1) != 0) telAutorizzato=1;
-			 else if (strcmp(phone_number,settings.phoneNumber2) != 0) telAutorizzato=2;
-			 else if (strcmp(phone_number,settings.phoneNumber3) != 0) telAutorizzato=3;
-			 else if (strcmp(phone_number,settings.phoneNumber4) != 0) telAutorizzato=4;
-			 else if (strcmp(phone_number,settings.phoneNumber5) != 0) telAutorizzato=5;
-
-
-			 #ifdef DEBUG_SMS
-			 Serial.print("Num tel: ");
-			 Serial.println(phone_number);
-			 Serial.print("Text: ");
-			 Serial.println(sms_text);
-			 Serial.print("Auth Tel: ");
-			 Serial.println(xx);
-			 Serial.print("Auth: ");
-			 Serial.println(telAutorizzato);
-			 #endif
-			 if (telAutorizzato>0)
-			 {
-			 this->eseguiSMSComando(sms_text);
-			 sms.DeleteSMS(position);
-			 }
-			 }*/
-		//}
-	//}
 }
 
 void MandJBeep::sendI2CCmd(String xCmd, int ch) {
@@ -908,11 +888,4 @@ void MandJBeep::sendI2CCmd(String xCmd, int ch) {
 		Wire.endTransmission();
 	}
 	delay(500);
-	/*Wire.requestFrom(ch, 2);    // request 6 bytes from slave device #8
-	 while (Wire.available()) { // slave may send less than requested
-	 char c = Wire.read(); // receive a byte as character
-	 Serial.print(c);         // print the character
-	 }*/
-	//Serial.print("m: ");
-	//Serial.println(xCmd);
 }

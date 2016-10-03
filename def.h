@@ -22,6 +22,6 @@ void timerDoLCDbacklight();
 
 void serialhwread();
 void serialswread();
-void inviaSMScomando(char *number_str, char *message_str);
+void inviaSMScomando(/*char *number_str,*/ char *message_str);
 
 #endif /* DEF_H_ */

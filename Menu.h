@@ -453,9 +453,9 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				{
 					lcd.setCursor(1, 2);
 					lcd.println(TXT_INIZIALIZZA_GSM);
-					wdt_disable();
-					allarm.inizializzaGSM();
-					wdt_enable(WDTO_8S);
+					//wdt_disable();
+					//allarm.inizializzaGSM();
+					//wdt_enable(WDTO_8S);
 				}
 				break;
 			case 12:
