@@ -55,12 +55,7 @@ void setup() {
 	// attivo watchdog 8s
 	wdt_enable(WDTO_8S);
 }
-/*
-int maxT=10000;
-int prevT=0;
-int x=0;
-String mm="|status~";
-*/
+
 void loop() {
 
 #ifndef CLKDS3231
@@ -307,7 +302,7 @@ void timerDoLCDbacklight() {
 	lcd.noBacklight();
 }
 
-void inviaSMScomando(/*char *number_str,*/ char *message_str) {
+void inviaSMScomando(/*char *number_str,*/ char *message_str, char type='2') {
 
 #ifdef DEBUG_SMS
 	Serial.print("Num: ");
@@ -316,7 +311,7 @@ void inviaSMScomando(/*char *number_str,*/ char *message_str) {
 	Serial.println(message_str);
 #endif
 	//String cmd = "2|" + String(number_str) + "|" + String(message_str) + "~";
-	String cmd = "2|" + String(message_str) + "~";
+	String cmd = String(type)+"|" + String(message_str) + "~";
 	allarm.sendI2CCmd(cmd, GSMI2C);
 }
 
@@ -441,6 +436,7 @@ void MandJBeep::primaDiAttivare() {
 			xxxx = 0;
 		else
 			xxxx = 1;
+		position2=position;
 		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
 		allarm.standby();
@@ -460,9 +456,10 @@ void MandJBeep::attiva() {
 	digitalWrite(GREEN_LED, LOW);
 
 	this->standby();
-	if (position > 0) {
+	if (position2 > 0) {
 		char txtTemp[13] = "ATTIVO";
 		inviaSMScomando(/*phone_number,*/ txtTemp);
+		position2=0;
 	}
 	/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
@@ -529,17 +526,7 @@ void MandJBeep::alarmTriggered() {
 				String msg = "Intrusione: " + sensore[i].getMessaggio();
 				msg.toCharArray(sms_text, 160);
 				//Serial.println(sms_text);
-
-				if (strcmp(settings.phoneNumber1, "0000000000") != 0)
-					inviaSMScomando(/*settings.phoneNumber1,*/ sms_text);
-				if (strcmp(settings.phoneNumber2, "0000000000") != 0)
-					inviaSMScomando(/*settings.phoneNumber2,*/ sms_text);
-				if (strcmp(settings.phoneNumber3, "0000000000") != 0)
-					inviaSMScomando(/*settings.phoneNumber3,*/ sms_text);
-				if (strcmp(settings.phoneNumber4, "0000000000") != 0)
-					inviaSMScomando(/*settings.phoneNumber4,*/ sms_text);
-				if (strcmp(settings.phoneNumber5, "0000000000") != 0)
-					inviaSMScomando(/*settings.phoneNumber5,*/ sms_text);
+				inviaSMScomando(sms_text, '3');
 			}
 		}
 	}
