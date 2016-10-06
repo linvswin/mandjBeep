@@ -22,9 +22,10 @@ String printDigit(int digits) {
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-	Wire.begin(); // join i2c bus (address optional for master)
+	//Wire.begin(); // join i2c bus (address optional for master)
 
-	allarm.inizializza();
+	//allarm.inizializza();
+	allarm.inizializzaLed();
 
 	lcd.begin(20, 4);
 	MenuSetup();

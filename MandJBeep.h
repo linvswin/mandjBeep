@@ -42,11 +42,7 @@ char sms_text[160];
 #include "pin.h"
 #include "def.h"
 
-#if BOARD == 2
 #include "lib/TimerOneThree/TimerOneThree.h"  //https://github.com/heliosoph/TimerOneThree
-#else
-#include <TimerOne.h>
-#endif
 
 #include "Sensore.h"
 

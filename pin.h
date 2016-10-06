@@ -37,33 +37,6 @@ const char keys[ROWS][COLS] = { // Define the Keymap
 byte rowPins[ROWS] = { 3, 2, 1, 0 }; //connect to the row pinouts of the keypad
 byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keypad
 
-#define BOARD 2  // 0 mega2560, 1 uno r3, 2 atmega1284
-#if ( BOARD==0 )
-//	#include <Keypad.h> //http://www.arduino.cc/playground/uploads/Code/Keypad.zip
-
-#define TIMER2_PIN1 9
-#define TIMER2_PIN2 10
-
-#define YELLOW_LED  37
-#define RED_LED     46
-
-#define PIR_PIN1    47
-#define RELAY_SIRENA1 4
-#define RELAY_SIRENA2 5
-
-#define myGSM	Serial1
-#elif ( BOARD==1 )
-
-#define TIMER1_PIN1 9   //buzzer pin
-//#define TIMER1_PIN2 10   //buzzer pin
-//#define TIMER2_PIN1 3
-//#define TIMER2_PIN2 11
-#define GREEN_LED  2
-#define RED_LED    4
-//#define GIALLO_LED  8
-//#define RELAY_SIRENA1 6
-//#define RELAY_SIRENA2 7
-#elif ( BOARD==2 )
 #define TIMER1_PIN1 13 //13   //buzzer pin
 #define TIMER1_PIN2 12   //buzzer pin
 
@@ -74,8 +47,7 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define RELAY_SIRENA1 14
 //#define RELAY_SIRENA2 7
 
-#define myGSM	Serial1
-#endif
+//#define myGSM	Serial1
 
 //Indirizzo I2C Slave GSM
 #define GSMI2C 0x08
