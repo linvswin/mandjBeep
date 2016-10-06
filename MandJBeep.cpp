@@ -22,7 +22,7 @@ String printDigit(int digits) {
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-	//Wire.begin(); // join i2c bus (address optional for master)
+	Wire.begin(); // join i2c bus (address optional for master)
 
 	allarm.inizializza();
 
@@ -45,13 +45,13 @@ void setup() {
 	//
 	timerReadGSMSlave= allarm.t.every(5, readGSMSlave);
 
-	if (settings.gsm == 1) {
+	/*if (settings.gsm == 1) {
 		lcd.setCursor(0, 2);
 		lcd.println(TXT_INIZIALIZZA_GSM);
 		//allarm.inizializzaGSM();
 		allarm.standby();
-	}
-	Wire.begin();
+	}*/
+
 	// attivo watchdog 8s
 	wdt_enable(WDTO_8S);
 }
@@ -548,8 +548,8 @@ void MandJBeep::inizializza() {
 	keypad.addEventListener(keypadEvent); //add an event listener for this keypad
 
 	this->inizializzaClock();
-	this->inizializzaSensori();
 	this->inizializzaLed();
+	this->inizializzaSensori();
 }
 
 void MandJBeep::saveSettings(void) {
@@ -719,7 +719,9 @@ void MandJBeep::inizializzaLed() {
 
 	digitalWrite(RELAY_SIRENA1, HIGH);
 	digitalWrite(RED_LED, LOW);
+	digitalWrite(GIALLO_LED, LOW);
 	digitalWrite(GREEN_LED, HIGH);
+	Serial.println("LED");
 }
 
 void MandJBeep::inizializzaSensori() {
