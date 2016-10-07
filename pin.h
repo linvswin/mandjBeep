@@ -46,10 +46,9 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define RELAY_SIRENA1 14
 //#define RELAY_SIRENA2 7
 
-//#define myGSM	Serial1
-
 //Indirizzo I2C Slave GSM
 #define GSMI2C 0x08
+
 /************* LCD *************/
 #define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
 #define BACKLIGHT_PIN  7
