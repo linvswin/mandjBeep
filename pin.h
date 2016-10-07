@@ -10,8 +10,6 @@
 
 #define BAUD_RATE  9600  //115200
 
-#define CTRL_Z 26
-
 //#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
@@ -40,9 +38,10 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define TIMER1_PIN1 13 //13   //buzzer pin
 #define TIMER1_PIN2 12   //buzzer pin
 
+#define GIALLO_LED  1
 #define GREEN_LED  2
 #define RED_LED    3
-#define GIALLO_LED  1
+
 //#define RELAY_SIRENA1 11
 #define RELAY_SIRENA1 14
 //#define RELAY_SIRENA2 7
