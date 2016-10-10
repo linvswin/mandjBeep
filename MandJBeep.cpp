@@ -698,6 +698,16 @@ void MandJBeep::disattivaSensori() {
 			sensore[i].setStato(sensTempDisabilitato);
 			//PORTB |= _BV(PB0);
 			digitalWrite(GIALLO_LED, HIGH);
+#ifdef MJGSM
+			if (started == true) {
+				if (position > 0) {
+					String msg = "Sensore disattivato: " + sensore[i].getMessaggio();
+					msg.toCharArray(sms_text, 160);
+					//Serial.println(sms_text);
+					inviaSMScomando(phone_number, sms_text);
+				}
+			}
+#endif
 		}
 	}
 	password.reset();
