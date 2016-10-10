@@ -8,13 +8,19 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
+//#define ECLIPSE
+
 #include "Arduino.h"
 
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
 
 #include <EEPROM.h>
-#include "lib/MandJTimer/MandJTimer.h"
+#ifdef ECLIPSE
+	#include "lib/MandJTimer/MandJTimer.h"
+#else
+	#include <MandJTimer.h>
+#endif
 
 #define MJGSM
 #ifdef MJGSM
@@ -29,6 +35,7 @@ boolean started = false;
 int i_serialh = 0;
 char inSerial[40];
 char position=0;
+char position2=0;
 char phone_number[20]; // array for the phone number string
 char sms_text[160];
 
@@ -37,11 +44,18 @@ int i_serialh = 0;
 char inSerial[40];
 #endif
 
-#include "lib/LCDMenuLib/LCDMenuLib.h"
-#include "lib/PCF8574/PCF8574_Class.h"
 #include <LiquidCrystal_I2C.h>
-#include "lib/Keypad_I2C/Keypad_I2C.h"
-#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
+#ifdef ECLIPSE
+	#include "lib/LCDMenuLib/LCDMenuLib.h"
+	#include "lib/PCF8574/PCF8574_Class.h"
+	#include "lib/Keypad_I2C/Keypad_I2C.h"
+	#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
+#else
+	#include <LCDMenuLib.h>
+	#include <PCF8574_Class.h>
+	#include <Keypad_I2C.h>
+	#include <Password.h> //http://www.arduino.cc/playground/uploads/Code/Password.zip
+#endif
 
 #define CLKDS3231
 
@@ -50,16 +64,26 @@ char inSerial[40];
 //enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
 #include "lib/RTClib/RTClib.h"
 #else
-#include "lib/Rtc/src/RtcDS3231.h"
+
+#ifdef ECLIPSE
+	#include "lib/Rtc/src/RtcDS3231.h"
+#else
+	#include <RtcDS3231.h>
 #endif
+
+#endif
+
+// azzera variabili
+#define memtozero_s(var) var ^= var;
+#define memtozero_v(var) memset((void*)&var,0,sizeof(var));
 
 #include "pin.h"
 #include "def.h"
 
-#if BOARD == 2
-#include "lib/TimerOneThree/TimerOneThree.h"  //https://github.com/heliosoph/TimerOneThree
+#ifdef ECLIPSE
+	#include "lib/TimerOneThree/TimerOneThree.h"  //https://github.com/heliosoph/TimerOneThree
 #else
-#include <TimerOne.h>
+	#include <TimerOneThree.h>  //https://github.com/heliosoph/TimerOneThree
 #endif
 
 #include "Sensore.h"
