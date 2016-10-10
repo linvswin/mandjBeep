@@ -8,6 +8,16 @@ AT+CMGDA=<TYPE>
  AT+CPOWD=1  //shutdown
 ATD+91xxxxxxxxxx; // ???
 
+I2C scanner. Scanning ...
+Found address: 8 (0x8)		-> atmega328 GMS
+Found address: 32 (0x20)	-> LCD
+Found address: 33 (0x21)	-> Keypad
+Found address: 34 (0x22)	-> sensori
+Found address: 87 (0x57)	-> ????? (eprom moduolo dc3231?)
+Found address: 104 (0x68)	-> RTC
+Done.
+Found 6 device(s).
+
 
 I2C scanner. Scanning ...
 Found address: 32 (0x20)

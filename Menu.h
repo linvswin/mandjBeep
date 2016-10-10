@@ -35,7 +35,7 @@ uint8_t  scroll_bar[5][8] = {
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   25 // 26
+#define _LCDML_DISP_cnt   26
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
@@ -68,14 +68,15 @@ LCDML_DISP_addMenu          (10, _LCDML_G1 , LCDML_root      , 3 , TXT_GSM);
 	     LCDML_DISP_addParam(15 , _LCDML_G1 , LCDML_root_3_2 , 3 , TXT_NUMERI3_GSM     , mnuGsmNumeri, 3);
 	     LCDML_DISP_addParam(16 , _LCDML_G1 , LCDML_root_3_2 , 4 , TXT_NUMERI4_GSM     , mnuGsmNumeri, 4);
 	     LCDML_DISP_addParam(17 , _LCDML_G1 , LCDML_root_3_2 , 5 , TXT_NUMERI5_GSM     , mnuGsmNumeri, 5);
-	LCDML_DISP_addParam     (18, _LCDML_G1 , LCDML_root_3    , 3 , TXT_SYNC_GSM         , mnuTempoSirena, 13);
-	LCDML_DISP_addParam     (19, _LCDML_G1 , LCDML_root_2    , 6 , TXT_CONTA_REED         , mnuTempoSirena, 8);
-	LCDML_DISP_addParam     (20, _LCDML_G1 , LCDML_root_2    , 9 , TXT_TEMPERATURA        , mnuTempoSirena, 12);
-	LCDML_DISP_addParam     (21, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	LCDML_DISP_addParam     (22, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	LCDML_DISP_addParam     (23, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-	LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
-LCDML_DISP_add              (25, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
+	LCDML_DISP_addParam     (18, _LCDML_G1 , LCDML_root_3    , 3 , TXT_SYNC_GSM        , mnuTempoSirena, 13);
+	LCDML_DISP_addParam     (19, _LCDML_G1 , LCDML_root_3    , 4 , TXT_STATE_GSM       , mnuTempoSirena, 14);
+	LCDML_DISP_addParam     (20, _LCDML_G1 , LCDML_root_2    , 6 , TXT_CONTA_REED         , mnuTempoSirena, 8);
+	LCDML_DISP_addParam     (21, _LCDML_G1 , LCDML_root_2    , 9 , TXT_TEMPERATURA        , mnuTempoSirena, 12);
+	LCDML_DISP_addParam     (22, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
+	LCDML_DISP_addParam     (23, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+	LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+	LCDML_DISP_addParam     (25, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
+LCDML_DISP_add              (26, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -354,6 +355,9 @@ void mngTempoSirena(uint8_t par){
 		case 13:
 			lcd.print(TXT_SYNC_GSM);
 			break;
+		case 14:
+			lcd.print(TXT_STATE_GSM);
+			break;
 	}
 	lcd.setCursor(0, 1);
 	lcd.blink();
@@ -422,6 +426,7 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 			LCDML_BUTTON_resetDown();
 		}
 		if (LCDML_BUTTON_checkEnter()) {
+			String s="";
 			switch (param) {
 			case 1:
 				settings.tempoSirena = newIntVal;
@@ -467,9 +472,14 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				//settings.tempoRitardo=newIntVal;
 				break;
 			case 13:
-				strcpy(settings.phoneNumber2, "3398650195");
+				//strcpy(settings.phoneNumber2, "3398650195");
 				//strcpy(settings.phoneNumber2, "0000000000");
-				String s="4|"+String(settings.gsm)+","+String(settings.phoneNumber1)+","+String(settings.phoneNumber2)+","+String(settings.phoneNumber3)+","+String(settings.phoneNumber4)+","+String(settings.phoneNumber5)+"~";
+				s="4|"+String(settings.gsm)+","+String(settings.phoneNumber1)+","+String(settings.phoneNumber2)+","+String(settings.phoneNumber3)+","+String(settings.phoneNumber4)+","+String(settings.phoneNumber5)+"~";
+				allarm.sendI2CCmd(s, GSMI2C);
+				//settings.tempoRitardo=newIntVal;
+				break;
+			case 14:
+				s="1|Status~";
 				allarm.sendI2CCmd(s, GSMI2C);
 				//settings.tempoRitardo=newIntVal;
 				break;

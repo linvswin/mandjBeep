@@ -38,10 +38,9 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define TIMER1_PIN1 13 //13   //buzzer pin
 #define TIMER1_PIN2 12   //buzzer pin
 
-#define GIALLO_LED  1
 #define GREEN_LED  2
 #define RED_LED    3
-
+#define GIALLO_LED  1
 //#define RELAY_SIRENA1 11
 #define RELAY_SIRENA1 14
 //#define RELAY_SIRENA2 7
@@ -127,6 +126,7 @@ int8_t timerReadGSMSlave = 0;
 #define TXT_NUMERI4_GSM          "Numero4"
 #define TXT_NUMERI5_GSM          "Numero5"
 #define TXT_SYNC_GSM             "Sync Imp GSM"
+#define TXT_STATE_GSM             "Stato GSM"
 #define TXT_TEMPERATURA			"Temperatura: "
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/

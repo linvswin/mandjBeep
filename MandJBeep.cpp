@@ -22,10 +22,9 @@ String printDigit(int digits) {
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-	//Wire.begin(); // join i2c bus (address optional for master)
+	Wire.begin(); // join i2c bus (address optional for master)
 
-	//allarm.inizializza();
-	allarm.inizializzaLed();
+	allarm.inizializza();
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -42,16 +41,17 @@ void setup() {
 	// avvia evento stampa data ogni secondo
 	timerPrintData = allarm.t.every(1, printDate);
 	// attiva evento spegni LCD dopo lcdBacklightTime secondi
-	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime, timerDoLCDbacklight);
+	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime,
+			timerDoLCDbacklight);
 	//
-	timerReadGSMSlave= allarm.t.every(5, readGSMSlave);
+	timerReadGSMSlave = allarm.t.every(5, readGSMSlave);
 
 	/*if (settings.gsm == 1) {
-		lcd.setCursor(0, 2);
-		lcd.println(TXT_INIZIALIZZA_GSM);
-		//allarm.inizializzaGSM();
-		allarm.standby();
-	}*/
+	 lcd.setCursor(0, 2);
+	 lcd.println(TXT_INIZIALIZZA_GSM);
+	 //allarm.inizializzaGSM();
+	 allarm.standby();
+	 }*/
 
 	// attivo watchdog 8s
 	wdt_enable(WDTO_8S);
@@ -217,15 +217,14 @@ void printSettings()
 /**
  * evento che si ripete ogni 5s. Interroga lo slaveGSM per valutarne lo stato
  **/
-void readGSMSlave()
-{
+void readGSMSlave() {
 	//*if (stringComplete == true) {
-		Wire.requestFrom(GSMI2C, 1);    // request 6 bytes from slave device #8
-		while (Wire.available()) { // slave may send less than requested
-			//byte c = Wire.read(); // receive a byte as character
-			risposteGSMSlave=Wire.read(); // receive a byte as character
-			//Serial.println(c);         // print the character
-		}
+	Wire.requestFrom(GSMI2C, 1);    // request 6 bytes from slave device #8
+	while (Wire.available()) { // slave may send less than requested
+		//byte c = Wire.read(); // receive a byte as character
+		risposteGSMSlave = Wire.read(); // receive a byte as character
+		//Serial.println(c);         // print the character
+	}
 	//}*/
 }
 
@@ -303,16 +302,16 @@ void timerDoLCDbacklight() {
 	lcd.noBacklight();
 }
 
-void inviaSMScomando(/*char *number_str,*/ char *message_str, char type='2') {
+void inviaSMScomando(char *message_str, char type = '2') {
 
 #ifdef DEBUG_SMS
 	Serial.print("Num: ");
-	Serial.println(number_str);
+//	Serial.println(number_str);
 	Serial.print("Msg: ");
 	Serial.println(message_str);
 #endif
 	//String cmd = "2|" + String(number_str) + "|" + String(message_str) + "~";
-	String cmd = String(type)+"|" + String(message_str) + "~";
+	String cmd = String(type) + "|" + String(message_str) + "~";
 	allarm.sendI2CCmd(cmd, GSMI2C);
 }
 
@@ -437,7 +436,7 @@ void MandJBeep::primaDiAttivare() {
 			xxxx = 0;
 		else
 			xxxx = 1;
-		position2=position;
+		position2 = position;
 		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
 		allarm.standby();
@@ -459,8 +458,8 @@ void MandJBeep::attiva() {
 	this->standby();
 	if (position2 > 0) {
 		char txtTemp[13] = "ATTIVO";
-		inviaSMScomando(/*phone_number,*/ txtTemp);
-		position2=0;
+		inviaSMScomando(/*phone_number,*/txtTemp);
+		position2 = 0;
 	}
 	/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
@@ -491,7 +490,7 @@ void MandJBeep::disattiva() {
 
 	if (position > 0) {
 		char txtTemp[13] = "DISATTIVO";
-		inviaSMScomando(/*phone_number,*/ txtTemp);
+		inviaSMScomando(/*phone_number,*/txtTemp);
 	}
 }
 
@@ -574,7 +573,8 @@ boolean MandJBeep::checkSensori() {
 		if (sensore[i].getStato() != sensDisabilitato
 				and sensore[i].getStato() != sensTempDisabilitato) {
 			if (sensore[i].getTipo() == tpReed) {
-				if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica()) {
+				if (PCF_24.read(sensore[i].getPin())
+						== sensore[i].getLogica()) {
 					sensore[i].setStato(sensMalfunzionamento);
 
 					lcd.clear();
@@ -586,7 +586,7 @@ boolean MandJBeep::checkSensori() {
 						if (position > 0) {
 							String msg = "Err: " + sensore[i].getMessaggio();
 							msg.toCharArray(sms_text, 160);
-							inviaSMScomando(/*phone_number,*/ sms_text);
+							inviaSMScomando(/*phone_number,*/sms_text);
 						}
 					}
 
@@ -609,6 +609,14 @@ void MandJBeep::disattivaSensori() {
 			sensore[i].setStato(sensTempDisabilitato);
 			//PORTB |= _BV(PB0);
 			digitalWrite(GIALLO_LED, HIGH);
+
+			if (settings.gsm) {
+				if (position > 0) {
+					String msg = "Sens.Disattivo: " + sensore[i].getMessaggio();
+					msg.toCharArray(sms_text, 160);
+					inviaSMScomando(sms_text);
+				}
+			}
 		}
 	}
 	password.reset();
@@ -722,7 +730,6 @@ void MandJBeep::inizializzaLed() {
 	digitalWrite(RED_LED, LOW);
 	digitalWrite(GIALLO_LED, LOW);
 	digitalWrite(GREEN_LED, HIGH);
-	Serial.println("LED");
 }
 
 void MandJBeep::inizializzaSensori() {
@@ -732,38 +739,38 @@ void MandJBeep::inizializzaSensori() {
 }
 
 /*void MandJBeep::inizializzaGSM() {
-	//if (settings.gsm)
-		if (gsm.begin(2400)) {
-	 Serial.println("\nGSM status=READY");
-	 Serial.println(gsm.getStatus());
-	 started = true;
-	 } else {
-	 Serial.println("\nGSM status=IDLE");
-	 started = false;
-	 //if (settings.gsm) settings.gsm=0;
-	 }
+ //if (settings.gsm)
+ if (gsm.begin(2400)) {
+ Serial.println("\nGSM status=READY");
+ Serial.println(gsm.getStatus());
+ started = true;
+ } else {
+ Serial.println("\nGSM status=IDLE");
+ started = false;
+ //if (settings.gsm) settings.gsm=0;
+ }
 
-	//started = gsm.getStatus();
-}*/
+ //started = gsm.getStatus();
+ }*/
 
 /*void MandJBeep::eseguiSMSComando(char sms_text[]) {
-	if (!strcmp(sms_text, "ATTIVA")) {
-		if (this->alarmeAttivo == false && this->statoAllarme == false) {
-			this->primaDiAttivare();
-		}
-	} else if (!strcmp(sms_text, "DISATTIVA")) {
-		this->disattiva();
-	} else if (!strcmp(sms_text, "DISSENTEMP")) {
-		this->disattivaSensori();
-	} else if (!strcmp(sms_text, "STATUS")) {
-		char txtTemp[13] = "";
-		if (this->getAllarmStatus() == true)
-			strcpy(txtTemp, "ATTIVO");
-		else
-			strcpy(txtTemp, "NON ATTIVO");
-		inviaSMScomando(phone_number, txtTemp);
-	}
-}*/
+ if (!strcmp(sms_text, "ATTIVA")) {
+ if (this->alarmeAttivo == false && this->statoAllarme == false) {
+ this->primaDiAttivare();
+ }
+ } else if (!strcmp(sms_text, "DISATTIVA")) {
+ this->disattiva();
+ } else if (!strcmp(sms_text, "DISSENTEMP")) {
+ this->disattivaSensori();
+ } else if (!strcmp(sms_text, "STATUS")) {
+ char txtTemp[13] = "";
+ if (this->getAllarmStatus() == true)
+ strcpy(txtTemp, "ATTIVO");
+ else
+ strcpy(txtTemp, "NON ATTIVO");
+ inviaSMScomando(phone_number, txtTemp);
+ }
+ }*/
 
 void MandJBeep::checkAttivita() {
 	if (this->alarmeAttivo) {
@@ -832,13 +839,25 @@ void MandJBeep::checkAttivita() {
 	}
 }
 
+/**
+ * 1:
+ * 2:
+ * 3:
+ * 4:
+ * 5:
+ * 6:
+ *
+ */
 void MandJBeep::checkSMS() {
 
 	if (settings.gsm == 1) {
-		position=1;
-		switch(risposteGSMSlave){
+		position = 1;
+		switch (risposteGSMSlave) {
 		case 1:
 			Serial.println("GSM READY !!");
+			break;
+		case 9:
+			Serial.println("GSM NOT READY !!");
 			break;
 		case 2:
 			Serial.println("SMS Inviato !!!");
@@ -859,20 +878,22 @@ void MandJBeep::checkSMS() {
 			break;
 		case 7:
 			char txtTemp[13] = "";
-			if (this->getAllarmStatus() == true) strcpy(txtTemp, "ATTIVO");
-			else strcpy(txtTemp, "NON ATTIVO");
+			if (this->getAllarmStatus() == true)
+				strcpy(txtTemp, "ATTIVO");
+			else
+				strcpy(txtTemp, "NON ATTIVO");
 
 			//strcpy(phone_number, "0");
-			inviaSMScomando(/*phone_number,*/ txtTemp);
+			inviaSMScomando(/*phone_number,*/txtTemp);
 			break;
 		}
-		position=0;
-		risposteGSMSlave=0;
+		position = 0;
+		risposteGSMSlave = 0;
 	}
 }
 
 void MandJBeep::sendI2CCmd(String xCmd, int ch) {
-	for (int i = 0; i < xCmd.length()+1; i++) {
+	for (int i = 0; i < xCmd.length() + 1; i++) {
 		Wire.beginTransmission(ch);
 		Wire.write(xCmd[i]);
 		Wire.endTransmission();
