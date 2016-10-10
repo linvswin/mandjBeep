@@ -355,6 +355,9 @@ void mngTempoSirena(uint8_t par){
 		case 13:
 			lcd.print(TXT_SYNC_GSM);
 			break;
+		case 14:
+			lcd.print(TXT_STATE_GSM);
+			break;
 	}
 	lcd.setCursor(0, 1);
 	lcd.blink();
@@ -423,6 +426,7 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 			LCDML_BUTTON_resetDown();
 		}
 		if (LCDML_BUTTON_checkEnter()) {
+			String s="";
 			switch (param) {
 			case 1:
 				settings.tempoSirena = newIntVal;
@@ -468,9 +472,14 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				//settings.tempoRitardo=newIntVal;
 				break;
 			case 13:
-				strcpy(settings.phoneNumber2, "3398650195");
+				//strcpy(settings.phoneNumber2, "3398650195");
 				//strcpy(settings.phoneNumber2, "0000000000");
-				String s="4|"+String(settings.gsm)+","+String(settings.phoneNumber1)+","+String(settings.phoneNumber2)+","+String(settings.phoneNumber3)+","+String(settings.phoneNumber4)+","+String(settings.phoneNumber5)+"~";
+				s="4|"+String(settings.gsm)+","+String(settings.phoneNumber1)+","+String(settings.phoneNumber2)+","+String(settings.phoneNumber3)+","+String(settings.phoneNumber4)+","+String(settings.phoneNumber5)+"~";
+				allarm.sendI2CCmd(s, GSMI2C);
+				//settings.tempoRitardo=newIntVal;
+				break;
+			case 14:
+				s="1|Status~";
 				allarm.sendI2CCmd(s, GSMI2C);
 				//settings.tempoRitardo=newIntVal;
 				break;
