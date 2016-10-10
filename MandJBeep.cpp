@@ -14,18 +14,16 @@ boolean stringComplete = false;
 
 String printDigit(int digits) {
 	String temp = "";
-	if (digits < 10)
-		temp += "0";
+	if (digits < 10) temp += "0";
 	temp += digits;
 	return temp;
 }
 
 void setup() {
 	Serial.begin(BAUD_RATE);
-	//Wire.begin(); // join i2c bus (address optional for master)
+	Wire.begin(); // join i2c bus (address optional for master)
 
-	//allarm.inizializza();
-	allarm.inizializzaLed();
+	allarm.inizializza();
 
 	lcd.begin(20, 4);
 	MenuSetup();
@@ -303,11 +301,11 @@ void timerDoLCDbacklight() {
 	lcd.noBacklight();
 }
 
-void inviaSMScomando(/*char *number_str,*/ char *message_str, char type='2') {
+void inviaSMScomando(char *message_str, char type='2') {
 
 #ifdef DEBUG_SMS
 	Serial.print("Num: ");
-	Serial.println(number_str);
+//	Serial.println(number_str);
 	Serial.print("Msg: ");
 	Serial.println(message_str);
 #endif
@@ -722,7 +720,6 @@ void MandJBeep::inizializzaLed() {
 	digitalWrite(RED_LED, LOW);
 	digitalWrite(GIALLO_LED, LOW);
 	digitalWrite(GREEN_LED, HIGH);
-	Serial.println("LED");
 }
 
 void MandJBeep::inizializzaSensori() {

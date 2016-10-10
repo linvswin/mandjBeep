@@ -8,14 +8,46 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
+//#define ECLIPSE
+
 #include "Arduino.h"
 
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
 
 #include <EEPROM.h>
-//#include "lib/MandJTimer/MandJTimer.h"
-#include <MandJTimer.h>
+
+#ifdef ECLIPSE
+	#include "lib/MandJTimer/MandJTimer.h"
+	#include "lib/LCDMenuLib/LCDMenuLib.h"
+	#include "lib/PCF8574/PCF8574_Class.h"
+	#include "lib/Keypad_I2C/Keypad_I2C.h"
+	#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
+#else
+  //#include "lib/MandJTimer/MandJTimer.h"
+	#include <MandJTimer.h>
+	#include <LCDMenuLib.h>
+	#include <PCF8574_Class.h>
+	#include <Keypad_I2C.h>
+	#include <Password.h> //http://www.arduino.cc/playground/uploads/Code/Password.zip
+#endif
+
+#include <LiquidCrystal_I2C.h>
+
+#define CLKDS3231
+#ifndef CLKDS3231
+// cambia wuesta riga in RTClib.h
+//enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
+#include "lib/RTClib/RTClib.h"
+#else
+
+#ifdef ECLIPSE
+	#include "lib/Rtc/src/RtcDS3231.h"
+#else
+	#include <RtcDS3231.h>
+#endif
+
+#endif
 
 int i_serialh = 0;
 char inSerial[40];
@@ -24,32 +56,14 @@ char position2=0; // indica la posizione del SMS
 //char phone_number[20]; // array for the phone number string
 char sms_text[160];
 
-//#include "lib/LCDMenuLib/LCDMenuLib.h"
-#include <LCDMenuLib.h>
-//#include "lib/PCF8574/PCF8574_Class.h"
-#include <PCF8574_Class.h>
-#include <LiquidCrystal_I2C.h>
-//#include "lib/Keypad_I2C/Keypad_I2C.h"
-#include <Keypad_I2C.h>
-//#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
-#include <Password.h> //http://www.arduino.cc/playground/uploads/Code/Password.zip
-
-#define CLKDS3231
-
-#ifndef CLKDS3231
-// cambia wuesta riga in RTClib.h
-//enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
-#include "lib/RTClib/RTClib.h"
-#else
-//#include "lib/Rtc/src/RtcDS3231.h"
-#include <RtcDS3231.h>
-#endif
-
 #include "pin.h"
 #include "def.h"
 
-//#include "lib/TimerOneThree/TimerOneThree.h"  //https://github.com/heliosoph/TimerOneThree
-#include <TimerOneThree.h>  //https://github.com/heliosoph/TimerOneThree
+#ifdef ECLIPSE
+	#include "lib/TimerOneThree/TimerOneThree.h"  //https://github.com/heliosoph/TimerOneThree
+#else
+	#include <TimerOneThree.h>  //https://github.com/heliosoph/TimerOneThree
+#endif
 
 #include "Sensore.h"
 

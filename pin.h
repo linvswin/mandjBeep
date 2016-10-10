@@ -126,6 +126,7 @@ int8_t timerReadGSMSlave = 0;
 #define TXT_NUMERI4_GSM          "Numero4"
 #define TXT_NUMERI5_GSM          "Numero5"
 #define TXT_SYNC_GSM             "Sync Imp GSM"
+#define TXT_STATE_GSM             "Stato GSM"
 #define TXT_TEMPERATURA			"Temperatura: "
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
