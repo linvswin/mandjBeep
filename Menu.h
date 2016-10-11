@@ -472,11 +472,8 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				//settings.tempoRitardo=newIntVal;
 				break;
 			case 13:
-				//strcpy(settings.phoneNumber2, "3398650195");
-				//strcpy(settings.phoneNumber2, "0000000000");
 				s="4|"+String(settings.gsm)+","+String(settings.phoneNumber1)+","+String(settings.phoneNumber2)+","+String(settings.phoneNumber3)+","+String(settings.phoneNumber4)+","+String(settings.phoneNumber5)+"~";
 				allarm.sendI2CCmd(s, GSMI2C);
-				//settings.tempoRitardo=newIntVal;
 				break;
 			case 14:
 				s="1|Status~";
