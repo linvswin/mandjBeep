@@ -907,7 +907,7 @@ void MandJBeep::checkAttivita() {
 			}
 		}
 	} else {
-		for (uint8_t i = 0; i < numSens; i++) {
+		/*for (uint8_t i = 0; i < numSens; i++) {
 			if (sensore[i].getTipo() == tpTamper) {
 #ifdef DEBUG_SENS
 				Serial.print("sens ");
@@ -928,13 +928,13 @@ void MandJBeep::checkAttivita() {
 					 digitalWrite(GIALLO_LED, LOW);
 
 					 }*/
-				}
+				/*}
 
 			} else if (sensore[i].getTipo() == tpSirena) {
 
 			}
 
-		}
+		}*/
 	}
 
 }
