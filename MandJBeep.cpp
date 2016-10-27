@@ -514,7 +514,9 @@ void MandJBeep::primaDiAttivare() {
 			xxxx = 0;
 		else
 			xxxx = 1;
-		position2 = 1;
+
+		if (position>0) position2 = 1;
+
 		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
 		allarm.standby();
