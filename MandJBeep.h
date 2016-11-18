@@ -55,6 +55,7 @@ char position=0;   // indica la posizione del SMS
 char position2=0; // indica la posizione del SMS
 //char phone_number[20]; // array for the phone number string
 char sms_text[160];
+int statoGSM=0;
 
 #include "pin.h"
 #include "def.h"

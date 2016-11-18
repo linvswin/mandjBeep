@@ -44,7 +44,7 @@ void setup() {
 	timerLCDbacklight = allarm.t.every(settings.lcdBacklightTime,
 			timerDoLCDbacklight);
 	//
-	timerReadGSMSlave = allarm.t.every(5, readGSMSlave);
+	timerReadGSMSlave = allarm.t.every(1, readGSMSlave);
 
 	/*if (settings.gsm == 1) {
 	 lcd.setCursor(0, 2);
@@ -854,10 +854,12 @@ void MandJBeep::checkSMS() {
 		position = 1;
 		switch (risposteGSMSlave) {
 		case 1:
-			Serial.println("GSM READY !!");
+			statoGSM=1;
+			//Serial.println("GSM READY !!");
 			break;
 		case 9:
-			Serial.println("GSM NOT READY !!");
+			statoGSM=2;
+			//Serial.println("GSM NOT READY !!");
 			break;
 		case 2:
 			Serial.println("SMS Inviato !!!");

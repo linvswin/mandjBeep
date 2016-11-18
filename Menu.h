@@ -357,6 +357,7 @@ void mngTempoSirena(uint8_t par){
 			break;
 		case 14:
 			lcd.print(TXT_STATE_GSM);
+			//allarm.sendI2CCmd("1|Status~", GSMI2C);
 			break;
 	}
 	lcd.setCursor(0, 1);
@@ -379,6 +380,14 @@ void mngTempoSirena(uint8_t par){
 		break;
 	case 12:
 		lcd.print(allarm.RTC.GetTemperature().AsFloat());
+		break;
+	case 14:
+		if (statoGSM==1)
+			lcd.println(TXT_GSM_READY);
+		else if (statoGSM==2)
+			lcd.println(TXT_GSM_NOT_READY);
+		//Serial.print("statoGSM: ");
+		//Serial.println(statoGSM);
 		break;
 	default:
 		lcd.print(newIntVal);
@@ -406,6 +415,10 @@ void LCDML_DISP_setup(mnuTempoSirena)
 		break;
 	case 10:
 		newIntVal = settings.tempoRitardo;
+		break;
+	case 14:
+		//lcd.print(TXT_STATE_GSM);
+		allarm.sendI2CCmd("1|Status~", GSMI2C);
 		break;
 	}
 	mngTempoSirena(param);
@@ -459,14 +472,6 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 				break;
 			case 11:
 				settings.gsm=(!settings.gsm);
-				/*if (settings.gsm)
-				{
-					lcd.setCursor(1, 2);
-					lcd.println(TXT_INIZIALIZZA_GSM);
-					//wdt_disable();
-					//allarm.inizializzaGSM();
-					//wdt_enable(WDTO_8S);
-				}*/
 				break;
 			case 12:
 				//settings.tempoRitardo=newIntVal;
@@ -474,11 +479,6 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 			case 13:
 				s="4|"+String(settings.gsm)+","+String(settings.phoneNumber1)+","+String(settings.phoneNumber2)+","+String(settings.phoneNumber3)+","+String(settings.phoneNumber4)+","+String(settings.phoneNumber5)+"~";
 				allarm.sendI2CCmd(s, GSMI2C);
-				break;
-			case 14:
-				s="1|Status~";
-				allarm.sendI2CCmd(s, GSMI2C);
-				//settings.tempoRitardo=newIntVal;
 				break;
 			}
 			newIntVal = 0;
