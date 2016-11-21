@@ -236,7 +236,8 @@ void doAfterRitActivate() {
 	Serial.println(F("Attivo Allarme"));
 #endif
 	conta = 0;
-	allarm.attiva();
+	//allarm.attiva();
+	allarm.ritardoAttivato=false;
 	mostraMenu = false;
 	allarm.standby();
 }
@@ -314,19 +315,6 @@ void inviaSMScomando(char *message_str, char type = '2') {
 	String cmd = String(type) + "|" + String(message_str) + "~";
 	allarm.sendI2CCmd(cmd, GSMI2C);
 }
-
-/*void inviaSMScomando(char *number_str, char *message_str)
- {
- wdt_disable();
- #ifdef DEBUG_SMS
- Serial.print("Num: ");
- Serial.println(number_str);
- Serial.print("Msg: ");
- Serial.println(message_str);
- #endif
- sms.SendSMS(number_str, message_str);
- wdt_enable(WDTO_8S);
- }*/
 
 /********************************************************/
 /**
@@ -437,8 +425,10 @@ void MandJBeep::primaDiAttivare() {
 		else
 			xxxx = 1;
 		position2 = position;
+		allarm.ritardoAttivato=true;
 		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
+		allarm.attiva();
 		allarm.standby();
 	}
 }
@@ -537,6 +527,7 @@ MandJBeep::MandJBeep() {
 	this->alarmeAttivo = false;
 	this->statoAllarme = false;
 	this->adminZone = false;
+	this->ritardoAttivato=false;
 }
 
 void MandJBeep::inizializza() {
@@ -782,13 +773,14 @@ void MandJBeep::checkAttivita() {
 			Serial.println(sensore[i].getStato());
 #endif
 
-			if ((sensore[i].getStato() != sensDisabilitato)
-					and (sensore[i].getStato() != sensTempDisabilitato)) {
-				if (sensore[i].getZona() == settings.zona
-						or settings.zona == znTotale) {
-					if (PCF_24.read(sensore[i].getPin())
-							== sensore[i].getLogica()
-							and sensore[i].getStato() != sensTrigged) {
+			if ((sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato)) {
+
+
+				if ( sensore[i].getRitardato()==true and allarm.ritardoAttivato==true){
+
+				} else
+				if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
+					if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica() and sensore[i].getStato() != sensTrigged) {
 						sensore[i].setStato(sensTrigged);
 						this->alarmTriggered();
 
@@ -800,6 +792,7 @@ void MandJBeep::checkAttivita() {
 							sensore[i].setConta((sensore[i].getConta() + 1));
 						}
 					}
+
 #ifdef DEBUG_PIR
 					if (sensore[i].getTipo()==tpPIR)
 					{
@@ -840,13 +833,15 @@ void MandJBeep::checkAttivita() {
 }
 
 /**
- * 1:
- * 2:
- * 3:
- * 4:
- * 5:
- * 6:
- *
+ * 1: gsm ready
+ * 2: sms inviato
+ * 3: sms non inviato
+ * 4: sms di attiva allarme
+ * 5: sms di disattiva allarme
+ * 6: sms disattiva sensori
+ * 7: sms stato allarme
+ * 8:
+ * 9: gsm not ready
  */
 void MandJBeep::checkSMS() {
 

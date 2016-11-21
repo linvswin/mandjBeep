@@ -10,6 +10,9 @@
 
 #define BAUD_RATE  9600  //115200
 
+// software reset
+#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {}
+
 //#define DEBUG
 #ifdef DEBUG
 //	#define DEBUG_KEY
@@ -127,8 +130,9 @@ int8_t timerReadGSMSlave = 0;
 #define TXT_NUMERI5_GSM          "Numero5"
 #define TXT_SYNC_GSM             "Sync Imp GSM"
 #define TXT_STATE_GSM            "Stato GSM"
-#define TXT_GSM_READY			 F("GSM READY")
-#define TXT_GSM_NOT_READY		 F("GSM Not Ready")
+#define TXT_GSM_READY			 "GSM READY"
+#define TXT_GSM_NOT_READY		 "GSM Not Ready"
+#define TXT_RIAVVIA_GSM			 "Riavvia"
 #define TXT_TEMPERATURA			"Temperatura: "
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
