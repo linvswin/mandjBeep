@@ -518,6 +518,7 @@ void MandJBeep::primaDiAttivare() {
 		else
 			xxxx = 1;
 		position2 = position;
+		conta=0;
 		allarm.ritardoAttivato=true;
 		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
@@ -544,7 +545,6 @@ void MandJBeep::attiva() {
 		inviaSMScomando(phone_number, txtTemp);
 		position2 = 0;
 	}
-	/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
 
 /*

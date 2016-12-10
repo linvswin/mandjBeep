@@ -134,7 +134,7 @@ Sensore sensore[numSens]={
 	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO",  znPerimetrale, false),
 	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale, false),
 	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale, false),
-	Sensore(I2C_REED5_PIN,  tpReed,  LOW, "CAMER2",     znInterno, false),
+	Sensore(I2C_REED5_PIN,   tpPIR,  LOW, "CAMER2",     znInterno, false),
 	Sensore(I2C_PIR0_PIN,    tpPIR,  LOW,  "SALA2",     znInterno, false),
 	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale, false),
 	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale, false),
