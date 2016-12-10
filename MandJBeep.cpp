@@ -219,6 +219,9 @@ void doAfterRitActivate() {
 	conta = 0;
 	allarm.attiva();
 	mostraMenu = false;
+	//allarm.attiva();
+	allarm.ritardoAttivato=false;
+	mostraMenu = false;
 	allarm.standby();
 }
 
@@ -514,11 +517,11 @@ void MandJBeep::primaDiAttivare() {
 			xxxx = 0;
 		else
 			xxxx = 1;
-
-		if (position>0) position2 = 1;
-
+		position2 = position;
+		allarm.ritardoAttivato=true;
 		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
+		allarm.attiva();
 		allarm.standby();
 	}
 }
@@ -627,6 +630,7 @@ MandJBeep::MandJBeep() {
 	this->alarmeAttivo = false;
 	this->statoAllarme = false;
 	this->adminZone = false;
+	this->ritardoAttivato=false;
 }
 
 void MandJBeep::inizializza() {
@@ -880,13 +884,14 @@ void MandJBeep::checkAttivita() {
 			Serial.println(sensore[i].getStato());
 #endif
 
-			if ((sensore[i].getStato() != sensDisabilitato)
-					and (sensore[i].getStato() != sensTempDisabilitato)) {
-				if (sensore[i].getZona() == settings.zona
-						or settings.zona == znTotale) {
-					if (PCF_24.read(sensore[i].getPin())
-							== sensore[i].getLogica()
-							and sensore[i].getStato() != sensTrigged) {
+			if ((sensore[i].getStato() != sensDisabilitato)	and (sensore[i].getStato() != sensTempDisabilitato)) {
+				
+				
+				if ( sensore[i].getRitardato()==true and allarm.ritardoAttivato==true){
+
+				} else
+				if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
+					if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica() and sensore[i].getStato() != sensTrigged) {
 						sensore[i].setStato(sensTrigged);
 						this->alarmTriggered();
 

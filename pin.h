@@ -28,13 +28,14 @@
 #define COLS  4  // Four columns
 
 const char keys[ROWS][COLS] = { // Define the Keymap
-		{ '1', '2', '3', 'A' }, { '4', '5', '6', 'B' }, { '7', '8', '9', 'C' },
-				{ '*', '0', '#', 'D' } };
+	{ '1', '2', '3', 'A' },
+	{ '4', '5', '6', 'B' },
+	{ '7', '8', '9', 'C' },
+	{ '*', '0', '#', 'D' } };
 
 #define I2CADDR 0x21 //keypad
 byte rowPins[ROWS] = { 3, 2, 1, 0 }; //connect to the row pinouts of the keypad
 byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keypad
-
 
 #define TIMER1_PIN1 13 //13   //buzzer pin
 #define TIMER1_PIN2 12   //buzzer pin

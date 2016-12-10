@@ -8,7 +8,7 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
-//#define ECLIPSE
+#define ECLIPSE
 
 #include "Arduino.h"
 
@@ -130,14 +130,14 @@ struct AlarmSettings {
 /*========================================*/
 
 Sensore sensore[numSens]={
-	Sensore(I2C_REED1_PIN,  tpReed,  LOW, "CAMERA", znPerimetrale),
-	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO",  znPerimetrale),
-	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale),
-	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale),
-	Sensore(I2C_REED5_PIN,  tpReed,  LOW, "REED5",  znPerimetrale),
-	Sensore(I2C_PIR0_PIN,    tpPIR,  HIGH, "PIR3",  znInterno),
-	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale),
-	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale),
+	Sensore(I2C_REED1_PIN,  tpReed,  LOW, "CAMERA", znPerimetrale, true),
+	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO",  znPerimetrale, false),
+	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale, false),
+	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale, false),
+	Sensore(I2C_REED5_PIN,  tpReed,  LOW, "CAMER2",     znInterno, false),
+	Sensore(I2C_PIR0_PIN,    tpPIR,  LOW,  "SALA2",     znInterno, false),
+	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale, false),
+	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale, false),
 };
 
 // Create the Keypad
@@ -165,6 +165,7 @@ public:
 	boolean alarmeAttivo;
 	boolean statoAllarme;
 	boolean adminZone;
+	boolean ritardoAttivato;  // settato a true quanto si attiva il ritardo in attivazione/disattivazione
 
 	// timer
 	MandJTimer t;
