@@ -82,6 +82,7 @@ uint8_t passwd_pos = 9;  // the postition of the password input
 int8_t timerLCDbacklight = 0;
 int8_t timerPrintData = 0;
 int8_t evRitardoAttivazione=0;
+int8_t evAfterRitardoTrigger=0;
 
 /**********************************************************
  **    Definizione di stringhe

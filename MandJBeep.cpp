@@ -276,6 +276,10 @@ void doPrintRitAttivazione() {
 	}
 }
 
+void doAfterRitardoTrigged(){
+	allarm.alarmTriggered();
+}
+
 void timerDoLCDbacklight() {
 	if (mostraMenu == true) {
 		mostraMenu == false;
@@ -283,49 +287,6 @@ void timerDoLCDbacklight() {
 	}
 	lcd.noBacklight();
 }
-
-#ifdef MJGSM
-//LEGGE DALLA SERIALE HARDWARE
-/*void serialhwread() {
- i_serialh = 0;
- if (Serial.available() > 0) {
- while (Serial.available() > 0) {
- inSerial[i_serialh] = (Serial.read());
- delay(10);
- i_serialh++;
- }
-
- inSerial[i_serialh] = '\0';
- if (!strcmp(inSerial, "/END")) {
- Serial.println("_");
- inSerial[0] = 0x1a;
- inSerial[1] = '\0';
- gsm.SimpleWriteln(inSerial);
- }
- //Send a saved AT command using serial port.
- if (!strcmp(inSerial, "TEST")) {
- Serial.println("SIGNAL QUALITY");
- gsm.SimpleWriteln("AT+CSQ");
- gsm.SimpleWriteln("AT+COPS?");
- } else if(!strcmp(inSerial, "SMS")){
- Serial.println("SMS TEST");
- if (sms.SendSMS("33900000", "Test SMS"))
- Serial.println("\nSMS sent OK");
- } else if(!strcmp(inSerial, "ALL")){
- Serial.println("SMS LEGGI TUTTI");
- gsm.SimpleWriteln("AT+CMGL=\"ALL\",1");
- } else {
- Serial.println(inSerial);
- gsm.SimpleWriteln(inSerial);
- }
- inSerial[0] = '\0';
- }
- }
-
- //LEGGE DALLA SERIALE SOFTWARE
- void serialswread() {
- gsm.SimpleRead();
- }*/
 
 void inviaSMScomando(char *number_str, char *message_str) {
 	wdt_disable();
@@ -338,74 +299,6 @@ void inviaSMScomando(char *number_str, char *message_str) {
 	sms.SendSMS(number_str, message_str);
 	wdt_enable(WDTO_8S);
 }
-
-#else
-
-void serialhwread() {
-	i_serialh = 0;
-	if (Serial.available() > 0) {
-		while (Serial.available() > 0) {
-			inSerial[i_serialh] = (Serial.read());
-			delay(10);
-			i_serialh++;
-		}
-
-		inSerial[i_serialh] = '\0';
-		if (!strcmp(inSerial, "/END")) {
-			Serial.println("_");
-			inSerial[0] = 0x1a;
-			inSerial[1] = '\0';
-			// gsm.SimpleWriteln(inSerial);
-		}
-		//Send a saved AT command using serial port.
-		if (!strcmp(inSerial, "TEST")) {
-			Serial.println("SIGNAL QUALITY");
-			myGSM.println("AT+CSQ");
-			myGSM.println("AT+COPS?");
-			//gsm.SimpleWriteln("AT+CSQ");
-			//gsm.SimpleWriteln("AT+COPS?");
-		} else if(!strcmp(inSerial, "SMS")) {
-			Serial.println("SMS TEST");
-			sendSMS("33900000", "Test SMS");
-			//if (sms.SendSMS("33900000", "Test SMS"))
-			//   Serial.println("\nSMS sent OK");
-		} else if(!strcmp(inSerial, "ALL")) {
-			Serial.println("SMS LEGGI TUTTI");
-			//gsm.SimpleWriteln("AT+CMGL=\"ALL\",1");
-		} else {
-			//Serial.println(inSerial);
-			ivioComandoAT(inSerial);
-			//gsm.SimpleWriteln(inSerial);
-		}
-		inSerial[0] = '\0';
-	}
-}
-
-void sendSMS(char *number_str, char *message_str) {
-	myGSM.println("AT+CMGF=1\r\n");
-	delay(1000);
-	myGSM.println("AT+CMGS=\"33900000\"\r\n");
-	delay(1000);
-	myGSM.write(message_str);
-	myGSM.write((char)CTRL_Z);
-}
-
-void gsmRead()
-{
-	char datain;
-	if(myGSM.available()>0) {
-		datain=myGSM.read();
-		if(datain>0) {
-			Serial.print(datain);
-		}
-	}
-}
-
-void ivioComandoAT(char *cmd)
-{
-	myGSM.println(cmd);
-}
-#endif
 
 /********************************************************/
 /*
@@ -510,18 +403,18 @@ void MandJBeep::primaDiAttivare() {
 	Serial.println(F("Ritardo attivazione ..........."));
 #endif
 	lcd.backlight();
-	if (allarm.checkSensori()) {
+	if (this->checkSensori()) {
 		if (settings.tempoRitardo % 2 == 0)
 			xxxx = 0;
 		else
 			xxxx = 1;
 		position2 = position;
 		conta=0;
-		allarm.ritardoAttivato=true;
-		evRitardoAttivazione=allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
-		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
-		allarm.attiva();
-		allarm.standby();
+		this->ritardoAttivato=true;
+		this->attiva();
+		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
+		this->t.after(settings.tempoRitardo, doAfterRitActivate);
+		this->standby();
 	}
 }
 
@@ -552,6 +445,12 @@ void MandJBeep::attiva() {
 void MandJBeep::disattiva() {
 	this->statoAllarme = false;
 	this->alarmeAttivo = false;
+
+	if (evRitardoAttivazione>0)
+	{
+		this->t.stop(evRitardoAttivazione);
+		this->t.stop(evAfterRitardoTrigger);
+	}
 
 	password.reset();
 	Timer1.disablePwm(TIMER1_PIN1);
@@ -630,6 +529,18 @@ void MandJBeep::alarmTriggered() {
 		}
 	}
 	t.after(settings.tempoSirena, doAfterTimerT);
+}
+
+void MandJBeep::alarmTriggeredRitardato(uint8_t sensId){
+	if (settings.tempoRitardo % 2 == 0) xxxx = 0;
+	else xxxx = 1;
+	conta=0;
+
+	if (evRitardoAttivazione>0) // controlla se altro evento già avviato
+	{
+		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
+		evAfterRitardoTrigger=this->t.after(settings.tempoRitardo, doAfterRitardoTrigged);
+	}
 }
 
 MandJBeep::MandJBeep() {
@@ -890,20 +801,26 @@ void MandJBeep::checkAttivita() {
 			Serial.println(sensore[i].getStato());
 #endif
 
-			if ((sensore[i].getStato() != sensDisabilitato)	and (sensore[i].getStato() != sensTempDisabilitato)) {
-				
+			if ((sensore[i].getStato() != sensDisabilitato)	and (sensore[i].getStato() != sensTempDisabilitato))
+			{
+
 				
 				if ( sensore[i].getRitardato()==true and allarm.ritardoAttivato==true){
-					// attivare procedura ritardata
-				} else
-				if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
+					//caso: in fase di attivazione
+				/*} else
+				/*if (sensore[i].getRitardato()==true and allarm.ritardoAttivato==false) {
+					// attivare procedura allarm trigged ritardata
+					sensore[i].setStato(sensTrigged);
+					this->alarmTriggeredRitardato(i);*/
+				}else if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
 					if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica() and sensore[i].getStato() != sensTrigged) {
 						sensore[i].setStato(sensTrigged);
-						this->alarmTriggered();
+						if (sensore[i].getRitardato())
+							this->alarmTriggeredRitardato(i); // TODO: forse parametro inutile !!!!
+						else this->alarmTriggered();
 
 						if (sensore[i].getTipo() == tpReed) {
-							if (sensore[i].getConta()
-									>= settings.maxReed_Conta) {
+							if (sensore[i].getConta() >= settings.maxReed_Conta) {
 								sensore[i].setStato(sensTempDisabilitato);
 							}
 							sensore[i].setConta((sensore[i].getConta() + 1));
