@@ -217,8 +217,6 @@ void doAfterRitActivate() {
 	Serial.println(F("Attivo Allarme"));
 #endif
 	conta = 0;
-	allarm.attiva();
-	mostraMenu = false;
 	//allarm.attiva();
 	allarm.ritardoAttivato=false;
 	mostraMenu = false;
@@ -520,7 +518,7 @@ void MandJBeep::primaDiAttivare() {
 		position2 = position;
 		conta=0;
 		allarm.ritardoAttivato=true;
-		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
+		evRitardoAttivazione=allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
 		allarm.attiva();
 		allarm.standby();
@@ -586,6 +584,12 @@ void MandJBeep::disattiva() {
  *   - dopo tempoSirena secondi disattiva la sirena
  */
 void MandJBeep::alarmTriggered() {
+	if (allarm.ritardoAttivato)
+	{
+		allarm.ritardoAttivato=false;
+		// TODO stoppare fase attivazione ritardata
+		t.stop(evRitardoAttivazione);
+	}
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
 
@@ -890,7 +894,7 @@ void MandJBeep::checkAttivita() {
 				
 				
 				if ( sensore[i].getRitardato()==true and allarm.ritardoAttivato==true){
-
+					// attivare procedura ritardata
 				} else
 				if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
 					if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica() and sensore[i].getStato() != sensTrigged) {
