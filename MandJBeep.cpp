@@ -604,21 +604,23 @@ void MandJBeep::alarmTriggered() {
 			lcd.print(sensore[i].getMessaggio());
 			allarm.salvaEventoEprom(i);
 #ifdef MJGSM
-			if (started == true) {
-				String msg = "Intrusione: " + sensore[i].getMessaggio();
-				msg.toCharArray(sms_text, 160);
-				//Serial.println(sms_text);
+			if (settings.gsm == 1) {
+				if (started == true) {
+					String msg = "Intrusione: " + sensore[i].getMessaggio();
+					msg.toCharArray(sms_text, 160);
+					//Serial.println(sms_text);
 
-				if (strcmp(settings.phoneNumber1, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber1, sms_text);
-				if (strcmp(settings.phoneNumber2, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber2, sms_text);
-				if (strcmp(settings.phoneNumber3, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber3, sms_text);
-				if (strcmp(settings.phoneNumber4, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber4, sms_text);
-				if (strcmp(settings.phoneNumber5, "0000000000") != 0)
-					inviaSMScomando(settings.phoneNumber5, sms_text);
+					if (strcmp(settings.phoneNumber1, "0000000000") != 0)
+						inviaSMScomando(settings.phoneNumber1, sms_text);
+					if (strcmp(settings.phoneNumber2, "0000000000") != 0)
+						inviaSMScomando(settings.phoneNumber2, sms_text);
+					if (strcmp(settings.phoneNumber3, "0000000000") != 0)
+						inviaSMScomando(settings.phoneNumber3, sms_text);
+					if (strcmp(settings.phoneNumber4, "0000000000") != 0)
+						inviaSMScomando(settings.phoneNumber4, sms_text);
+					if (strcmp(settings.phoneNumber5, "0000000000") != 0)
+						inviaSMScomando(settings.phoneNumber5, sms_text);
+				}
 			}
 #endif
 		}
