@@ -541,12 +541,11 @@ void MandJBeep::alarmTriggered() {
 }
 
 void MandJBeep::alarmTriggeredRitardato(uint8_t sensId){
-	if (settings.tempoRitardo % 2 == 0) xxxx = 0;
-	else xxxx = 1;
-	conta=0;
-
 	if (ritardoTriggedGiaAttivato==0) // controlla se altro evento già avviato
 	{
+		if (settings.tempoRitardo % 2 == 0) xxxx = 0;
+		else xxxx = 1;
+		conta=0;
 		ritardoTriggedGiaAttivato=1;
 		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		evAfterRitardoTrigger=this->t.after(settings.tempoRitardo, doAfterRitardoTrigged);
