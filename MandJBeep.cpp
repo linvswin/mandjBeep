@@ -446,8 +446,9 @@ void MandJBeep::disattiva() {
 	this->statoAllarme = false;
 	this->alarmeAttivo = false;
 
-	if (evRitardoAttivazione>0)
+	if (ritardoTriggedGiaAttivato==1)
 	{
+		ritardoTriggedGiaAttivato=0;
 		this->t.stop(evRitardoAttivazione);
 		this->t.stop(evAfterRitardoTrigger);
 	}
@@ -489,6 +490,14 @@ void MandJBeep::alarmTriggered() {
 		// TODO stoppare fase attivazione ritardata
 		t.stop(evRitardoAttivazione);
 	}
+
+	if (ritardoTriggedGiaAttivato==1)
+	{
+		ritardoTriggedGiaAttivato=0;
+		this->t.stop(evRitardoAttivazione);
+		this->t.stop(evAfterRitardoTrigger);
+	}
+
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
 
@@ -536,8 +545,9 @@ void MandJBeep::alarmTriggeredRitardato(uint8_t sensId){
 	else xxxx = 1;
 	conta=0;
 
-	if (evRitardoAttivazione>0) // controlla se altro evento già avviato
+	if (ritardoTriggedGiaAttivato==0) // controlla se altro evento già avviato
 	{
+		ritardoTriggedGiaAttivato=1;
 		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		evAfterRitardoTrigger=this->t.after(settings.tempoRitardo, doAfterRitardoTrigged);
 	}
