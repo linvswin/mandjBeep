@@ -855,16 +855,15 @@ void mngTipoAttivazione(){
 
 	// display content
 	// ==================
-	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows); n++) {
+	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows)-1; n++) {
 		// set cursor
-		lcd.setCursor(1, n - scroll_row);
+		//lcd.setCursor(1, n - scroll_row);
 		// set content
 		lcd.setCursor(1, n - scroll_row);
 		lcd.print(tipoAttivazione[n]);
 		lcd.setCursor(_LCDML_DISP_cols-3, n - scroll_row);
 
-		if (n==settings.zona)
-			lcd.print(F("*"));
+		if (n==settings.zona) lcd.print(F("*"));
 		else lcd.print( TXT_SPAZIO );
 	}
 	// set cursor and scrollbar

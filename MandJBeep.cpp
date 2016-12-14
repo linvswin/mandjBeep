@@ -295,6 +295,10 @@ void doPrintRitAttivazione() {
 	}
 }
 
+void doAfterRitardoTrigged(){
+	allarm.alarmTriggered();
+}
+
 void timerDoLCDbacklight() {
 	if (mostraMenu == true) {
 		mostraMenu == false;
@@ -419,17 +423,18 @@ void MandJBeep::primaDiAttivare() {
 	Serial.println(F("Ritardo attivazione ..........."));
 #endif
 	lcd.backlight();
-	if (allarm.checkSensori()) {
+	if (this->checkSensori()) {
 		if (settings.tempoRitardo % 2 == 0)
 			xxxx = 0;
 		else
 			xxxx = 1;
 		position2 = position;
-		allarm.ritardoAttivato=true;
-		allarm.t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
-		allarm.t.after(settings.tempoRitardo, doAfterRitActivate);
-		allarm.attiva();
-		allarm.standby();
+		conta=0;
+		this->ritardoAttivato=true;
+		this->attiva();
+		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
+		this->t.after(settings.tempoRitardo, doAfterRitActivate);
+		this->standby();
 	}
 }
 
@@ -462,6 +467,13 @@ void MandJBeep::disattiva() {
 	this->statoAllarme = false;
 	this->alarmeAttivo = false;
 
+	if (ritardoTriggedGiaAttivato==1)
+	{
+		ritardoTriggedGiaAttivato=0;
+		this->t.stop(evRitardoAttivazione);
+		this->t.stop(evAfterRitardoTrigger);
+	}
+
 	password.reset();
 	Timer1.disablePwm(TIMER1_PIN1);
 
@@ -493,6 +505,20 @@ void MandJBeep::disattiva() {
  *   - dopo tempoSirena secondi disattiva la sirena
  */
 void MandJBeep::alarmTriggered() {
+	if (allarm.ritardoAttivato)
+	{
+		allarm.ritardoAttivato=false;
+		// TODO stoppare fase attivazione ritardata
+		t.stop(evRitardoAttivazione);
+	}
+
+	if (ritardoTriggedGiaAttivato==1)
+	{
+		ritardoTriggedGiaAttivato=0;
+		this->t.stop(evRitardoAttivazione);
+		this->t.stop(evAfterRitardoTrigger);
+	}
+
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
 
@@ -521,6 +547,18 @@ void MandJBeep::alarmTriggered() {
 		}
 	}
 	t.after(settings.tempoSirena, doAfterTimerT);
+}
+
+void MandJBeep::alarmTriggeredRitardato(uint8_t sensId){
+	if (ritardoTriggedGiaAttivato==0) // controlla se altro evento già avviato
+	{
+		if (settings.tempoRitardo % 2 == 0) xxxx = 0;
+		else xxxx = 1;
+		conta=0;
+		ritardoTriggedGiaAttivato=1;
+		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
+		evAfterRitardoTrigger=this->t.after(settings.tempoRitardo, doAfterRitardoTrigged);
+	}
 }
 
 MandJBeep::MandJBeep() {
@@ -773,26 +811,31 @@ void MandJBeep::checkAttivita() {
 			Serial.println(sensore[i].getStato());
 #endif
 
-			if ((sensore[i].getStato() != sensDisabilitato) and (sensore[i].getStato() != sensTempDisabilitato)) {
+			if ((sensore[i].getStato() != sensDisabilitato)	and (sensore[i].getStato() != sensTempDisabilitato))
+			{
 
-
+				
 				if ( sensore[i].getRitardato()==true and allarm.ritardoAttivato==true){
-
-				} else
-				if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
+					//caso: in fase di attivazione
+				/*} else
+				/*if (sensore[i].getRitardato()==true and allarm.ritardoAttivato==false) {
+					// attivare procedura allarm trigged ritardata
+					sensore[i].setStato(sensTrigged);
+					this->alarmTriggeredRitardato(i);*/
+				}else if (sensore[i].getZona() == settings.zona or settings.zona == znTotale) {
 					if (PCF_24.read(sensore[i].getPin()) == sensore[i].getLogica() and sensore[i].getStato() != sensTrigged) {
 						sensore[i].setStato(sensTrigged);
-						this->alarmTriggered();
+						if (sensore[i].getRitardato())
+							this->alarmTriggeredRitardato(i); // TODO: forse parametro inutile !!!!
+						else this->alarmTriggered();
 
 						if (sensore[i].getTipo() == tpReed) {
-							if (sensore[i].getConta()
-									>= settings.maxReed_Conta) {
+							if (sensore[i].getConta() >= settings.maxReed_Conta) {
 								sensore[i].setStato(sensTempDisabilitato);
 							}
 							sensore[i].setConta((sensore[i].getConta() + 1));
 						}
 					}
-
 #ifdef DEBUG_PIR
 					if (sensore[i].getTipo()==tpPIR)
 					{
@@ -820,16 +863,20 @@ void MandJBeep::checkAttivita() {
 						//sensore[i].setStato(sensTrigged);
 
 						digitalWrite(GIALLO_LED, HIGH);
-					} else {
-						sensore[i].setStato(sensAttivo);
-						digitalWrite(GIALLO_LED, LOW);
-					}
-				}
+					}/*else{
+					 sensore[i].setStato(sensAttivo);
+					 digitalWrite(GIALLO_LED, LOW);
+
+					 }*/
+				/*}
+
 			} else if (sensore[i].getTipo() == tpSirena) {
 
 			}
+
 		}*/
 	}
+
 }
 
 /**

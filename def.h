@@ -13,8 +13,8 @@ void keypadEvent(KeypadEvent eKey);
 
 void doAfterTimerT();
 void doAfterRitActivate();
+void doAfterRitardoTrigged();
 void readGSMSlave();
-void printSettings();
 
 bool setPulseWidth(long microseconds);
 void doPrintRitAttivazione();
