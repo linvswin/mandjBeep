@@ -20,8 +20,7 @@ bool setPulseWidth(long microseconds);
 void doPrintRitAttivazione();
 void timerDoLCDbacklight();
 
-void serialhwread();
-void serialswread();
 void inviaSMScomando(/*char *number_str,*/ char *message_str, char type);
 
 #endif /* DEF_H_ */
+

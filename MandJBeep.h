@@ -44,7 +44,7 @@
 #ifdef ECLIPSE
 	#include "lib/Rtc/src/RtcDS3231.h"
 #else
-#include <Wire.h>
+	#include <Wire.h>
 	#include <RtcDS3231.h>
 #endif
 
@@ -158,7 +158,7 @@ public:
 	RTC_DS1307 RTC;
 	DateTime now;
 #else
-	//RtcDS3231<TwoWire> RTC(Wire);
+	//RtcDS3231<TwoWire> Rtc(Wire);
 	RtcDS3231 RTC;
 	RtcDateTime now;
 #endif
