@@ -136,6 +136,9 @@ int8_t evAfterRitardoTrigger=0;
 #define TXT_GSM_NOT_READY		 "GSM Not Ready"
 #define TXT_RIAVVIA_GSM			 "Riavvia"
 #define TXT_TEMPERATURA			"Temperatura: "
+#define TXT_DATA_ORA        "Data/Ora"
+#define TXT_DATA        "Data"
+#define TXT_ORA        "Ora"
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
 boolean mostraMenu = false;
