@@ -24,7 +24,6 @@
 	#include "lib/Keypad_I2C/Keypad_I2C.h"
 	#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
 #else
-  //#include "lib/MandJTimer/MandJTimer.h"
 	#include <MandJTimer.h>
 	#include <LCDMenuLib.h>
 	#include <PCF8574_Class.h>
@@ -44,7 +43,7 @@
 #ifdef ECLIPSE
 	#include "lib/Rtc/src/RtcDS3231.h"
 #else
-	#include <Wire.h>
+	//#include <Wire.h>
 	#include <RtcDS3231.h>
 #endif
 
@@ -206,3 +205,4 @@ MandJBeep allarm; //=new MandJBeep();
 #include "Menu.h"
 
 #endif /* _MandJBeep_H_ */
+

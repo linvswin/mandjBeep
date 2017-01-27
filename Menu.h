@@ -74,11 +74,13 @@ LCDML_DISP_addMenu          (10, _LCDML_G1 , LCDML_root      , 3 , TXT_GSM);
 	LCDML_DISP_addParam     (21, _LCDML_G1 , LCDML_root_2    , 6 , TXT_CONTA_REED         , mnuTempoSirena, 8);
 	LCDML_DISP_addParam     (22, _LCDML_G1 , LCDML_root_2    , 9 , TXT_TEMPERATURA        , mnuTempoSirena, 12);
 	LCDML_DISP_addParam     (23, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	LCDML_DISP_addParam     (25, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-	LCDML_DISP_addParam     (26, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
-LCDML_DISP_add              (27, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
-	LCDML_DISP_addParam         (28, _LCDML_G2 , LCDML_root      , 6 , TXT_RIAVVIA_GSM        , mnuTempoSirena, 16);
+	//LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+	//LCDML_DISP_addParam     (25, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+	LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
+LCDML_DISP_add              (25, _LCDML_G1 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
+LCDML_DISP_addParam         (26, _LCDML_G1 , LCDML_root      , 6 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+LCDML_DISP_addParam         (27, _LCDML_G1 , LCDML_root      , 7 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+LCDML_DISP_addParam         (28, _LCDML_G2 , LCDML_root      , 8 , TXT_RIAVVIA_GSM        , mnuTempoSirena, 16);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -1004,3 +1006,4 @@ void LCDML_DISP_loop_end(mnuTipoAttivazione) {
  */
 
 #endif /* MENU_H_ */
+
