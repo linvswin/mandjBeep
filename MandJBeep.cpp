@@ -433,7 +433,7 @@ void MandJBeep::primaDiAttivare() {
 		this->ritardoAttivato=true;
 		this->attiva();
 		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
-		this->t.after(settings.tempoRitardo, doAfterRitActivate);
+		evAfterRitardoTrigger=this->t.after(settings.tempoRitardo, doAfterRitActivate);
 		this->standby();
 	}
 }
@@ -456,7 +456,6 @@ void MandJBeep::attiva() {
 		inviaSMScomando(/*phone_number,*/txtTemp);
 		position2 = 0;
 	}
-	/*if((digitalRead(reedPin1) == HIGH) && (digitalRead(reedPin2) == HIGH))*/
 }
 
 /*
@@ -467,11 +466,13 @@ void MandJBeep::disattiva() {
 	this->statoAllarme = false;
 	this->alarmeAttivo = false;
 
-	if (ritardoTriggedGiaAttivato==1)
+	//if (ritardoTriggedGiaAttivato==1)
+	if (this->ritardoAttivato)
 	{
-		ritardoTriggedGiaAttivato=0;
+		//ritardoTriggedGiaAttivato=0;
 		this->t.stop(evRitardoAttivazione);
 		this->t.stop(evAfterRitardoTrigger);
+		this->ritardoAttivato=true;
 	}
 
 	password.reset();
@@ -509,15 +510,16 @@ void MandJBeep::alarmTriggered() {
 	{
 		allarm.ritardoAttivato=false;
 		// TODO stoppare fase attivazione ritardata
-		t.stop(evRitardoAttivazione);
+		this->t.stop(evRitardoAttivazione);
+		this->t.stop(evAfterRitardoTrigger);
 	}
 
-	if (ritardoTriggedGiaAttivato==1)
+	/*if (ritardoTriggedGiaAttivato==1)
 	{
 		ritardoTriggedGiaAttivato=0;
 		this->t.stop(evRitardoAttivazione);
 		this->t.stop(evAfterRitardoTrigger);
-	}
+	}*/
 
 	Timer1.initialize(period); // initialize timer1, 1000 microseconds
 	setPulseWidth(pulseWidth); // long pulseWidth = 950; // width of a pulse in microseconds
@@ -944,3 +946,4 @@ void MandJBeep::sendI2CCmd(String xCmd, int ch) {
 	}
 	delay(500);
 }
+
