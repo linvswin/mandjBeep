@@ -552,12 +552,14 @@ void MandJBeep::alarmTriggered() {
 }
 
 void MandJBeep::alarmTriggeredRitardato(uint8_t sensId){
-	if (ritardoTriggedGiaAttivato==0) // controlla se altro evento già avviato
+	//if (allarm.ritardoAttivato=false;ritardoTriggedGiaAttivato==0) // controlla se altro evento già avviato
+	if (allarm.ritardoAttivato==false) // controlla se altro evento già avviato
 	{
 		if (settings.tempoRitardo % 2 == 0) xxxx = 0;
 		else xxxx = 1;
 		conta=0;
-		ritardoTriggedGiaAttivato=1;
+		allarm.ritardoAttivato=true;
+		//ritardoTriggedGiaAttivato=1;
 		evRitardoAttivazione=this->t.every(1, doPrintRitAttivazione, settings.tempoRitardo);
 		evAfterRitardoTrigger=this->t.after(settings.tempoRitardo, doAfterRitardoTrigged);
 	}
@@ -768,40 +770,6 @@ void MandJBeep::inizializzaSensori() {
 		sensore[i].setStato(
 				(bitRead(settings.sens, i) == 0 ? sensDisabilitato : sensAttivo));
 }
-
-/*void MandJBeep::inizializzaGSM() {
- //if (settings.gsm)
- if (gsm.begin(2400)) {
- Serial.println("\nGSM status=READY");
- Serial.println(gsm.getStatus());
- started = true;
- } else {
- Serial.println("\nGSM status=IDLE");
- started = false;
- //if (settings.gsm) settings.gsm=0;
- }
-
- //started = gsm.getStatus();
- }*/
-
-/*void MandJBeep::eseguiSMSComando(char sms_text[]) {
- if (!strcmp(sms_text, "ATTIVA")) {
- if (this->alarmeAttivo == false && this->statoAllarme == false) {
- this->primaDiAttivare();
- }
- } else if (!strcmp(sms_text, "DISATTIVA")) {
- this->disattiva();
- } else if (!strcmp(sms_text, "DISSENTEMP")) {
- this->disattivaSensori();
- } else if (!strcmp(sms_text, "STATUS")) {
- char txtTemp[13] = "";
- if (this->getAllarmStatus() == true)
- strcpy(txtTemp, "ATTIVO");
- else
- strcpy(txtTemp, "NON ATTIVO");
- inviaSMScomando(phone_number, txtTemp);
- }
- }*/
 
 void MandJBeep::checkAttivita() {
 	if (this->alarmeAttivo) {

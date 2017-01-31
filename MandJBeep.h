@@ -8,7 +8,8 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
-//#define ECLIPSE
+//#define TEST
+#define ECLIPSE
 
 #include "Arduino.h"
 
@@ -111,7 +112,11 @@ struct AlarmSettings {
 
 Sensore sensore[numSens]={
 	Sensore(I2C_REED1_PIN,  tpReed,  LOW, "CAMERA", znPerimetrale, false),
-	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO",  znPerimetrale, false),
+#ifdef TEST
+	Sensore(I2C_REED2_PIN,  tpPIR,  LOW, "BAGNO",  znInterno, true),
+#else
+	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO", znPerimetrale, false),
+#endif
 	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale, false),
 	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale, true),
 	Sensore(I2C_REED5_PIN,   tpPIR,  LOW, "CAMER2",     znInterno, true),
@@ -132,7 +137,7 @@ PCF8574_Class PCF_24(0x22);
 uint8_t conta = 0;		// contatore ritardo attivazione
 byte risposteGSMSlave=0;
 uint8_t ritardoAttivato=0;  // settato a 1 quanto si attiva il ritardo in attivazione/disattivazione
-uint8_t ritardoTriggedGiaAttivato=0;
+//uint8_t ritardoTriggedGiaAttivato=0;
 
 // generare treno PWM
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
