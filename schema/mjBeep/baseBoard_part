@@ -1,0 +1,28 @@
+Partlist
+
+Exported from boardBase2.brd at 15/02/17 18:20
+
+EAGLE Version 8.0.1 Copyright (c) 1988-2017 Autodesk, Inc.
+
+Assembly variant: 
+
+Part     Value          Package      Library      Position (inch)       Orientation
+
+C1       22p            C025-024X044 rcl          (2.75 1.15)           R90
+C2       22p            C025-024X044 rcl          (2.45 0.6)            R90
+C3       0.1uF          C025-025X050 rcl          (2.15 1.15)           R0
+C4       0.1uF          C025-025X050 rcl          (2.15 2.1)            R0
+C5       0.1uF          C025-025X050 rcl          (0.3 2.3)             R0
+IC1      atmega1284     DIL40        1284p        (2.15 1.65)           R0
+JP1      LedPin         2X03         pinhead      (1.4 0.55)            R0
+JP2      Spk            1X02         pinhead      (3.7 1.25)            R90
+JP4      Relay          1X03         pinhead      (3.7 1.65)            R90
+Q1       16MH           QS           special      (2.5 1)               R90
+R1       10K            0207/10      rcl          (0.65 1.45)           R0
+R2       220            0207/10      rcl          (1.3 1.05)            R270
+R3       220            0207/10      rcl          (1.4 1.05)            R270
+R4       220            0207/10      rcl          (1.5 1.05)            R270
+R5       230            0207/10      rcl          (3 1)                 R270
+SV1                     FE05-1       con-lsta     (0.55 1.9)            R0
+T1       BC547          TO92         transistor   (3.5 0.9)             R270
+X2       VIN            W237-102     con-wago-500 (0.6 0.55)            R270

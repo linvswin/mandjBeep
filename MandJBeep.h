@@ -8,8 +8,8 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
-//#define TEST
-#define ECLIPSE
+#define TEST
+//#define ECLIPSE
 
 #include "Arduino.h"
 
