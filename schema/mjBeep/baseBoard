@@ -1,0 +1,87 @@
+Netlist
+
+Exported from boardBase2.brd at 15/02/17 18:20
+
+EAGLE Version 8.0.1 Copyright (c) 1988-2017 Autodesk, Inc.
+
+Net        Part     Pad
+
+5V         C3       1
+           C4       2
+           IC1      10
+           IC1      30
+           JP4      3
+           R1       1
+           SV1      4
+           T1       3
+           X2       1
+
+GND        C1       1
+           C2       1
+           C3       2
+           C4       1
+           IC1      11
+           IC1      31
+           JP1      1
+           JP1      3
+           JP1      5
+           JP2      2
+           JP4      1
+           SV1      5
+           X2       2
+
+LED_GIALLO IC1      2
+           R2       1
+
+LED_ROSSO  IC1      4
+           R4       1
+
+LED_VERDE  IC1      3
+           R3       1
+
+N$1        C2       2
+           IC1      12
+           Q1       1
+
+N$2        C1       2
+           IC1      13
+           Q1       2
+
+N$4        C5       2
+           SV1      1
+
+N$7        JP1      2
+           R2       2
+
+N$8        JP1      4
+           R3       2
+
+N$9        JP1      6
+           R4       2
+
+N$11       R5       2
+           T1       2
+
+N$12       JP2      1
+           T1       1
+
+RELAY      IC1      20
+           JP4      2
+
+RESET      C5       1
+           IC1      9
+           R1       2
+
+RX         IC1      14
+           SV1      3
+
+SIM_RX     IC1      17
+
+SIM_TX     IC1      16
+
+SPK        IC1      19
+           R5       1
+
+TX         IC1      15
+           SV1      2
+
