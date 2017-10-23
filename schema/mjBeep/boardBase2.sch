@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.3.2">
+<eagle version="8.4.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -9571,6 +9571,7 @@ Grid 5.08 mm&lt;p&gt;
 <text x="246.38" y="-30.48" size="1.778" layer="91">5V</text>
 <text x="246.38" y="-40.64" size="1.778" layer="91">5V</text>
 <text x="246.38" y="-50.8" size="1.778" layer="91">5V</text>
+<text x="-5.08" y="-25.4" size="1.778" layer="91">RTC</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="27.94" y="40.64"/>
