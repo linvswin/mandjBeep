@@ -7,7 +7,7 @@
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="mm" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -9412,7 +9412,7 @@ Source: www.kingbright.com</description>
 </class>
 </classes>
 <parts>
-<part name="IC1" library="1284p" deviceset="MEGA1284P" device="" value="atmega1284"/>
+<part name="ATMEGA1284" library="1284p" deviceset="MEGA1284P" device="" value="atmega1284"/>
 <part name="Q1" library="special" deviceset="XTAL/S" device="" value="16MH"/>
 <part name="C1" library="rcl" deviceset="C-EU" device="025-024X044" value="22p"/>
 <part name="C2" library="rcl" deviceset="C-EU" device="025-024X044" value="22p"/>
@@ -9474,7 +9474,7 @@ Source: www.kingbright.com</description>
 <text x="114.3" y="-12.7" size="3.81" layer="91">LCD</text>
 </plain>
 <instances>
-<instance part="IC1" gate="G$1" x="27.94" y="40.64"/>
+<instance part="ATMEGA1284" gate="G$1" x="27.94" y="40.64"/>
 <instance part="Q1" gate="G$1" x="-10.16" y="33.02" smashed="yes" rot="R90">
 <attribute name="NAME" x="-13.97" y="30.48" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="-5.08" y="27.94" size="1.778" layer="96" rot="R90"/>
@@ -9567,10 +9567,10 @@ Source: www.kingbright.com</description>
 <segment>
 <pinref part="SUPPLY1" gate="GND" pin="GND"/>
 <wire x1="-38.1" y1="25.4" x2="-38.1" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="GND@1"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="GND@1"/>
 <wire x1="-38.1" y1="2.54" x2="-38.1" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="-2.54" x2="5.08" y2="-2.54" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="GND@0"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="GND@0"/>
 <wire x1="5.08" y1="2.54" x2="-38.1" y2="2.54" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="1"/>
 <wire x1="-27.94" y1="25.4" x2="-38.1" y2="25.4" width="0.1524" layer="91"/>
@@ -9681,7 +9681,7 @@ Source: www.kingbright.com</description>
 <net name="N$1" class="0">
 <segment>
 <pinref part="Q1" gate="G$1" pin="1"/>
-<pinref part="IC1" gate="G$1" pin="XTAL2"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="XTAL2"/>
 <wire x1="-10.16" y1="27.94" x2="-5.08" y2="27.94" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="-5.08" y1="27.94" x2="5.08" y2="27.94" width="0.1524" layer="91"/>
@@ -9693,7 +9693,7 @@ Source: www.kingbright.com</description>
 <net name="N$2" class="0">
 <segment>
 <pinref part="Q1" gate="G$1" pin="2"/>
-<pinref part="IC1" gate="G$1" pin="XTAL1"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="XTAL1"/>
 <wire x1="-10.16" y1="38.1" x2="-5.08" y2="38.1" width="0.1524" layer="91"/>
 <pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="-5.08" y1="38.1" x2="5.08" y2="38.1" width="0.1524" layer="91"/>
@@ -9731,14 +9731,14 @@ Source: www.kingbright.com</description>
 <label x="142.24" y="144.78" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="OC1A/PCINT29"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="OC1A/PCINT29"/>
 <wire x1="50.8" y1="2.54" x2="60.96" y2="2.54" width="0.1524" layer="91"/>
 <label x="55.88" y="2.54" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED_GIALLO" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="T1/CLK0/PCINT9"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="T1/CLK0/PCINT9"/>
 <wire x1="50.8" y1="58.42" x2="60.96" y2="58.42" width="0.1524" layer="91"/>
 <label x="55.88" y="58.42" size="1.778" layer="95"/>
 </segment>
@@ -9755,14 +9755,14 @@ Source: www.kingbright.com</description>
 <label x="45.72" y="139.7" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="AIN0/INT2/PCINT10"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="AIN0/INT2/PCINT10"/>
 <wire x1="50.8" y1="55.88" x2="60.96" y2="55.88" width="0.1524" layer="91"/>
 <label x="55.88" y="55.88" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED_ROSSO" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="AIN1/OC0A/PCINT11"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="AIN1/OC0A/PCINT11"/>
 <wire x1="50.8" y1="53.34" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
 <label x="55.88" y="53.34" size="1.778" layer="95"/>
 </segment>
@@ -9774,7 +9774,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="5V" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="VCC"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="VCC"/>
 <wire x1="-25.4" y1="83.82" x2="5.08" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="C4" gate="G$1" pin="2"/>
 <wire x1="-25.4" y1="86.36" x2="-25.4" y2="83.82" width="0.1524" layer="91"/>
@@ -9783,7 +9783,7 @@ Source: www.kingbright.com</description>
 <label x="-38.1" y="83.82" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="AVCC"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="AVCC"/>
 <wire x1="5.08" y1="78.74" x2="-25.4" y2="78.74" width="0.1524" layer="91"/>
 <wire x1="-25.4" y1="78.74" x2="-38.1" y2="78.74" width="0.1524" layer="91"/>
 <pinref part="C3" gate="G$1" pin="1"/>
@@ -9881,14 +9881,14 @@ Source: www.kingbright.com</description>
 </net>
 <net name="SIM_TX" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="RXD1/INT0/PCINT26"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="RXD1/INT0/PCINT26"/>
 <wire x1="50.8" y1="10.16" x2="60.96" y2="10.16" width="0.1524" layer="91"/>
 <label x="55.88" y="10.16" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SIM_RX" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="TXD1/INT1/PCINT27"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="TXD1/INT1/PCINT27"/>
 <wire x1="50.8" y1="7.62" x2="60.96" y2="7.62" width="0.1524" layer="91"/>
 <label x="55.88" y="7.62" size="1.778" layer="95"/>
 </segment>
@@ -9900,7 +9900,7 @@ Source: www.kingbright.com</description>
 <label x="134.62" y="25.4" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="RESET"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="RESET"/>
 <pinref part="R1" gate="G$1" pin="2"/>
 <wire x1="5.08" y1="66.04" x2="0" y2="66.04" width="0.1524" layer="91"/>
 <label x="2.54" y="68.58" size="1.778" layer="95" rot="R180"/>
@@ -9922,7 +9922,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="TX" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="TXD0/PCINT25"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="TXD0/PCINT25"/>
 <wire x1="50.8" y1="12.7" x2="60.96" y2="12.7" width="0.1524" layer="91"/>
 <label x="55.88" y="12.7" size="1.778" layer="95"/>
 </segment>
@@ -9934,7 +9934,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="RX" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="T3/RXD0/PCINT24"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="T3/RXD0/PCINT24"/>
 <wire x1="50.8" y1="15.24" x2="60.96" y2="15.24" width="0.1524" layer="91"/>
 <label x="55.88" y="15.24" size="1.778" layer="95"/>
 </segment>
@@ -9979,7 +9979,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="SCL" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="SCL/PCINT16"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="SCL/PCINT16"/>
 <wire x1="50.8" y1="38.1" x2="63.5" y2="38.1" width="0.1524" layer="91"/>
 <label x="58.42" y="38.1" size="1.778" layer="95"/>
 </segment>
@@ -10024,7 +10024,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="SDA" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="SDA/PCINT17"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="SDA/PCINT17"/>
 <wire x1="50.8" y1="35.56" x2="63.5" y2="35.56" width="0.1524" layer="91"/>
 <label x="58.42" y="35.56" size="1.778" layer="95"/>
 </segment>
@@ -10069,7 +10069,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="LED_SIRENA" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="SS/OC0B/PCINT12"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="SS/OC0B/PCINT12"/>
 <wire x1="50.8" y1="50.8" x2="60.96" y2="50.8" width="0.1524" layer="91"/>
 <label x="55.88" y="50.8" size="1.778" layer="95"/>
 </segment>
@@ -10177,7 +10177,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="N$20" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="T0/XCK0/PCINT8"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="T0/XCK0/PCINT8"/>
 <pinref part="R17" gate="G$1" pin="1"/>
 <wire x1="50.8" y1="60.96" x2="55.88" y2="60.96" width="0.1524" layer="91"/>
 </segment>
@@ -10212,7 +10212,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="RELAY1" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="OC2B/ICP/PCINT30"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="OC2B/ICP/PCINT30"/>
 <wire x1="50.8" y1="0" x2="60.96" y2="0" width="0.1524" layer="91"/>
 <label x="55.88" y="0" size="1.778" layer="95"/>
 </segment>
@@ -10224,7 +10224,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="RELAY2" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="XCK1/OC1B/PCINT28"/>
+<pinref part="ATMEGA1284" gate="G$1" pin="XCK1/OC1B/PCINT28"/>
 <wire x1="50.8" y1="5.08" x2="60.96" y2="5.08" width="0.1524" layer="91"/>
 <label x="55.88" y="5.08" size="1.778" layer="95"/>
 </segment>

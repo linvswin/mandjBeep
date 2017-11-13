@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.3.2">
+<eagle version="8.4.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="mm" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -7399,9 +7399,9 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="C1" library="rcl" deviceset="CPOL-EU" device="E2.5-6" value="10uF"/>
 <part name="J4" library="Libreria-componenti" deviceset="MORSETTIERA" device="" value="OUT"/>
-<part name="IC1" library="v-reg" library_urn="urn:adsk.eagle:library:409" deviceset="LM317TS" device="" package3d_urn="urn:adsk.eagle:package:30353/1" value="LM317"/>
-<part name="IC2" library="v-reg" library_urn="urn:adsk.eagle:library:409" deviceset="LM317TS" device="" package3d_urn="urn:adsk.eagle:package:30353/1" value="LM350"/>
-<part name="IC4" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="78*" device="TV" package3d_urn="urn:adsk.eagle:package:16417/1" technology="05"/>
+<part name="LM317" library="v-reg" library_urn="urn:adsk.eagle:library:409" deviceset="LM317TS" device="" package3d_urn="urn:adsk.eagle:package:30353/1" value="LM317"/>
+<part name="LM350" library="v-reg" library_urn="urn:adsk.eagle:library:409" deviceset="LM317TS" device="" package3d_urn="urn:adsk.eagle:package:30353/1" value="LM350"/>
+<part name="7805" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="78*" device="TV" package3d_urn="urn:adsk.eagle:package:16417/1" technology="05"/>
 <part name="V2" library="supply2" deviceset="GND" device=""/>
 <part name="V3" library="supply2" deviceset="GND" device=""/>
 </parts>
@@ -7432,9 +7432,9 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="C1" gate="G$1" x="91.44" y="109.22"/>
 <instance part="J4" gate="1" x="185.42" y="139.7" rot="MR0"/>
-<instance part="IC1" gate="1" x="73.66" y="73.66"/>
-<instance part="IC2" gate="1" x="71.12" y="124.46"/>
-<instance part="IC4" gate="A1" x="147.32" y="124.46"/>
+<instance part="LM317" gate="1" x="73.66" y="73.66"/>
+<instance part="LM350" gate="1" x="71.12" y="124.46"/>
+<instance part="7805" gate="A1" x="147.32" y="124.46"/>
 <instance part="V2" gate="GND" x="170.18" y="137.16" rot="R270"/>
 <instance part="V3" gate="GND" x="177.8" y="111.76"/>
 </instances>
@@ -7445,10 +7445,10 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <segment>
 <pinref part="J1" gate="1" pin="1"/>
 <wire x1="50.8" y1="124.46" x2="50.8" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="1" pin="IN"/>
+<pinref part="LM317" gate="1" pin="IN"/>
 <wire x1="50.8" y1="73.66" x2="66.04" y2="73.66" width="0.1524" layer="91"/>
 <junction x="50.8" y="73.66"/>
-<pinref part="IC2" gate="1" pin="IN"/>
+<pinref part="LM350" gate="1" pin="IN"/>
 <wire x1="63.5" y1="124.46" x2="50.8" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -7460,7 +7460,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <junction x="96.52" y="73.66"/>
 <pinref part="R2" gate="1" pin="2"/>
 <pinref part="D1" gate="1" pin="A"/>
-<pinref part="IC1" gate="1" pin="OUT"/>
+<pinref part="LM317" gate="1" pin="OUT"/>
 </segment>
 </net>
 <net name="N$27" class="0">
@@ -7475,7 +7475,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <pinref part="R2" gate="1" pin="1"/>
 <pinref part="T1" gate="G$1" pin="C"/>
 <pinref part="R5" gate="1" pin="3"/>
-<pinref part="IC1" gate="1" pin="ADJ"/>
+<pinref part="LM317" gate="1" pin="ADJ"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -7521,7 +7521,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <pinref part="C1" gate="G$1" pin="-"/>
 <wire x1="91.44" y1="104.14" x2="91.44" y2="83.82" width="0.1524" layer="91"/>
 <junction x="91.44" y="83.82"/>
-<pinref part="IC4" gate="A1" pin="GND"/>
+<pinref part="7805" gate="A1" pin="GND"/>
 <wire x1="147.32" y1="116.84" x2="147.32" y2="83.82" width="0.1524" layer="91"/>
 <junction x="147.32" y="83.82"/>
 </segment>
@@ -7578,7 +7578,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <pinref part="C1" gate="G$1" pin="+"/>
 <wire x1="91.44" y1="111.76" x2="91.44" y2="124.46" width="0.1524" layer="91"/>
 <junction x="91.44" y="124.46"/>
-<pinref part="IC2" gate="1" pin="OUT"/>
+<pinref part="LM350" gate="1" pin="OUT"/>
 <wire x1="78.74" y1="124.46" x2="83.82" y2="124.46" width="0.1524" layer="91"/>
 <junction x="83.82" y="124.46"/>
 </segment>
@@ -7588,7 +7588,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <pinref part="R7" gate="1" pin="3"/>
 <pinref part="R6" gate="1" pin="1"/>
 <wire x1="83.82" y1="104.14" x2="71.12" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC2" gate="1" pin="ADJ"/>
+<pinref part="LM350" gate="1" pin="ADJ"/>
 <wire x1="71.12" y1="104.14" x2="71.12" y2="116.84" width="0.1524" layer="91"/>
 <junction x="71.12" y="104.14"/>
 </segment>
@@ -7609,7 +7609,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <wire x1="121.92" y1="142.24" x2="121.92" y2="124.46" width="0.1524" layer="91"/>
 <junction x="121.92" y="124.46"/>
 <label x="175.26" y="142.24" size="1.778" layer="95"/>
-<pinref part="IC4" gate="A1" pin="VI"/>
+<pinref part="7805" gate="A1" pin="VI"/>
 <wire x1="137.16" y1="124.46" x2="129.54" y2="124.46" width="0.1524" layer="91"/>
 <junction x="129.54" y="124.46"/>
 </segment>
@@ -7621,7 +7621,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <wire x1="162.56" y1="124.46" x2="177.8" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="114.3" x2="162.56" y2="124.46" width="0.1524" layer="91"/>
 <label x="177.8" y="127" size="1.778" layer="95"/>
-<pinref part="IC4" gate="A1" pin="VO"/>
+<pinref part="7805" gate="A1" pin="VO"/>
 <wire x1="157.48" y1="124.46" x2="162.56" y2="124.46" width="0.1524" layer="91"/>
 <junction x="162.56" y="124.46"/>
 </segment>
