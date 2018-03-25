@@ -301,7 +301,7 @@ void doAfterRitardoTrigged(){
 
 void timerDoLCDbacklight() {
 	if (mostraMenu == true) {
-		mostraMenu == false;
+		mostraMenu = false;
 		allarm.standby();
 	}
 	lcd.noBacklight();

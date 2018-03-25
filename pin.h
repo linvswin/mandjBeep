@@ -72,8 +72,8 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define I2C_REED2_PIN 1
 #define I2C_REED3_PIN 2
 #define I2C_REED4_PIN 3
-#define I2C_REED5_PIN 4
-#define I2C_PIR0_PIN  5
+#define I2C_PIR0_PIN 4
+#define I2C_PIR1_PIN  5
 #define I2C_GUASTISIRENA_PIN  6
 #define I2C_TAMPER_PIN  7
 /*===============================*/

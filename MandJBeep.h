@@ -8,7 +8,7 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
-#define TEST
+//#define TEST
 //#define ECLIPSE
 
 #include "Arduino.h"
@@ -119,8 +119,8 @@ Sensore sensore[numSens]={
 #endif
 	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale, false),
 	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale, true),
-	Sensore(I2C_REED5_PIN,   tpPIR,  LOW, "CAMER2",     znInterno, true),
-	Sensore(I2C_PIR0_PIN,    tpPIR,  LOW,  "SALA2",     znInterno, true),
+	Sensore(I2C_PIR0_PIN,   tpPIR,   LOW, "CAMER2",     znInterno, false),
+	Sensore(I2C_PIR1_PIN,   tpPIR,   LOW,  "SALA2",     znInterno, false),
 	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale, false),
 	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale, false),
 };
