@@ -113,6 +113,7 @@ void keypadEvent(KeypadEvent eKey) {
 				password.reset();
 				passwd_pos = 9;
 				mostraMenu = false;
+				noAdmin= true;
 				allarm.standby();
 			} else {
 				LCDML_BUTTON_quit()
@@ -131,18 +132,29 @@ void keypadEvent(KeypadEvent eKey) {
 			if (mostraMenu == false) {
 				passwd_pos = 9;
 				password.set(settings.menuPassword);
+
 				if (allarm.checkPassword2()) {
 					allarm.t.stop(timerPrintData);
+					noAdmin = false;
 					mostraMenu = true;
 					LCDML.goRoot();
-					LCDML_BUTTON_up()
-					;
-				} else
-					allarm.codiceErrato(1);
+					LCDML_BUTTON_up();
+				} else {
+					//allarm.codiceErrato(1);
+					password.reset();
+					password.set(settings.alarmPassword1);
+					allarm.t.stop(timerPrintData);
+					noAdmin=true;
+					mostraMenu = true;
+					LCDML.goRoot();
+					LCDML_BUTTON_up();
+				}
+
 			} else {
 				password.reset();
 				password.set(settings.alarmPassword1);
 				mostraMenu = false;
+				noAdmin=true;
 				timerPrintData = allarm.t.every(1, printDate);
 				allarm.standby();
 			}
@@ -150,9 +162,13 @@ void keypadEvent(KeypadEvent eKey) {
 		case 'C':
 			if (mostraMenu == false) {
 				lcd.backlight();
+				/*allarm.t.stop(timerPrintData);
+				noAdmin=true;
+				mostraMenu = true;
+				LCDML.goRoot();
+				LCDML_BUTTON_up();*/
 			} else {
-				LCDML_BUTTON_up()
-				;
+				LCDML_BUTTON_up();
 			}
 			break;
 		case 'D':
@@ -239,6 +255,7 @@ void doAfterRitActivate() {
 	//allarm.attiva();
 	allarm.ritardoAttivato=false;
 	mostraMenu = false;
+	noAdmin= true;
 	allarm.standby();
 }
 
@@ -302,6 +319,7 @@ void doAfterRitardoTrigged(){
 void timerDoLCDbacklight() {
 	if (mostraMenu == true) {
 		mostraMenu = false;
+		noAdmin= true;
 		allarm.standby();
 	}
 	lcd.noBacklight();
@@ -334,7 +352,10 @@ void MandJBeep::standby() {
 		lcd.print(TXT_ENTER_PIN);
 //	lcd.setCursor(0, 1);
 //	lcd.print(getDate());
-	lcd.setCursor(5, 3);
+	lcd.setCursor(0, 3);
+	//if (settings.zona==znTotale)
+	lcd.print(tipoAttivazione[settings.zona]);
+	lcd.setCursor(12, 3);
 	lcd.print(TXT_AUTOR);
 }
 

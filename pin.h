@@ -90,7 +90,7 @@ int8_t evAfterRitardoTrigger=0;
 /**********************************************************
  **    Definizione di stringhe
  ***********************************************************/
-#define TXT_AUTOR              F("Beep by M&J")
+#define TXT_AUTOR              F("Beep M&J")
 #define TXT_SYS_ACTIVE         F("Attivo: ")
 #define TXT_ENTER_PIN          F("Codice: ")
 #define TXT_INVALID_PIN        F("Codice errato!")
@@ -142,5 +142,6 @@ int8_t evAfterRitardoTrigger=0;
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
 boolean mostraMenu = false;
+boolean noAdmin = true; 		// indica se è stata inserita pass di admin
 /**********************************************************/
 #endif

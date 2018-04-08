@@ -35,7 +35,7 @@ uint8_t  scroll_bar[5][8] = {
 // create menu
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt   30
+#define _LCDML_DISP_cnt   31
 
 // LCDML_root        => layer 0
 // LCDML_root_X      => layer 1
@@ -50,9 +50,9 @@ uint8_t  scroll_bar[5][8] = {
 
 LCDML_DISP_initParam(_LCDML_DISP_cnt);// enbable parameters (needs one byte per menu element)
 // Menu
-LCDML_DISP_addMenu        (0 , _LCDML_G1 , LCDML_root      , 1 , TXT_ATTIVA);
-	LCDML_DISP_add          (1 , _LCDML_G1 , LCDML_root_1    , 1 , TXT_ATTIVA             , mnuTipoAttivazione);
-	LCDML_DISP_addParam     (2 , _LCDML_G1 , LCDML_root_1    , 2 , TXT_DISATTIVA_SENSORI  , mnuTempoSirena, 5);
+LCDML_DISP_addMenu        (0 , _LCDML_G3 , LCDML_root      , 1 , TXT_ATTIVA);
+	LCDML_DISP_add          (1 , _LCDML_G3 , LCDML_root_1    , 1 , TXT_ATTIVA             , mnuTipoAttivazione);
+	LCDML_DISP_addParam     (2 , _LCDML_G3 , LCDML_root_1    , 2 , TXT_DISATTIVA_SENSORI  , mnuTempoSirena, 5);
 LCDML_DISP_addMenu        (3 , _LCDML_G1 , LCDML_root      , 2 , TXT_IMPOSTAZIONE);
   LCDML_DISP_addMenu      (4 , _LCDML_G1 , LCDML_root_2    , 10, TXT_DATA_ORA);
     LCDML_DISP_addParam   (5 , _LCDML_G1 , LCDML_root_2_10 , 1 , TXT_DATA               , mnuCambioDataOra, 1);
@@ -77,13 +77,11 @@ LCDML_DISP_addMenu        (13, _LCDML_G1 , LCDML_root      , 3 , TXT_GSM);
 	LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root_2    , 6 , TXT_CONTA_REED         , mnuTempoSirena, 8);
 	LCDML_DISP_addParam     (25, _LCDML_G1 , LCDML_root_2    , 9 , TXT_TEMPERATURA        , mnuTempoSirena, 12);
 	LCDML_DISP_addParam     (26, _LCDML_G1 , LCDML_root_2    , 4 , TXT_LCDBACK_LIGHT_TIME , mnuTempoSirena, 2);
-	//LCDML_DISP_addParam     (24, _LCDML_G1 , LCDML_root_2    , 5 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-	//LCDML_DISP_addParam     (25, _LCDML_G1 , LCDML_root_2    , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
- 	LCDML_DISP_addParam     (27, _LCDML_G1 , LCDML_root      , 5 , TXT_REPORT             , mnuTempoSirena, 9);
-LCDML_DISP_add            (28, _LCDML_G1 , LCDML_root      , 6 , TXT_SENSORI            , mnuSensori);
-LCDML_DISP_addParam       (29, _LCDML_G1 , LCDML_root      , 7 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
-LCDML_DISP_addParam       (30, _LCDML_G1 , LCDML_root      , 8 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
-LCDML_DISP_addParam       (31, _LCDML_G2 , LCDML_root      , 9 , TXT_RIAVVIA_GSM        , mnuTempoSirena, 16);
+ 	LCDML_DISP_addParam     (27, _LCDML_G1 , LCDML_root      , 4 , TXT_REPORT             , mnuTempoSirena, 9);
+LCDML_DISP_add            (28, _LCDML_G2 , LCDML_root      , 5 , TXT_SENSORI            , mnuSensori);
+LCDML_DISP_addParam       (29, _LCDML_G2 , LCDML_root      , 6 , TXT_LOAD_TO_EPROM      , mnuTempoSirena, 3);
+LCDML_DISP_addParam       (30, _LCDML_G2 , LCDML_root      , 7 , TXT_SAVE_TO_EPROM      , mnuTempoSirena, 4);
+LCDML_DISP_addParam       (31, _LCDML_G2 , LCDML_root      , 8 , TXT_RIAVVIA_GSM        , mnuTempoSirena, 16);
 // create Menu
 LCDML_DISP_createMenu(_LCDML_DISP_cnt);
 
@@ -125,8 +123,18 @@ void MenuSetup() {
 
 
 	// Enable all items with _LCDML_G1
-	LCDML_DISP_groupEnable (_LCDML_G1); // enable group 1
-	LCDML_DISP_groupEnable (_LCDML_G2); // enable group 21
+	/*if (noAdmin==false)
+	{
+		LCDML_DISP_groupEnable (_LCDML_G1); // enable group 1
+		LCDML_DISP_groupEnable (_LCDML_G2); // enable group 2
+	} else {
+		LCDML_DISP_groupDisable(_LCDML_G1);
+		LCDML_DISP_groupDisable(_LCDML_G2);
+	}*/
+
+	LCDML_DISP_groupEnable(_LCDML_G1);
+	LCDML_DISP_groupEnable(_LCDML_G2);
+	LCDML_DISP_groupEnable(_LCDML_G3); // enable group 3
 
 	// LCDMenu Setup
 	LCDML_setup(_LCDML_BACK_cnt);
@@ -139,10 +147,16 @@ void MenuLoop() {
 	//if (mostraMenu==true)
 	//	LCDML_DISP_jumpToFunc(mnuStandby);
 	// this function must called here, do not delete it
-	if (allarm.alarmeAttivo)
+	if (noAdmin == false)
+	{
+		LCDML_DISP_groupEnable(_LCDML_G1); // enable group 1
+
+		if (allarm.alarmeAttivo) LCDML_DISP_groupDisable(_LCDML_G2);
+		else LCDML_DISP_groupEnable(_LCDML_G2);
+	} else {
+		LCDML_DISP_groupDisable(_LCDML_G1);
 		LCDML_DISP_groupDisable(_LCDML_G2);
-	else
-		LCDML_DISP_groupEnable(_LCDML_G2);
+	}
 	LCDML_run (_LCDML_priority);
 }
 
