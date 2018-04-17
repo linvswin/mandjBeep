@@ -123,17 +123,17 @@ void MenuSetup() {
 
 
 	// Enable all items with _LCDML_G1
-	/*if (noAdmin==false)
+	if (noAdmin==false)
 	{
 		LCDML_DISP_groupEnable (_LCDML_G1); // enable group 1
 		LCDML_DISP_groupEnable (_LCDML_G2); // enable group 2
 	} else {
 		LCDML_DISP_groupDisable(_LCDML_G1);
 		LCDML_DISP_groupDisable(_LCDML_G2);
-	}*/
+	}
 
-	LCDML_DISP_groupEnable(_LCDML_G1);
-	LCDML_DISP_groupEnable(_LCDML_G2);
+	//LCDML_DISP_groupEnable(_LCDML_G1);
+	//LCDML_DISP_groupEnable(_LCDML_G2);
 	LCDML_DISP_groupEnable(_LCDML_G3); // enable group 3
 
 	// LCDMenu Setup

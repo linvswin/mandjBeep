@@ -161,12 +161,12 @@ void keypadEvent(KeypadEvent eKey) {
 			break;
 		case 'C':
 			if (mostraMenu == false) {
-				lcd.backlight();
-				/*allarm.t.stop(timerPrintData);
+				//lcd.backlight();
+				allarm.t.stop(timerPrintData);
 				noAdmin=true;
 				mostraMenu = true;
 				LCDML.goRoot();
-				LCDML_BUTTON_up();*/
+				LCDML_BUTTON_up();
 			} else {
 				LCDML_BUTTON_up();
 			}
