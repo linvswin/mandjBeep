@@ -22,5 +22,8 @@ void timerDoLCDbacklight();
 
 void inviaSMScomando(/*char *number_str,*/ char *message_str, char type);
 
-#endif /* DEF_H_ */
+#ifdef DEBUG_SETTINGS
+void printSettings();
+#endif
 
+#endif /* DEF_H_ */
