@@ -8,7 +8,8 @@
 #ifndef _MandJBeep_H_
 #define _MandJBeep_H_
 
-#define ECLIPSE
+//#define TEST
+//#define ECLIPSE
 
 #include "Arduino.h"
 
@@ -16,49 +17,24 @@
 #include <avr/pgmspace.h>
 
 #include <EEPROM.h>
+
 #ifdef ECLIPSE
 	#include "lib/MandJTimer/MandJTimer.h"
-#else
-	#include <MandJTimer.h>
-#endif
-
-#define MJGSM
-#ifdef MJGSM
-
-#include "SIM900.h"
-#include <SoftwareSerial.h>
-#include "sms.h"
-SMSGSM sms;
-boolean started = false;
-//int started = 0;
-
-int i_serialh = 0;
-char inSerial[40];
-char position=0;
-char position2=0;
-char phone_number[20]; // array for the phone number string
-char sms_text[160];
-
-#else
-int i_serialh = 0;
-char inSerial[40];
-#endif
-
-#include <LiquidCrystal_I2C.h>
-#ifdef ECLIPSE
 	#include "lib/LCDMenuLib/LCDMenuLib.h"
 	#include "lib/PCF8574/PCF8574_Class.h"
 	#include "lib/Keypad_I2C/Keypad_I2C.h"
 	#include "lib/Password/Password.h" //http://www.arduino.cc/playground/uploads/Code/Password.zip
 #else
+	#include <MandJTimer.h>
 	#include <LCDMenuLib.h>
 	#include <PCF8574_Class.h>
 	#include <Keypad_I2C.h>
 	#include <Password.h> //http://www.arduino.cc/playground/uploads/Code/Password.zip
 #endif
 
-#define CLKDS3231
+#include <LiquidCrystal_I2C.h>
 
+#define CLKDS3231
 #ifndef CLKDS3231
 // cambia wuesta riga in RTClib.h
 //enum Ds1307SqwPinMode { SQW_OFF = 0x00, SQW_ON = 0x80, SquareWave1HZ = 0x10, SquareWave4kHz = 0x11, SquareWave8kHz = 0x12, SquareWave32kHz = 0x13 };
@@ -68,14 +44,19 @@ char inSerial[40];
 #ifdef ECLIPSE
 	#include "lib/Rtc/src/RtcDS3231.h"
 #else
+	//#include <Wire.h>
 	#include <RtcDS3231.h>
 #endif
 
 #endif
 
-// azzera variabili
-#define memtozero_s(var) var ^= var;
-#define memtozero_v(var) memset((void*)&var,0,sizeof(var));
+int i_serialh = 0;
+char inSerial[40];
+char position=0;   // indica la posizione del SMS
+char position2=0; // indica la posizione del SMS
+//char phone_number[20]; // array for the phone number string
+char sms_text[160];
+int statoGSM=0;
 
 #include "pin.h"
 #include "def.h"
@@ -115,7 +96,7 @@ struct AlarmSettings {
 	"0000",			// menuPassword
 	60,				// lcdBacklightTime secondi
 	5,				//maxReedConta
-	znPerimetrale,	// zona
+	znTotale,	// zona
 	//B11000100		// sens
 	B10000001,		// sens
 	//1,			// adminpass
@@ -131,11 +112,15 @@ struct AlarmSettings {
 
 Sensore sensore[numSens]={
 	Sensore(I2C_REED1_PIN,  tpReed,  LOW, "CAMERA", znPerimetrale, false),
-	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO",  znPerimetrale, false),
+#ifdef TEST
+	Sensore(I2C_REED2_PIN,  tpPIR,  LOW, "BAGNO",  znInterno, true),
+#else
+	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO", znPerimetrale, false),
+#endif
 	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale, false),
 	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale, true),
-	Sensore(I2C_REED5_PIN,   tpPIR,  LOW, "CAMER2",     znInterno, true),
-	Sensore(I2C_PIR0_PIN,    tpPIR,  LOW,  "SALA2",     znInterno, true),
+	Sensore(I2C_PIR0_PIN,   tpPIR,   LOW, "CAMER2",     znInterno, false),
+	Sensore(I2C_PIR1_PIN,   tpPIR,   LOW,  "SALA2",     znInterno, false),
 	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale, false),
 	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale, false),
 };
@@ -150,7 +135,9 @@ Password password = Password(settings.alarmPassword1);
 PCF8574_Class PCF_24(0x22);
 
 uint8_t conta = 0;		// contatore ritardo attivazione
-uint8_t ritardoTriggedGiaAttivato=0;
+byte risposteGSMSlave=0;
+uint8_t ritardoAttivato=0;  // settato a 1 quanto si attiva il ritardo in attivazione/disattivazione
+//uint8_t ritardoTriggedGiaAttivato=0;
 
 // generare treno PWM
 #define pwmRegister OCR1A // the logical pin, can be set to OCR1B
@@ -175,6 +162,7 @@ public:
 	RTC_DS1307 RTC;
 	DateTime now;
 #else
+	//RtcDS3231<TwoWire> Rtc(Wire);
 	RtcDS3231 RTC;
 	RtcDateTime now;
 #endif
@@ -184,7 +172,7 @@ public:
 	void inizializzaClock();
 	void inizializzaLed();
 	void inizializzaSensori();
-	void inizializzaGSM();
+	//void inizializzaGSM();
 
 	boolean checkSensori();
 	void disattivaSensori();
@@ -211,8 +199,10 @@ public:
 	void saveSettings(void);
 	void loadSettings(void);
 
-	void eseguiSMSComando(char sms_text[]);
+	//void eseguiSMSComando(char sms_text[]);
 	bool getAllarmStatus(){return this->alarmeAttivo;};
+
+	void sendI2CCmd(String cmd, int ch);
 };
 
 MandJBeep allarm; //=new MandJBeep();
@@ -220,3 +210,4 @@ MandJBeep allarm; //=new MandJBeep();
 #include "Menu.h"
 
 #endif /* _MandJBeep_H_ */
+

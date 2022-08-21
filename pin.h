@@ -10,7 +10,8 @@
 
 #define BAUD_RATE  9600  //115200
 
-#define CTRL_Z 26
+// software reset
+#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {}
 
 //#define DEBUG
 #ifdef DEBUG
@@ -46,8 +47,9 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 //#define RELAY_SIRENA1 11
 #define RELAY_SIRENA1 14
 //#define RELAY_SIRENA2 7
-#define myGSM	Serial1
 
+//Indirizzo I2C Slave GSM
+#define GSMI2C 0x08
 
 /************* LCD *************/
 #define I2C_ADDR    0x20 // LCD: Define I2C Address for controller
@@ -70,8 +72,8 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define I2C_REED2_PIN 1
 #define I2C_REED3_PIN 2
 #define I2C_REED4_PIN 3
-#define I2C_REED5_PIN 4
-#define I2C_PIR0_PIN  5
+#define I2C_PIR0_PIN 4
+#define I2C_PIR1_PIN  5
 #define I2C_GUASTISIRENA_PIN  6
 #define I2C_TAMPER_PIN  7
 /*===============================*/
@@ -81,6 +83,7 @@ uint8_t passwd_pos = 9;  // the postition of the password input
 // id timer event
 int8_t timerLCDbacklight = 0;
 int8_t timerPrintData = 0;
+int8_t timerReadGSMSlave = 0;
 int8_t evRitardoAttivazione=0;
 int8_t evAfterRitardoTrigger=0;
 
@@ -127,7 +130,15 @@ int8_t evAfterRitardoTrigger=0;
 #define TXT_NUMERI3_GSM          "Numero3"
 #define TXT_NUMERI4_GSM          "Numero4"
 #define TXT_NUMERI5_GSM          "Numero5"
+#define TXT_SYNC_GSM             "Sync Imp GSM"
+#define TXT_STATE_GSM            "Stato GSM"
+#define TXT_GSM_READY			 "GSM READY"
+#define TXT_GSM_NOT_READY		 "GSM Not Ready"
+#define TXT_RIAVVIA_GSM			 "Riavvia"
 #define TXT_TEMPERATURA			"Temperatura: "
+#define TXT_DATA_ORA        "Data/Ora"
+#define TXT_DATA        "Data"
+#define TXT_ORA        "Ora"
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
 boolean mostraMenu = false;
