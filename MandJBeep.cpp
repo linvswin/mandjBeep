@@ -546,7 +546,6 @@ void MandJBeep::alarmTriggered() {
 				//Serial.println(sms_text);
 				inviaSMScomando(sms_text, '3');
 			}
-#endif
 		}
 	}
 	t.after(settings.tempoSirena, doAfterTimerT);
@@ -905,10 +904,7 @@ void MandJBeep::checkSMS() {
 		position = 0;
 		risposteGSMSlave = 0;
 	}
-#else
-	serialhwread();
-	gsmRead();
-#endif
+
 }
 
 void MandJBeep::sendI2CCmd(String xCmd, int ch) {
