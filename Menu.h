@@ -110,11 +110,11 @@ void MenuSetup() {
 	// LCD Begin
 	//lcd.begin(_LCDML_DISP_cols, _LCDML_DISP_rows);
 	// set special chars for scrollbar
-	lcd.createChar(0, (uint8_t*) scroll_bar[0]);
-	lcd.createChar(1, (uint8_t*) scroll_bar[1]);
-	lcd.createChar(2, (uint8_t*) scroll_bar[2]);
-	lcd.createChar(3, (uint8_t*) scroll_bar[3]);
-	lcd.createChar(4, (uint8_t*) scroll_bar[4]);
+	allarm.lcd.createChar(0, (uint8_t*) scroll_bar[0]);
+	allarm.lcd.createChar(1, (uint8_t*) scroll_bar[1]);
+	allarm.lcd.createChar(2, (uint8_t*) scroll_bar[2]);
+	allarm.lcd.createChar(3, (uint8_t*) scroll_bar[3]);
+	allarm.lcd.createChar(4, (uint8_t*) scroll_bar[4]);
 
 
 	/*lcd.createChar(0, (uint8_t*) pgm_read_byte(&scroll_bar [0]));
@@ -210,10 +210,8 @@ void LCDML_lcd_menu_display(){
 
 			// display rows
 			for (uint8_t n = 0; n < n_max; n++) {
-				// set cursor
-				lcd.setCursor(1, n);
 				// set content
-				lcd.print(LCDML.content[n]);
+				allarm.lcd.mjPrint(1,n,LCDML.content[n]);
 			}
 		}
 
@@ -223,23 +221,22 @@ void LCDML_lcd_menu_display(){
 			// display rows
 			for (uint8_t n = 0; n < n_max; n++) {
 				//set cursor
-				lcd.setCursor(0, n);
+				allarm.lcd.mjPrint(0, n,"");
 
 				//set cursor char
 				if (n == LCDML.getCursorPos()) {
-					lcd.write(_LCDML_DISP_cfg_cursor);
+					allarm.lcd.write(_LCDML_DISP_cfg_cursor);
 				} else {
-					lcd.write(' ');
+					allarm.lcd.write(' ');
 				}
 
 				// delete or reset scrollbar
 				if (_LCDML_DISP_cfg_scrollbar == 1) {
 					if (scrollbar_max > n_max) {
-						lcd.setCursor((_LCDML_DISP_cols - 1), n);
-						lcd.write((uint8_t) 0);
+						allarm.lcd.mjPrint((_LCDML_DISP_cols - 1), n, "");
+						allarm.lcd.write((uint8_t) 0);
 					} else {
-						lcd.setCursor((_LCDML_DISP_cols - 1), n);
-						lcd.print(' ');
+						allarm.lcd.mjPrint((_LCDML_DISP_cols - 1), n, " ");
 					}
 				}
 			}
@@ -250,17 +247,16 @@ void LCDML_lcd_menu_display(){
 					//set scroll position
 					if (scrollbar_cur_pos == scrollbar_min) {
 						// min pos
-						lcd.setCursor((_LCDML_DISP_cols - 1), 0);
-						lcd.write((uint8_t) 1);
+						allarm.lcd.mjPrint((_LCDML_DISP_cols - 1), 0, "");
+						allarm.lcd.write((uint8_t) 1);
 					} else if (scrollbar_cur_pos == (scrollbar_max - 1)) {
 						// max pos
-						lcd.setCursor((_LCDML_DISP_cols - 1), (n_max - 1));
-						lcd.write((uint8_t) 4);
+						allarm.lcd.mjPrint((_LCDML_DISP_cols - 1), (n_max - 1), "");
+						allarm.lcd.write((uint8_t) 4);
 					} else {
 						// between
-						lcd.setCursor((_LCDML_DISP_cols - 1),
-								scroll_pos / n_max);
-						lcd.write((uint8_t) (scroll_pos % n_max) + 1);
+						allarm.lcd.mjPrint((_LCDML_DISP_cols - 1), scroll_pos / n_max, "");
+						allarm.lcd.write((uint8_t) (scroll_pos % n_max) + 1);
 					}
 				}
 			}
@@ -272,8 +268,8 @@ void LCDML_lcd_menu_display(){
 
 // lcd clear
 void LCDML_lcd_menu_clear() {
-	lcd.clear();
-	lcd.setCursor(0, 0);
+	allarm.lcd.clear();
+	allarm.lcd.mjPrint(0, 0, "");
 }
 
 /* ===================================================================== *
@@ -331,58 +327,58 @@ char newTxtVal3[11];
 int mnuNewTxtVal=0;
 
 void mngTempoSirena(uint8_t par){
-	lcd.setCursor(0, 0);
+	allarm.lcd.mjPrint(0, 0, "");
 	switch(par)
 	{
 		case 1:
-			lcd.print(TXT_TEMPO_SIRENA);
+			allarm.lcd.mjPrint(TXT_TEMPO_SIRENA);
 			break;
 		case 2:
-			lcd.print(TXT_LCDBACK_LIGHT_TIME);
+			allarm.lcd.mjPrint(TXT_LCDBACK_LIGHT_TIME);
 			break;
 		case 3:
-			lcd.print(TXT_LOAD_TO_EPROM);
+			allarm.lcd.mjPrint(TXT_LOAD_TO_EPROM);
 			break;
 		case 4:
-			lcd.print(TXT_SAVE_TO_EPROM);
+			allarm.lcd.mjPrint(TXT_SAVE_TO_EPROM);
 			break;
 		case 5:
-			lcd.print(TXT_DISATTIVA_SENSORI);
+			allarm.lcd.mjPrint(TXT_DISATTIVA_SENSORI);
 			break;
 		case 8:
-			lcd.print(TXT_CONTA_REED);
+			allarm.lcd.mjPrint(TXT_CONTA_REED);
 			break;
 		case 9:
-			lcd.print(TXT_REPORT);
+			allarm.lcd.mjPrint(TXT_REPORT);
 			break;
 		case 10:
-			lcd.print(TXT_TEMPO_RITARDO);
+			allarm.lcd.mjPrint(TXT_TEMPO_RITARDO);
 			break;
 		case 11:
-			if (settings.gsm) lcd.print(TXT_DISATTIVA_GSM);
-			else lcd.print(TXT_ATTIVA_GSM);
+			if (settings.gsm) allarm.lcd.mjPrint(TXT_DISATTIVA_GSM);
+			else allarm.lcd.mjPrint(TXT_ATTIVA_GSM);
 			break;
 		case 12:
-			lcd.print(TXT_TEMPERATURA);
+			allarm.lcd.mjPrint(TXT_TEMPERATURA);
 			break;
 		case 13:
-			lcd.print(TXT_SYNC_GSM);
+			allarm.lcd.mjPrint(TXT_SYNC_GSM);
 			break;
 		case 14:
-			lcd.print(TXT_STATE_GSM);
+			allarm.lcd.mjPrint(TXT_STATE_GSM);
 			//allarm.sendI2CCmd("1|Status~", GSMI2C);
 			break;
 		case 15:
-			lcd.print(TXT_RIAVVIA_GSM);
+			allarm.lcd.mjPrint(TXT_RIAVVIA_GSM);
 			//allarm.sendI2CCmd("1|Status~", GSMI2C);
 			break;
 		case 16: // riavvia sistema allarme
-			lcd.print(TXT_RIAVVIA_GSM);
+			allarm.lcd.mjPrint(TXT_RIAVVIA_GSM);
 			break;
 	}
-	lcd.setCursor(0, 1);
-	lcd.blink();
-	lcd.setCursor(1, 1);
+	allarm.lcd.mjPrint(0, 1,"");
+	allarm.lcd.mjBlink(true);
+	allarm.lcd.mjPrint(1, 1,"");
 	switch(par){
 	case 3:
 	case 4:
@@ -391,28 +387,26 @@ void mngTempoSirena(uint8_t par){
 	case 13:
 	case 15:
 	case 16:
-		lcd.print(TXT_CONFERMA);
+		allarm.lcd.mjPrint(TXT_CONFERMA);
 		break;
 	case 9:
-		lcd.setCursor(0, 1);
-		lcd.print(allarm.leggiEventoEprom(0));
-		lcd.setCursor(0, 2);
-		lcd.print(allarm.leggiEventoEprom(1));
-		lcd.noBlink();
+		allarm.lcd.mjPrint(0,1,allarm.leggiEventoEprom(0));
+		allarm.lcd.mjPrint(0,2,allarm.leggiEventoEprom(1));
+		allarm.lcd.mjBlink(false);
 		break;
 	case 12:
-		lcd.print(allarm.RTC.GetTemperature().AsFloat());
+		allarm.lcd.print(allarm.RTC.GetTemperature().AsFloat());
 		break;
 	case 14:
 		if (statoGSM==1)
-			lcd.println(TXT_GSM_READY);
+			allarm.lcd.println(TXT_GSM_READY);
 		else if (statoGSM==2)
-			lcd.println(TXT_GSM_NOT_READY);
+			allarm.lcd.println(TXT_GSM_NOT_READY);
 		//Serial.print("statoGSM: ");
 		//Serial.println(statoGSM);
 		break;
 	default:
-		lcd.print(newIntVal);
+		allarm.lcd.print(newIntVal);
 //		lcd.print(newTxtVal);
 		break;
 	}
@@ -513,7 +507,7 @@ void LCDML_DISP_loop(mnuTempoSirena) {
 			newIntVal = 0;
 			LCDML_DISP_funcend();
 		}
-		lcd.clear();
+		allarm.lcd.clear();
 		mngTempoSirena(param);
 	}
 }
@@ -524,33 +518,33 @@ void LCDML_DISP_loop_end(mnuTempoSirena)
   // you can here reset some global vars or do nothing
 
     // disable the cursor
-  lcd.noBlink();
+  allarm.lcd.mjBlink(false);
   param=0;
   //indNewTxtVal=0;
   //memset(newTxtVal,0,sizeof(newTxtVal));
 }
 
 void mngCambiPassword(uint8_t par){
-	lcd.setCursor(0, 0);
+	allarm.lcd.setCursor(0, 0);
 	switch(par)
 	{
 		case 1:
-			lcd.print(TXT_ADMIN_PASSWORD);
+			allarm.lcd.print(TXT_ADMIN_PASSWORD);
 			break;
 		case 2:
-			lcd.print(TXT_PASSWORD1);
+			allarm.lcd.print(TXT_PASSWORD1);
 			break;
 		case 3:
-			lcd.print(TXT_PASSWORD2);
+			allarm.lcd.print(TXT_PASSWORD2);
 			break;
 	}
-	lcd.setCursor(0, 1);
-	lcd.blink();
-	lcd.setCursor(1, 1);
+	allarm.lcd.setCursor(0, 1);
+	allarm.lcd.blink();
+	allarm.lcd.setCursor(1, 1);
 	/*if (par ==3 or par == 4 or par==5)
 		lcd.print(TXT_CONFERMA);
 	else*/
-		lcd.print(newTxtVal);
+		allarm.lcd.print(newTxtVal);
 }
 // *********************************************************************
 void LCDML_DISP_setup(mnuPassword)
@@ -559,13 +553,13 @@ void LCDML_DISP_setup(mnuPassword)
 	param = LCDML_DISP_getParameter();
 	switch (param) {
 	case 1:
-		lcd.print(TXT_ADMIN_PASSWORD);
+		allarm.lcd.print(TXT_ADMIN_PASSWORD);
 		break;
 	case 2:
-		lcd.print(TXT_PASSWORD1);
+		allarm.lcd.print(TXT_PASSWORD1);
 		break;
 	case 3:
-		lcd.print(TXT_PASSWORD2);
+		allarm.lcd.print(TXT_PASSWORD2);
 		break;
 	}
 	mngCambiPassword(param);
@@ -588,54 +582,54 @@ void LCDML_DISP_loop(mnuPassword) {  // loop
 		}
 		LCDML_DISP_funcend();
 	}
-	lcd.clear();
+	allarm.lcd.clear();
 	mngCambiPassword(param);
 }
 
 void LCDML_DISP_loop_end(mnuPassword) {  // loop end
-	lcd.noBlink();
+	allarm.lcd.noBlink();
 	param=0;
 	indNewTxtVal=0;
 	memset(newTxtVal,0,sizeof(newTxtVal));
 }
 
 void mngGsmNumeri(uint8_t par){
-	lcd.setCursor(0, 0);
+	allarm.lcd.setCursor(0, 0);
 	switch(par)
 	{
 		case 1:
-			lcd.print(TXT_NUMERI1_GSM);
-			lcd.setCursor(1, 1);
-			lcd.print(settings.phoneNumber1);
+			allarm.lcd.print(TXT_NUMERI1_GSM);
+			allarm.lcd.setCursor(1, 1);
+			allarm.lcd.print(settings.phoneNumber1);
 			break;
 		case 2:
-			lcd.print(TXT_NUMERI2_GSM);
-			lcd.setCursor(1, 1);
-			lcd.print(settings.phoneNumber2);
+			allarm.lcd.print(TXT_NUMERI2_GSM);
+			allarm.lcd.setCursor(1, 1);
+			allarm.lcd.print(settings.phoneNumber2);
 			break;
 		case 3:
-			lcd.print(TXT_NUMERI3_GSM);
-			lcd.setCursor(1, 1);
-			lcd.print(settings.phoneNumber3);
+			allarm.lcd.print(TXT_NUMERI3_GSM);
+			allarm.lcd.setCursor(1, 1);
+			allarm.lcd.print(settings.phoneNumber3);
 			break;
 		case 4:
-			lcd.print(TXT_NUMERI4_GSM);
-			lcd.setCursor(1, 1);
-			lcd.print(settings.phoneNumber4);
+			allarm.lcd.print(TXT_NUMERI4_GSM);
+			allarm.lcd.setCursor(1, 1);
+			allarm.lcd.print(settings.phoneNumber4);
 			break;
 		case 5:
-			lcd.print(TXT_NUMERI5_GSM);
-			lcd.setCursor(1, 1);
-			lcd.print(settings.phoneNumber5);
+			allarm.lcd.print(TXT_NUMERI5_GSM);
+			allarm.lcd.setCursor(1, 1);
+			allarm.lcd.print(settings.phoneNumber5);
 			break;
 	}
 	//lcd.setCursor(0, 1);
-	lcd.blink();
-	lcd.setCursor(1, 2);
+	allarm.lcd.blink();
+	allarm.lcd.setCursor(1, 2);
 	/*if (par ==3 or par == 4 or par==5)
 		lcd.print(TXT_CONFERMA);
 	else*/
-		lcd.print(newTxtVal2);
+		allarm.lcd.print(newTxtVal2);
 }
 // *********************************************************************
 void LCDML_DISP_setup(mnuGsmNumeri)
@@ -645,19 +639,19 @@ void LCDML_DISP_setup(mnuGsmNumeri)
 	param = LCDML_DISP_getParameter();
 	switch (param) {
 	case 1:
-		lcd.print(TXT_NUMERI1_GSM);
+		allarm.lcd.print(TXT_NUMERI1_GSM);
 		break;
 	case 2:
-		lcd.print(TXT_NUMERI2_GSM);
+		allarm.lcd.print(TXT_NUMERI2_GSM);
 		break;
 	case 3:
-		lcd.print(TXT_NUMERI3_GSM);
+		allarm.lcd.print(TXT_NUMERI3_GSM);
 		break;
 	case 4:
-		lcd.print(TXT_NUMERI5_GSM);
+		allarm.lcd.print(TXT_NUMERI5_GSM);
 		break;
 	case 5:
-		lcd.print(TXT_NUMERI5_GSM);
+		allarm.lcd.print(TXT_NUMERI5_GSM);
 		break;
 	}
 	mngGsmNumeri(param);
@@ -686,12 +680,12 @@ void LCDML_DISP_loop(mnuGsmNumeri) {  // loop
 		}
 		LCDML_DISP_funcend();
 	}
-	lcd.clear();
+	allarm.lcd.clear();
 	mngGsmNumeri(param);
 }
 
 void LCDML_DISP_loop_end(mnuGsmNumeri) {  // loop end
-	lcd.noBlink();
+	allarm.lcd.noBlink();
 	param=0;
 	indNewTxtVal2=0;
 	mnuNewTxtVal=0;
@@ -718,48 +712,48 @@ void mngSensori(){
 	// ==================
 	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows); n++) {
 		// set cursor
-		lcd.setCursor(1, n - scroll_row);
+		allarm.lcd.setCursor(1, n - scroll_row);
 		// set content
-		lcd.setCursor(1, n - scroll_row);
-		lcd.print(sensore[n].getMessaggio());
-		lcd.setCursor(_LCDML_DISP_cols-3, n - scroll_row);
+		allarm.lcd.setCursor(1, n - scroll_row);
+		allarm.lcd.print(sensore[n].getMessaggio());
+		allarm.lcd.setCursor(_LCDML_DISP_cols-3, n - scroll_row);
 
 		switch(sensore[n].getStato())
 		{
 		case sensDisabilitato:
-			lcd.print(F("D"));
+			allarm.lcd.print(F("D"));
 			break;
 		case sensTempDisabilitato:
-			lcd.print(F("T"));
+			allarm.lcd.print(F("T"));
 			break;
 		case sensAttivo:
-			lcd.print(F("A"));
+			allarm.lcd.print(F("A"));
 			break;
 		}
 	}
 	// set cursor and scrollbar
 	// =============================
 	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows); n++) {
-		lcd.setCursor(0, n - scroll_row);
+		allarm.lcd.setCursor(0, n - scroll_row);
 
 		// set cursor
 		// =====================
 		if (n == cursor_position_cur) {
-			lcd.write(_LCDML_DISP_cfg_cursor);
+			allarm.lcd.write(_LCDML_DISP_cfg_cursor);
 			cursor_real_pos = n - scroll_row;
 		} else {
-			lcd.write(' ');
+			allarm.lcd.write(' ');
 		}
 
 		// display scrollbar
 		// ==============================
 		// delete or reset scrollbar
 		if (scrollbar_max > n_max) {
-			lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
-			lcd.write((uint8_t) 0);
+			allarm.lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
+			allarm.lcd.write((uint8_t) 0);
 		} else {
-			lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
-			lcd.print(' ');
+			allarm.lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
+			allarm.lcd.print(' ');
 		}
 
 		// set scrollbar
@@ -767,16 +761,16 @@ void mngSensori(){
 			//set scroll position
 			if (cursor_position_cur == scrollbar_min) {
 				// min pos
-				lcd.setCursor((_LCDML_DISP_cols - 1), 0);
-				lcd.write((uint8_t) 1);
+				allarm.lcd.setCursor((_LCDML_DISP_cols - 1), 0);
+				allarm.lcd.write((uint8_t) 1);
 			} else if (cursor_position_cur == (scrollbar_max - 1)) {
 				// max pos
-				lcd.setCursor((_LCDML_DISP_cols - 1), (n_max - 1));
-				lcd.write((uint8_t) 4);
+				allarm.lcd.setCursor((_LCDML_DISP_cols - 1), (n_max - 1));
+				allarm.lcd.write((uint8_t) 4);
 			} else {
 				// between
-				lcd.setCursor((_LCDML_DISP_cols - 1), scroll_pos / n_max);
-				lcd.write((uint8_t) (scroll_pos % n_max) + 1);
+				allarm.lcd.setCursor((_LCDML_DISP_cols - 1), scroll_pos / n_max);
+				allarm.lcd.write((uint8_t) (scroll_pos % n_max) + 1);
 			}
 		}
 
@@ -837,7 +831,7 @@ void LCDML_DISP_loop(mnuSensori) {
 			//Serial.println(settings.sens);
 		}
 		// clear display
-		lcd.clear();
+		allarm.lcd.clear();
 		mngSensori();
 	}
 }
@@ -866,37 +860,37 @@ void mngTipoAttivazione(){
 		// set cursor
 		//lcd.setCursor(1, n - scroll_row);
 		// set content
-		lcd.setCursor(1, n - scroll_row);
-		lcd.print(tipoAttivazione[n]);
-		lcd.setCursor(_LCDML_DISP_cols-3, n - scroll_row);
+		allarm.lcd.setCursor(1, n - scroll_row);
+		allarm.lcd.print(tipoAttivazione[n]);
+		allarm.lcd.setCursor(_LCDML_DISP_cols-3, n - scroll_row);
 
-		if (n==settings.zona) lcd.print(F("*"));
-		else lcd.print( TXT_SPAZIO );
+		if (n==settings.zona) allarm.lcd.print(F("*"));
+		else allarm.lcd.print( TXT_SPAZIO );
 	}
 	// set cursor and scrollbar
 	// =============================
 	for (uint8_t n = scroll_row; n < (scroll_row + _LCDML_DISP_rows); n++) {
-		lcd.setCursor(0, n - scroll_row);
+		allarm.lcd.setCursor(0, n - scroll_row);
 
 		// set cursor
 		// =====================
 		if (n == cursor_position_cur) {
-			lcd.write(_LCDML_DISP_cfg_cursor);
+			allarm.lcd.write(_LCDML_DISP_cfg_cursor);
 			cursor_real_pos = n - scroll_row;
 		} else {
 			//lcd.write(' ');
-			lcd.print( TXT_SPAZIO );
+			allarm.lcd.print( TXT_SPAZIO );
 		}
 
 		// display scrollbar
 		// ==============================
 		// delete or reset scrollbar
 		if (scrollbar_max > n_max) {
-			lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
-			lcd.write((uint8_t) 0);
+			allarm.lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
+			allarm.lcd.write((uint8_t) 0);
 		} else {
-			lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
-			lcd.print(TXT_SPAZIO);
+			allarm.lcd.setCursor((_LCDML_DISP_cols - 1), n - scroll_row);
+			allarm.lcd.print(TXT_SPAZIO);
 		}
 
 		// set scrollbar
@@ -904,16 +898,16 @@ void mngTipoAttivazione(){
 			//set scroll position
 			if (cursor_position_cur == scrollbar_min) {
 				// min pos
-				lcd.setCursor((_LCDML_DISP_cols - 1), 0);
-				lcd.write((uint8_t) 1);
+				allarm.lcd.setCursor((_LCDML_DISP_cols - 1), 0);
+				allarm.lcd.write((uint8_t) 1);
 			} else if (cursor_position_cur == (scrollbar_max - 1)) {
 				// max pos
-				lcd.setCursor((_LCDML_DISP_cols - 1), (n_max - 1));
-				lcd.write((uint8_t) 4);
+				allarm.lcd.setCursor((_LCDML_DISP_cols - 1), (n_max - 1));
+				allarm.lcd.write((uint8_t) 4);
 			} else {
 				// between
-				lcd.setCursor((_LCDML_DISP_cols - 1), scroll_pos / n_max);
-				lcd.write((uint8_t) (scroll_pos % n_max) + 1);
+				allarm.lcd.setCursor((_LCDML_DISP_cols - 1), scroll_pos / n_max);
+				allarm.lcd.write((uint8_t) (scroll_pos % n_max) + 1);
 			}
 		}
 	}
@@ -967,7 +961,7 @@ void LCDML_DISP_loop(mnuTipoAttivazione) {
 			settings.zona=cursor_position_cur;
 		}
 		// clear display
-		lcd.clear();
+		allarm.lcd.clear();
 		mngTipoAttivazione();
 	}
 }
@@ -978,26 +972,26 @@ void LCDML_DISP_loop_end(mnuTipoAttivazione) {
 
 
 void mngCambioDataOra(uint8_t par){
-  lcd.setCursor(0, 0);
+  allarm.lcd.setCursor(0, 0);
   switch(par)
   {
     case 1:
-      lcd.print(TXT_DATA);
+      allarm.lcd.print(TXT_DATA);
       strcpy(newTxtVal3,"__/__/____");
       break;
     case 2:
-      lcd.print(TXT_ORA);
+      allarm.lcd.print(TXT_ORA);
       break;
     /*case 3:
       lcd.print(TXT_PASSWORD2);
       break;*/
   }
-  lcd.setCursor(0, 1);
-  lcd.blink();
+  allarm.lcd.setCursor(0, 1);
+  allarm.lcd.blink();
 
-  lcd.setCursor(1, 1);
-  lcd.print(newTxtVal3);
-  lcd.setCursor(1, 1);
+  allarm.lcd.setCursor(1, 1);
+  allarm.lcd.print(newTxtVal3);
+  allarm.lcd.setCursor(1, 1);
   /*if (par ==3 or par == 4 or par==5)
     lcd.print(TXT_CONFERMA);
   else*/
@@ -1010,10 +1004,10 @@ void LCDML_DISP_setup(mnuCambioDataOra)
   param = LCDML_DISP_getParameter();
   switch (param) {
   case 1:
-    lcd.print(TXT_DATA);
+    allarm.lcd.print(TXT_DATA);
     break;
   case 2:
-    lcd.print(TXT_ORA);
+    allarm.lcd.print(TXT_ORA);
     break;
   /*case 3:
     lcd.print(TXT_PASSWORD2);
@@ -1039,12 +1033,12 @@ void LCDML_DISP_loop(mnuCambioDataOra) {  // loop
     }
     LCDML_DISP_funcend();
   }
-  lcd.clear();
+  allarm.lcd.clear();
   mngCambioDataOra(param);
 }
 
 void LCDML_DISP_loop_end(mnuCambioDataOra) {  // loop end
-  lcd.noBlink();
+  allarm.lcd.noBlink();
   //param=0;
   //indNewTxtVal=0;
   //memset(newTxtVal,0,sizeof(newTxtVal));

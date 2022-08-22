@@ -8,6 +8,9 @@
 #ifndef _Pin_H_
 #define _Pin_H_
 
+#include "Arduino.h"
+//#include <stdint.h>
+
 #define BAUD_RATE  9600  //115200
 
 // software reset
@@ -35,8 +38,8 @@ const char keys[ROWS][COLS] = { // Define the Keymap
 	{ '*', '0', '#', 'D' } };
 
 #define I2CADDR 0x21 //keypad
-byte rowPins[ROWS] = { 3, 2, 1, 0 }; //connect to the row pinouts of the keypad
-byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keypad
+static byte rowPins[ROWS] = { 3, 2, 1, 0 }; //connect to the row pinouts of the keypad
+static byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keypad
 
 #define TIMER1_PIN1 13 //13   //buzzer pin
 #define TIMER1_PIN2 12   //buzzer pin
@@ -78,14 +81,14 @@ byte colPins[COLS] = { 7, 6, 5, 4 }; //connect to the column pinouts of the keyp
 #define I2C_TAMPER_PIN  7
 /*===============================*/
 
-uint8_t passwd_pos = 9;  // the postition of the password input
+static uint8_t passwd_pos = 9;  // the postition of the password input
 
 // id timer event
-int8_t timerLCDbacklight = 0;
-int8_t timerPrintData = 0;
-int8_t timerReadGSMSlave = 0;
-int8_t evRitardoAttivazione=0;
-int8_t evAfterRitardoTrigger=0;
+static int8_t timerLCDbacklight = 0;
+static int8_t timerPrintData = 0;
+static int8_t timerReadGSMSlave = 0;
+static int8_t evRitardoAttivazione=0;
+static int8_t evAfterRitardoTrigger=0;
 
 /**********************************************************
  **    Definizione di stringhe
@@ -141,6 +144,6 @@ int8_t evAfterRitardoTrigger=0;
 #define TXT_ORA        "Ora"
 //#define TXT_ATTDIS_GSM       (settings.gsm==0?TXT_ATTIVA_GSM:TXT_DISATTIVA_GSM)
 /**********************************************************/
-boolean mostraMenu = false;
+static boolean mostraMenu = false;
 /**********************************************************/
 #endif

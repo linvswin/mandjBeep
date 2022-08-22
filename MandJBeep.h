@@ -68,6 +68,7 @@ int statoGSM=0;
 #endif
 
 #include "Sensore.h"
+#include "MJLcd.h"
 
 /* Struttura parametri di configurazione*/
 //const static byte SettingsMagic = 0x11;
@@ -128,7 +129,7 @@ Sensore sensore[numSens]={
 // Create the Keypad
 Keypad_I2C keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF8574);
 // LCD
-LiquidCrystal_I2C  lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
+//LiquidCrystal_I2C  _lcdI2C(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
 //Password
 Password password = Password(settings.alarmPassword1);
 // PCF8574 modulo sensori 1
@@ -156,7 +157,8 @@ public:
 	boolean ritardoAttivato;  // settato a true quanto si attiva il ritardo in attivazione/disattivazione
 
 	// timer
-	MandJTimer t;
+	MandJTimer mjTimer;
+  MJLcd &lcd;
 	//Real Time Clock
 #ifndef CLKDS3231
 	RTC_DS1307 RTC;
@@ -167,7 +169,7 @@ public:
 	RtcDateTime now;
 #endif
 
-	MandJBeep();
+	MandJBeep(MJLcd &_lcd);
 	void inizializza();
 	void inizializzaClock();
 	void inizializzaLed();
@@ -205,7 +207,9 @@ public:
 	void sendI2CCmd(String cmd, int ch);
 };
 
-MandJBeep allarm; //=new MandJBeep();
+// LCD
+MJLcd  _lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
+MandJBeep allarm(_lcd); //=new MandJBeep();
 
 #include "Menu.h"
 
