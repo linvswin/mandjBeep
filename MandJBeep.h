@@ -67,64 +67,8 @@ int statoGSM=0;
 	#include <TimerOneThree.h>  //https://github.com/heliosoph/TimerOneThree
 #endif
 
-#include "Sensore.h"
+
 #include "MJLcd.h"
-
-/* Struttura parametri di configurazione*/
-//const static byte SettingsMagic = 0x11;
-const static byte PasswordLength_Max = 7;
-struct AlarmSettings {
-	char alarmPassword1[PasswordLength_Max];	//    password di attivazione
-	char alarmPassword2[PasswordLength_Max];	// 				||
-	uint8_t tempoSirena;						// tempo attivazione sirena
-	char menuPassword[PasswordLength_Max];		// password di accesso menu
-	uint8_t lcdBacklightTime;					// durata retroilluminazione
-	uint8_t maxReed_Conta;						// numero max di controllo sensore reed attivo, dopodich� disattiva temp il sensore
-	uint8_t zona;								// zona attiva
-	byte sens;									// configurazione sensori
-	//byte adminpass;
-	uint8_t tempoRitardo;						// tempo ritardo attiazione
-	uint8_t gsm;								// attiva gms
-	char phoneNumber1[20]; // array for the phone number string
-	char phoneNumber2[20]; // array for the phone number string
-	char phoneNumber3[20]; // array for the phone number string
-	char phoneNumber4[20]; // array for the phone number string
-	char phoneNumber5[20]; // array for the phone number string
-} settings = {
-	"1111",			// alarmPassword1,
-	"2222",			// alarmPassword2,
-	30,				// tempoSirena secondi
-	"0000",			// menuPassword
-	60,				// lcdBacklightTime secondi
-	5,				//maxReedConta
-	znTotale,	// zona
-	//B11000100		// sens
-	B10000001,		// sens
-	//1,			// adminpass
-	20,				// tempo ritardo
-	0,				// gsm
-	"0000000000",	// phoneNumber1
-	"0000000000",	// phoneNumber2
-	"0000000000",	// phoneNumber3
-	"0000000000",	// phoneNumber4
-	"0000000000",	// phoneNumber5
-};
-/*========================================*/
-
-Sensore sensore[numSens]={
-	Sensore(I2C_REED1_PIN,  tpReed,  LOW, "CAMERA", znPerimetrale, false),
-#ifdef TEST
-	Sensore(I2C_REED2_PIN,  tpPIR,  LOW, "BAGNO",  znInterno, true),
-#else
-	Sensore(I2C_REED2_PIN,  tpReed,  LOW, "BAGNO", znPerimetrale, false),
-#endif
-	Sensore(I2C_REED3_PIN,  tpReed,  LOW, "SALONE", znPerimetrale, false),
-	Sensore(I2C_REED4_PIN,  tpReed,  LOW, "INGRES", znPerimetrale, true),
-	Sensore(I2C_PIR0_PIN,   tpPIR,   LOW, "CAMER2",     znInterno, false),
-	Sensore(I2C_PIR1_PIN,   tpPIR,   LOW,  "SALA2",     znInterno, false),
-	Sensore(I2C_GUASTISIRENA_PIN, tpSirena,  HIGH, "SIRENA",znTotale, false),
-	Sensore(I2C_TAMPER_PIN, tpTamper,  HIGH, "SABOT.",  znTotale, false),
-};
 
 // Create the Keypad
 Keypad_I2C keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF8574);
