@@ -69,13 +69,12 @@ int statoGSM=0;
 
 
 #include "MJLcd.h"
+#include "Clock.h"
+
 
 // Create the Keypad
 Keypad_I2C keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF8574);
-// LCD
-//LiquidCrystal_I2C  _lcdI2C(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, NEGATIVE);
-//Password
-Password password = Password(settings.alarmPassword1);
+
 // PCF8574 modulo sensori 1
 PCF8574_Class PCF_24(0x22);
 
@@ -100,22 +99,25 @@ public:
 	boolean adminZone;
 	boolean ritardoAttivato;  // settato a true quanto si attiva il ritardo in attivazione/disattivazione
 
+  Password password=Password("");
 	// timer
 	MandJTimer mjTimer;
   MJLcd &lcd;
-	//Real Time Clock
-#ifndef CLKDS3231
-	RTC_DS1307 RTC;
-	DateTime now;
-#else
-	//RtcDS3231<TwoWire> Rtc(Wire);
-	RtcDS3231 RTC;
-	RtcDateTime now;
-#endif
+  Clock clock;
+
+// 	//Real Time Clock
+// #ifndef CLKDS3231
+// 	RTC_DS1307 RTC;
+// 	DateTime now;
+// #else
+// 	//RtcDS3231<TwoWire> Rtc(Wire);
+// 	RtcDS3231 RTC;
+// 	RtcDateTime now;
+// #endif
 
 	MandJBeep(MJLcd &_lcd);
 	void inizializza();
-	void inizializzaClock();
+	//void inizializzaClock();
 	void inizializzaLed();
 	void inizializzaSensori();
 	//void inizializzaGSM();
@@ -128,7 +130,7 @@ public:
 
 	void standby();
 	void printDate();
-	String getDate();
+	// String getDate();
 
 	void checkAttivita();
 	void checkSMS();
@@ -149,6 +151,7 @@ public:
 	bool getAllarmStatus(){return this->alarmeAttivo;};
 
 	void sendI2CCmd(String cmd, int ch);
+  void setPassword(char* pass);
 };
 
 // LCD

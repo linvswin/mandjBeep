@@ -395,7 +395,7 @@ void mngTempoSirena(uint8_t par){
 		allarm.lcd.mjBlink(false);
 		break;
 	case 12:
-		allarm.lcd.print(allarm.RTC.GetTemperature().AsFloat());
+		allarm.lcd.print(allarm.clock.RTC.GetTemperature().AsFloat());
 		break;
 	case 14:
 		if (statoGSM==1)

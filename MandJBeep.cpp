@@ -25,6 +25,7 @@ void setup() {
   Wire.begin();  // join i2c bus (address optional for master)
 
   allarm.inizializza();
+  allarm.setPassword(settings.alarmPassword1);
 
   allarm.lcd.begin(20, 4);
   MenuSetup();
@@ -60,9 +61,9 @@ void setup() {
 void loop() {
 
 #ifndef CLKDS3231
-  allarm.now = allarm.RTC.now();
+  allarm.now = allarm.clock.RTC.now();
 #else
-  allarm.now = allarm.RTC.GetDateTime();
+  allarm.clock.now = allarm.clock.RTC.GetDateTime();
 #endif
 
   keypad.getKey();
@@ -109,7 +110,7 @@ void keypadEvent(KeypadEvent eKey) {
           break;
         case '*':  //* is to reset password attempt
           if (mostraMenu == false) {
-            password.reset();
+            allarm.password.reset();
             passwd_pos = 9;
             mostraMenu = false;
             allarm.standby();
@@ -128,7 +129,7 @@ void keypadEvent(KeypadEvent eKey) {
         case 'B':
           if (mostraMenu == false) {
             passwd_pos = 9;
-            password.set(settings.menuPassword);
+            allarm.password.set(settings.menuPassword);
             if (allarm.checkPassword2()) {
               allarm.mjTimer.stop(timerPrintData);
               mostraMenu = true;
@@ -137,8 +138,8 @@ void keypadEvent(KeypadEvent eKey) {
             } else
               allarm.codiceErrato(1);
           } else {
-            password.reset();
-            password.set(settings.alarmPassword1);
+            allarm.password.reset();
+            allarm.password.set(settings.alarmPassword1);
             mostraMenu = false;
             timerPrintData = allarm.mjTimer.every(1, printDate);
             allarm.standby();
@@ -160,7 +161,7 @@ void keypadEvent(KeypadEvent eKey) {
           break;
         default:
           if (mostraMenu == false) {
-            password.append(eKey);
+            allarm.password.append(eKey);
             allarm.lcd.setCursor((passwd_pos++), 0);
             allarm.lcd.print(F("*"));
           } else {
@@ -184,7 +185,7 @@ void keypadEvent(KeypadEvent eKey) {
 void printDate() {
   //TIME and DATE
   allarm.lcd.setCursor(0, 1);
-  allarm.lcd.print(allarm.getDate());
+  allarm.lcd.print(allarm.clock.getDate());
 }
 
 #ifdef DEBUG_SETTINGS
@@ -336,41 +337,41 @@ void MandJBeep::standby() {
   } else{
     lcd.print(TXT_ENTER_PIN);
     }
-  lcd.mjPrint(0,1,getDate());
+  lcd.mjPrint(0,1, clock.getDate());
   lcd.mjPrint(5,3,TXT_AUTOR);
 }
 
 /*
  * funzione che formatta per stampa su LCD di data e ora
  */
-String MandJBeep::getDate() {
-  String txt = F("");
-#ifndef CLKDS3231
-  txt += printDigit(now.hour()) + F(":");
-  txt += printDigit(now.minute()) + F(":");
-  txt += printDigit(now.second());
-  txt += TXT_SPAZIO;
-  txt += printDigit(now.day()) + F("/");
-  txt += printDigit(now.month()) + F("/");
-  txt += printDigit(now.year());
-#else
-  txt += printDigit(now.Hour()) + F(":");
-  txt += printDigit(now.Minute()) + F(":");
-  txt += printDigit(now.Second());
-  txt += TXT_SPAZIO;
-  txt += printDigit(now.Day()) + F("/");
-  txt += printDigit(now.Month()) + F("/");
-  txt += printDigit(now.Year());
-#endif
+// String MandJBeep::getDate() {
+//   String txt = F("");
+// #ifndef CLKDS3231
+//   txt += printDigit(clock.now.hour()) + F(":");
+//   txt += printDigit(clock.now.minute()); // + F(":");
+//   //txt += printDigit(clock.now.second());
+//   txt += TXT_SPAZIO;
+//   txt += printDigit(clock.now.day()) + F("/");
+//   txt += printDigit(clock.now.month()) + F("/");
+//   txt += printDigit(clock.now.year());
+// #else
+//   txt += printDigit(clock.now.Hour()) + F(":");
+//   txt += printDigit(clock.now.Minute()); // + F(":");
+//   //txt += printDigit(clock.now.Second());
+//   txt += TXT_SPAZIO;
+//   txt += printDigit(clock.now.Day()) + F("/");
+//   txt += printDigit(clock.now.Month()) + F("/");
+//   txt += printDigit(clock.now.Year());
+// #endif
 
-#ifdef DEBUG
-#ifdef DEBUG_PRINTDATA
-  Serial.print(F("date: "));
-  Serial.println(txt);
-#endif
-#endif
-  return txt;
-}
+// #ifdef DEBUG
+// #ifdef DEBUG_PRINTDATA
+//   Serial.print(F("date: "));
+//   Serial.println(txt);
+// #endif
+// #endif
+//   return txt;
+// }
 
 /*
  * check la password di admin
@@ -563,16 +564,16 @@ void MandJBeep::alarmTriggeredRitardato(uint8_t sensId) {
 }
 
 void MandJBeep::inizializza() {
-  //this->saveSettings();
-  this->loadSettings();
+  //saveSettings();
+  loadSettings();
   password.set(settings.alarmPassword1);
 
   keypad.begin(makeKeymap(keys));
   keypad.addEventListener(keypadEvent);  //add an event listener for this keypad
 
-  this->inizializzaClock();
-  this->inizializzaLed();
-  this->inizializzaSensori();
+  clock.inizializza();
+  inizializzaLed();
+  inizializzaSensori();
 }
 
 void MandJBeep::saveSettings(void) {
@@ -672,17 +673,17 @@ void MandJBeep::salvaEventoEprom(int num) {
   EEPROM.write(0, num);
 
 #ifndef CLKDS3231
-  EEPROM.write(1, now.day());
-  EEPROM.write(2, now.month());
-  EEPROM.write(3, now.year() - 2000);
-  EEPROM.write(4, now.hour());
-  EEPROM.write(5, now.minute());
+  EEPROM.write(1, clock.now.day());
+  EEPROM.write(2, clock.now.month());
+  EEPROM.write(3, clock.now.year() - 2000);
+  EEPROM.write(4, clock.now.hour());
+  EEPROM.write(5, clock.now.minute());
 #else
-  EEPROM.write(1, now.Day());
-  EEPROM.write(2, now.Month());
-  EEPROM.write(3, now.Year() - 2000);
-  EEPROM.write(4, now.Hour());
-  EEPROM.write(5, now.Minute());
+  EEPROM.write(1, clock.now.Day());
+  EEPROM.write(2, clock.now.Month());
+  EEPROM.write(3, clock.now.Year() - 2000);
+  EEPROM.write(4, clock.now.Hour());
+  EEPROM.write(5, clock.now.Minute());
 #endif
 }
 
@@ -697,48 +698,6 @@ String MandJBeep::leggiEventoEprom(byte a) {  // S:num sensore|gg/mm/yy|hh:mm
            + printDigit(EEPROM.read(7)) + printDigit(EEPROM.read(8))
            + printDigit(EEPROM.read(9)) + F("|")
            + printDigit(EEPROM.read(10)) + printDigit(EEPROM.read(11));
-}
-
-void MandJBeep::inizializzaClock() {
-  //Adding time
-#ifndef CLKDS3231
-  RTC.begin();
-  //togli il commento per aggiornare l'ora con il pc, upload, poi disattivalo subito dopo
-  //RTC.adjust(DateTime(__DATE__, __TIME__));
-#else
-  RTC.Begin();
-  RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
-  if (!RTC.IsDateTimeValid())
-    RTC.SetDateTime(compiled);
-#endif
-
-#ifdef DEBUG
-#ifndef CLKDS3231
-  if (!RTC.isrunning())
-#else
-  if (!RTC.GetIsRunning())
-#endif
-    Serial.println(F("RTC NOT run"));
-  else
-    Serial.println(F("RTC run"));
-#endif
-
-#ifdef CLKDS3231
-  now = RTC.GetDateTime();
-  if (now < compiled) {
-    Serial.println("RTC is older than compile time!  (Updating DateTime)");
-    RTC.SetDateTime(compiled);
-  } else if (now > compiled) {
-    Serial.println("RTC is newer than compile time. (this is expected)");
-  } else if (now == compiled) {
-    Serial.println(
-      "RTC is the same as compile time! (not expected but all is fine)");
-  }
-  // never assume the Rtc was last configured by you, so
-  // just clear them to your needed state
-  RTC.Enable32kHzPin(false);
-  RTC.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
-#endif
 }
 
 void MandJBeep::inizializzaLed() {
@@ -900,4 +859,9 @@ void MandJBeep::sendI2CCmd(String xCmd, int ch) {
     Wire.endTransmission();
   }
   delay(500);
+}
+
+void MandJBeep::setPassword(char* pass) {
+  password.set(pass);
+  password.reset();
 }
